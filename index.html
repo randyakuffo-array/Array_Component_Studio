@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Array Component Studio</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg:#05070b;
+      --rail:#080d16;
+      --rail2:#0c1320;
+      --panel:#0b111d;
+      --panel2:#111827;
+      --ink:#f8fafc;
+      --muted:#9aa7ba;
+      --soft:#64748b;
+      --line:rgba(148,163,184,.18);
+      --line2:rgba(99,102,241,.35);
+      --accent:#7c3aed;
+      --accent2:#06b6d4;
+      --accent3:#22c55e;
+      --danger:#fb7185;
+      --warn:#fbbf24;
+      --ok:#34d399;
+      --shadow:0 22px 70px rgba(0,0,0,.45);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+      overflow:hidden;
+    }
+    body::before{
+      content:"";position:fixed;inset:0;pointer-events:none;opacity:.7;
+      background:
+        radial-gradient(circle at 7% 12%, rgba(124,58,237,.25), transparent 26%),
+        radial-gradient(circle at 82% 0%, rgba(6,182,212,.20), transparent 28%),
+        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px);
+      background-size:auto,auto,36px 36px,36px 36px;
+      mask-image:linear-gradient(to bottom,#000 0%,#000 70%,transparent 100%);
+    }
+    .app{height:100vh;width:100vw;display:grid;grid-template-columns:360px 1fr;position:relative;z-index:1}
+    aside{
+      height:100vh;overflow:auto;background:linear-gradient(180deg,rgba(12,19,32,.96),rgba(8,13,22,.98));
+      border-right:1px solid var(--line);box-shadow:18px 0 60px rgba(0,0,0,.28);
+    }
+    .rail-head{padding:18px 18px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(8,13,22,.92);backdrop-filter:blur(16px);z-index:4}
+    .logo-row{display:flex;align-items:center;gap:11px}
+    .logo{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-weight:950;color:white;box-shadow:0 0 30px rgba(124,58,237,.3)}
+    h1{font-size:16px;line-height:1.1;margin:0;letter-spacing:-.03em}
+    .tagline{font-size:11px;color:var(--muted);margin-top:4px}
+    .rail-body{padding:16px}
+    .module{border:1px solid var(--line);background:rgba(15,23,42,.48);border-radius:18px;padding:14px;margin-bottom:12px}
+    .module-title{font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:#a5b4fc;font-weight:900;margin-bottom:10px}
+    label{display:block;font-size:12px;font-weight:750;color:#dbeafe;margin:10px 0 6px}
+    input,select,textarea{
+      width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 11px;background:#050a13;color:var(--ink);font:inherit;font-size:13px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+    }
+    textarea{min-height:76px;resize:vertical;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:11px;line-height:1.4}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2);box-shadow:0 0 0 4px rgba(6,182,212,.10)}
+    input::placeholder,textarea::placeholder{color:#64748b}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+    .micro{font-size:11px;color:var(--muted);line-height:1.4;margin-top:8px}
+    .timer-card{border:1px solid rgba(6,182,212,.24);border-radius:16px;background:linear-gradient(135deg,rgba(6,182,212,.10),rgba(124,58,237,.08));padding:12px;margin-top:10px}
+    .timer-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+    .timer-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:900}
+    .timer-display{font-size:25px;font-weight:950;letter-spacing:-.05em;color:var(--ok);font-variant-numeric:tabular-nums;line-height:1.1}
+    .timer-display.warn{color:var(--warn)}.timer-display.danger{color:var(--danger)}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+    button,.link-button{
+      border:1px solid var(--line);border-radius:12px;padding:10px 11px;font-weight:850;font-size:12px;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;color:#dbeafe;background:rgba(148,163,184,.10);transition:transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+    button:hover,.link-button:hover{transform:translateY(-1px);background:rgba(148,163,184,.16);border-color:rgba(148,163,184,.3)}
+    .primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border-color:transparent;box-shadow:0 14px 34px rgba(6,182,212,.16)}
+    .primary:hover{background:linear-gradient(135deg,#8b5cf6,#22d3ee)}
+    .full-actions{display:grid;grid-template-columns:1.35fr .65fr;gap:9px;position:sticky;bottom:0;background:linear-gradient(180deg,transparent,var(--rail) 25%);padding-top:12px}
+    .status{margin-top:10px;padding:10px 11px;border-radius:13px;background:rgba(148,163,184,.08);border:1px solid var(--line);font-size:12px;color:var(--muted);white-space:pre-wrap;min-height:38px}
+    .status.ok{color:var(--ok);border-color:rgba(52,211,153,.28);background:rgba(52,211,153,.08)}
+    .status.err{color:var(--danger);border-color:rgba(251,113,133,.28);background:rgba(251,113,133,.08)}
+    details{border:1px solid var(--line);border-radius:15px;background:rgba(2,6,23,.30);padding:0 11px 11px;margin-top:10px}
+    summary{cursor:pointer;list-style:none;padding:11px 0;font-size:12px;font-weight:850;color:#cbd5e1}
+    summary::-webkit-details-marker{display:none}summary::after{content:"+";float:right;color:var(--accent2)}details[open] summary::after{content:"–"}
+    .checkline{display:flex;align-items:center;gap:8px;margin-top:9px;color:var(--muted);font-size:11px}
+    .checkline input{width:auto;margin:0}
+
+    .workspace{height:100vh;display:grid;grid-template-rows:58px 1fr 190px;min-width:0;background:#03050a;transition:grid-template-rows .18s ease}
+    .workspace.console-collapsed{grid-template-rows:58px 1fr 36px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 18px;border-bottom:1px solid var(--line);background:rgba(5,7,11,.72);backdrop-filter:blur(18px)}
+    .preview-heading{min-width:0}
+    .preview-title{font-weight:950;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .preview-meta{font-size:11px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .top-actions{display:flex;gap:9px;align-items:center;flex-shrink:0}
+    .top-actions button{width:auto;min-width:86px}
+    .live-pill{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:8px 11px;color:var(--muted);font-size:11px;background:rgba(15,23,42,.62)}
+    .pulse{width:7px;height:7px;border-radius:99px;background:var(--accent3);box-shadow:0 0 20px var(--accent3)}
+    .stage{min-height:0;overflow:auto;background:white;color:#0f172a}
+    #componentContainer{min-height:100%;padding:0;background:#fff;color:#0f172a}
+    .render-note{font-size:12px;color:#475569;background:#f8fafc;border-bottom:1px solid #e2e8f0;padding:10px 14px}
+    .debug-dock{border-top:1px solid var(--line);background:linear-gradient(180deg,#070b12,#05070b);display:grid;grid-template-rows:36px 1fr;min-height:0}
+    .dock-head{display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid var(--line);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:900}
+    .debug{margin:0;border:0;border-radius:0;max-height:none;height:100%;overflow:auto;background:#02040a;color:#bfdbfe;padding:12px 14px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:11px;white-space:pre-wrap}
+    .workspace.console-collapsed .debug{display:none}
+    .workspace.console-collapsed .debug-dock{grid-template-rows:36px 0}
+    .console-toggle{min-width:0!important;width:30px!important;padding:6px 0!important;font-size:14px!important;line-height:1}
+    .debug[hidden]{display:block;color:#475569}
+    .debug[hidden]::before{content:"Logs will appear here after loading a component."}
+
+    .dock-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .dock-tools button{width:auto;min-width:0;padding:6px 9px;border-radius:9px;font-size:10px;text-transform:none;letter-spacing:0;color:#cbd5e1}
+    .dock-tools .tool-select{width:auto;min-width:105px;padding:6px 9px;border-radius:9px;font-size:10px;background:#020617;color:#cbd5e1}
+    .debug-line{display:block;margin:0 0 4px}
+    .debug-line.info{color:#bfdbfe}.debug-line.ok{color:#86efac}.debug-line.warn{color:#fde68a}.debug-line.err{color:#fda4af}.debug-line.diag{color:#c4b5fd}
+    .debug-line .ts{color:#64748b}.debug-line .tag{color:#93c5fd;font-weight:800}
+
+    @media(max-width:980px){body{overflow:auto}.app{height:auto;min-height:100vh;grid-template-columns:1fr}aside{height:auto;max-height:none}.workspace{height:900px;grid-template-rows:58px 1fr 170px}.workspace.console-collapsed{grid-template-rows:58px 1fr 36px}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="rail-head">
+        <div class="logo-row">
+          <div class="logo">A</div>
+          <div>
+            <h1>Array Component Studio</h1>
+            <div class="tagline">Local component studio · direct appKey + userToken</div>
+          </div>
+        </div>
+      </div>
+      <div class="rail-body">
+        <div class="module">
+          <div class="module-title">Target</div>
+          <label for="componentSelect">Component</label>
+          <select id="componentSelect"><optgroup label="Enrollment And Auth">
+  <option value="accountEnroll">Account Enroll</option>
+  <option value="authenticationKBA">Authentication KBA</option>
+  <option value="login">Account Login</option>
+</optgroup>
+<optgroup label="My Credit Manager">
+  <option value="creditOverview">Credit Overview</option>
+  <option value="creditReport1b">Credit Report v1 1B</option>
+  <option value="creditReport3b">Credit Report v1 3B</option>
+  <option value="creditReportCondensed1b">Credit Report v2 1B</option>
+  <option value="creditScoreDetails">Credit Score Details</option>
+  <option value="mcmCreditProtection">Credit Protection</option>
+  <option value="debtAnalysis">Debt Analysis</option>
+  <option value="scoreInsights">Credit Score Insights</option>
+  <option value="scoreSimulator">Credit Score Simulator</option>
+  <option value="scoreCoach">Credit Score Coach</option>
+  <option value="creditScore1b">Score Tracker 1B</option>
+  <option value="creditScore3b">Score Tracker 3B</option>
+  <option value="creditAlerts">Credit Alerts</option>
+</optgroup>
+<optgroup label="Offers Engine">
+  <option value="ads">Ad Component</option>
+</optgroup>
+<optgroup label="Identity Protect">
+  <option value="identityProtect">Identity Protect</option>
+  <option value="identityProtectPlus">Identity Protect - Plus</option>
+  <option value="neighborhoodWatch">Neighborhood Watch</option>
+  <option value="breachScan">Breach Scan</option>
+</optgroup>
+<optgroup label="Privacy Protect">
+  <option value="personalInfoProtectionScan">Personal Info Protection - Data Broker Scan</option>
+  <option value="personalInfoProtectionScanResults">Personal Info Protection - Data Broker Scan Results</option>
+  <option value="personalInfoProtectionDashboard">Personal Info Protection - User Dashboard</option>
+</optgroup>
+<optgroup label="BuildCredit Account">
+  <option value="creditBuilder">BuildCredit Account - Enroll</option>
+  <option value="creditBuilderDashboard">BuildCredit Account - Dashboard</option>
+</optgroup>
+<optgroup label="BuildCredit Rent">
+  <option value="rentReporting">BuildCredit Rent Enroll</option>
+</optgroup>
+<optgroup label="Subscription Manager">
+  <option value="subscriptionManager" selected>Subscription Manager</option>
+</optgroup>
+<optgroup label="Student Loan Aid">
+  <option value="studentLoanNavigator">Student Loan Aid - Enroll</option>
+  <option value="studentLoanAid">Student Loan Aid - Dashboard</option>
+</optgroup>
+<optgroup label="Debt Navigator">
+  <option value="debtNavigator">Debt Navigator</option>
+</optgroup>
+<optgroup label="Array+">
+  <option value="arrayPlusBasicMini">Basic - Mini</option>
+  <option value="arrayPlusBasic">Basic</option>
+  <option value="arrayPlusUpgradedMini">Upgraded - Mini</option>
+  <option value="arrayPlusUpgraded">Upgraded</option>
+</optgroup>
+<optgroup label="Financial Links">
+  <option value="financialLinks">Financial Links</option>
+</optgroup>
+<optgroup label="My Home Value">
+  <option value="myHomeValue">My Home Value</option>
+  <option value="myHomeValueMini">My Home Value Mini</option>
+</optgroup></select>
+          <div class="grid2">
+            <div>
+              <label for="environment">Environment</label>
+              <select id="environment"><option value="sandbox" selected>Sandbox</option><option value="production">Production</option><option value="custom">Custom</option></select>
+            </div>
+            <div>
+              <label for="sandboxAttr">Sandbox attr</label>
+              <select id="sandboxAttr"><option value="true" selected>true</option><option value="false">false</option></select>
+            </div>
+          </div>
+        </div>
+
+        <div class="module">
+          <div class="module-title">Session</div>
+          <label for="appKey">App Key</label>
+          <input id="appKey" autocomplete="off" placeholder="Paste appKey" />
+          <label for="userToken">User Token</label>
+          <textarea id="userToken" autocomplete="off" placeholder="Paste userToken"></textarea>
+          <div class="timer-card">
+            <div class="timer-top">
+              <div><div class="timer-label">Token countdown</div><div id="tokenTimer" class="timer-display">Not started</div></div>
+              <div style="min-width:112px"><label for="tokenLife" style="margin-top:0">Token life</label><select id="tokenLife"><option value="15">15 min</option><option value="30" selected>30 min</option><option value="60">60 min</option><option value="custom">Custom</option></select></div>
+            </div>
+            <div id="customTokenLifeWrap" hidden><label for="customTokenLife">Custom minutes</label><input id="customTokenLife" type="number" min="1" step="1" placeholder="Example: 45" /></div>
+            <div class="actions" style="grid-template-columns:1fr"><button id="replaceTokenBtn" class="secondary" type="button">Replace token + reload</button></div>
+            <div class="checkline"><input id="rememberAppKey" type="checkbox" /><label for="rememberAppKey" style="margin:0;color:inherit;font-weight:650">Remember appKey locally</label></div>
+          </div>
+        </div>
+
+        <div class="module">
+          <div class="module-title">Options</div>
+          <label for="apiUrl">API URL</label><input id="apiUrl" placeholder="Auto-filled from environment" />
+          <div class="grid2"><div><label for="componentHeight">Preview height</label><input id="componentHeight" value="640" /></div><div><label for="scriptOverride">Script/tag override</label><input id="scriptOverride" placeholder="optional" /></div></div>
+          <details><summary>Extra attributes</summary><textarea id="extraAttrs" placeholder='Optional JSON, e.g. {"condensed":"true"}'></textarea><div class="micro">Applied to the selected web component.</div></details>
+        </div>
+
+        <div class="full-actions"><button id="loadBtn" class="primary">Load Component</button><button id="clearBtn" class="secondary">Clear</button></div>
+        <div id="status" class="status">Ready. Paste appKey + userToken, then load a component.</div>
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <div class="topbar">
+        <div class="preview-heading"><div class="preview-title" id="previewTitle">Subscription Manager</div><div class="preview-meta" id="previewMeta">Not loaded yet.</div></div>
+        <div class="top-actions"><div class="live-pill"><span class="pulse"></span>No auth calls</div><button class="secondary" id="reloadBtn">Reload</button></div>
+      </div>
+      <div class="stage"><div id="componentContainer"></div></div>
+      <div class="debug-dock"><div class="dock-head"><span>Filtered diagnostics</span><div class="dock-tools"><select id="logFilter" class="tool-select"><option value="relevant" selected>Relevant issues</option><option value="err">Errors</option><option value="warn">Warnings</option><option value="diag">Diagnostics</option><option value="all">All logs</option><option value="info">Info</option><option value="ok">Success</option></select><button id="diagnoseBtn" type="button">Diagnose</button><button id="inspectBtn" type="button">Inspect</button><button id="copySnippetBtn" type="button">Copy snippet</button><button id="copyLogsBtn" type="button">Copy logs</button><button id="exportLogsBtn" type="button">Export</button><button id="clearLogsBtn" type="button">Clear</button><button id="toggleConsoleBtn" class="console-toggle" type="button" title="Collapse diagnostics">⌄</button></div></div><div id="debug" class="debug" hidden></div></div>
+    </section>
+  </div>
+  <script>
+const ENVIRONMENTS = {
+  sandbox: { apiUrl: 'https://sandbox.array.io', sandbox: 'true' },
+  production: { apiUrl: 'https://array.io', sandbox: 'false' },
+  custom: { apiUrl: '', sandbox: 'false' }
+};
+
+const SPECIAL_COMPONENTS = {
+  creditReport1b: { baseName: 'array-credit-report', attrs: { bureau: '1b', condensed: 'false' } },
+  creditReport3b: { baseName: 'array-credit-report', attrs: { bureau: '3b', condensed: 'false' } },
+  creditReportCondensed1b: { baseName: 'array-credit-report', attrs: { bureau: '1b', condensed: 'true' } },
+  creditScore1b: { baseName: 'array-credit-score', attrs: { bureau: '1b' } },
+  creditScore3b: { baseName: 'array-credit-score', attrs: { bureau: '3b' } }
+};
+
+const $ = id => document.getElementById(id);
+const statusEl = $('status');
+const debugEl = $('debug');
+const container = $('componentContainer');
+const SCRIPT_LOADS = new Map();
+const STORAGE_KEY = 'array-component-playground-preferences-v2';
+let tokenTimerInterval = null;
+let tokenExpiresAt = null;
+let currentComponentEl = null;
+let currentLoadContext = null;
+let debugEntries = [];
+const RELEVANT_LOG_LEVELS = new Set(['err', 'warn']);
+let diagnosticsInstalled = false;
+let activeLoadId = 0;
+let tokenPortalWindow = null;
+
+function openTokenPortal(mode = 'popup') {
+  const width = mode === 'side' ? 720 : 980;
+  const height = mode === 'side' ? Math.max(720, Math.floor(screen.availHeight * 0.9)) : 760;
+  const left = mode === 'side' ? Math.max(0, screen.availWidth - width - 12) : Math.max(0, Math.floor((screen.availWidth - width) / 2));
+  const top = mode === 'side' ? 24 : Math.max(0, Math.floor((screen.availHeight - height) / 2));
+  const features = `popup=yes,width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`;
+  tokenPortalWindow = window.open(TOKEN_PORTAL_URL, 'arrayTokenExtender', features);
+  if (!tokenPortalWindow) {
+    debug('Popup blocked. Allow popups for this local file/page, then try Open portal again.', 'warn', 'token');
+    logStatus('Popup blocked. Allow popups and try again.', 'warn');
+    return;
+  }
+  try { tokenPortalWindow.focus(); } catch (_) {}
+  debug(`Opened token portal (${mode}).`, 'diag', 'token');
+  logStatus('Token portal opened. Paste refreshed token back into the workflow panel.', 'ok');
+}
+
+function openTokenSidecar() {
+  $('tokenSidecar').classList.add('open');
+  setTimeout(() => $('refreshedUserToken')?.focus(), 50);
+}
+function closeTokenSidecar() {
+  $('tokenSidecar').classList.remove('open');
+}
+function applyRefreshedToken(shouldReload) {
+  const token = $('refreshedUserToken').value.trim();
+  if (!token) {
+    logStatus('Paste the refreshed userToken first.', 'err');
+    debug('No refreshed token was provided.', 'warn', 'token');
+    return;
+  }
+  $('userToken').value = token;
+  $('refreshedUserToken').value = '';
+  startTokenTimer();
+  savePrefs();
+  debug('Refreshed userToken applied. Token value was not logged.', 'ok', 'token');
+  logStatus(shouldReload ? 'Refreshed token applied. Reloading component...' : 'Refreshed token applied.', 'ok');
+  if (shouldReload) loadComponent();
+}
+
+function logStatus(message, type = '') { statusEl.textContent = message; statusEl.className = `status ${type}`; }
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch]));
+}
+function debug(message, level = 'info', tag = 'log') {
+  const entry = { time: new Date(), level, tag, message: String(message) };
+  debugEntries.push(entry);
+  renderDebugEntries();
+}
+function renderDebugEntries() {
+  const filter = $('logFilter') ? $('logFilter').value : 'relevant';
+  debugEl.hidden = false;
+  const visible = debugEntries.filter(e => filter === 'all' || (filter === 'relevant' ? RELEVANT_LOG_LEVELS.has(e.level) : e.level === filter));
+  debugEl.innerHTML = visible.map(e => `<span class="debug-line ${e.level}"><span class="ts">[${e.time.toLocaleTimeString()}]</span> <span class="tag">${escapeHtml(e.tag)}</span> ${escapeHtml(e.message)}</span>`).join('');
+  if (!visible.length) debugEl.innerHTML = '<span class="debug-line info"><span class="ts">No relevant issues yet. Switch to All logs for full trace.</span></span>'; 
+  debugEl.scrollTop = debugEl.scrollHeight;
+}
+function getLogsText() {
+  return debugEntries.map(e => `[${e.time.toLocaleTimeString()}] [${e.level}] [${e.tag}] ${e.message}`).join('\n');
+}
+async function copyText(text, successMessage) {
+  try {
+    await navigator.clipboard.writeText(text);
+    debug(successMessage || 'Copied to clipboard.', 'ok', 'copy');
+  } catch (err) {
+    debug(`Clipboard failed: ${err.message || err}`, 'err', 'copy');
+  }
+}
+function downloadText(filename, text) {
+  const blob = new Blob([text], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function looksArrayRelated(text) {
+  const value = String(text || '').toLowerCase();
+  return value.includes('array.io') || value.includes('array.com') || value.includes('array-') || value.includes('appkey') || value.includes('usertoken') || value.includes('apiurl') || value.includes('sandbox') || value.includes('unauthorized') || value.includes('forbidden') || value.includes('cors') || value.includes('failed to fetch') || value.includes('networkerror') || value.includes('not found') || value.includes('token');
+}
+function summarizeError(value) {
+  if (!value) return 'Unknown error';
+  if (value instanceof Error) return value.stack || value.message || String(value);
+  if (typeof value === 'object') {
+    try { return JSON.stringify(value, null, 2); } catch (_) { return String(value); }
+  }
+  return String(value);
+}
+function maskUrlSecrets(url) {
+  return String(url || '')
+    .replace(/(appKey=)[^&]+/ig, '$1...')
+    .replace(/(userToken=)[^&]+/ig, '$1...')
+    .replace(/(clientKey=)[^&]+/ig, '$1...')
+    .replace(/(token=)[^&]+/ig, '$1...');
+}
+function getRequestUrl(input) {
+  try {
+    if (typeof input === 'string') return input;
+    if (input && input.url) return input.url;
+    return String(input || '');
+  } catch (_) { return ''; }
+}
+async function safeReadResponse(response) {
+  try {
+    const clone = response.clone();
+    const text = await clone.text();
+    return text ? text.slice(0, 800) : '';
+  } catch (_) { return ''; }
+}
+function validateEnvironmentSelection() {
+  const selectedEnv = $('environment').value;
+  const apiUrl = $('apiUrl').value.trim();
+  const sandbox = $('sandboxAttr').value;
+  if (selectedEnv === 'sandbox' && (!apiUrl.includes('sandbox') || sandbox !== 'true')) {
+    debug(`Sandbox environment mismatch: apiUrl=${apiUrl || '(blank)'}, sandbox=${sandbox}. Expected sandbox API URL and sandbox=true.`, 'warn', 'env');
+  }
+  if (selectedEnv === 'production' && (apiUrl.includes('sandbox') || sandbox !== 'false')) {
+    debug(`Production environment mismatch: apiUrl=${apiUrl || '(blank)'}, sandbox=${sandbox}. Expected production API URL and sandbox=false.`, 'warn', 'env');
+  }
+}
+function installRelevantDiagnostics() {
+  if (diagnosticsInstalled) return;
+  diagnosticsInstalled = true;
+
+  const originalFetch = window.fetch ? window.fetch.bind(window) : null;
+  if (originalFetch) {
+    window.fetch = async function(input, init) {
+      const url = getRequestUrl(input);
+      const started = performance.now();
+      try {
+        const response = await originalFetch(input, init);
+        if (!response.ok && looksArrayRelated(url)) {
+          const body = await safeReadResponse(response);
+          debug(`${init && init.method ? init.method : 'GET'} ${maskUrlSecrets(url)} -> ${response.status} ${response.statusText}${body ? ': ' + body : ''} (${Math.round(performance.now() - started)}ms)`, 'err', 'network');
+        }
+        return response;
+      } catch (err) {
+        if (looksArrayRelated(url) || looksArrayRelated(err && err.message)) {
+          debug(`${maskUrlSecrets(url)} -> ${err.message || err}`, 'err', 'network');
+        }
+        throw err;
+      }
+    };
+  }
+
+  const OriginalXHR = window.XMLHttpRequest;
+  if (OriginalXHR) {
+    window.XMLHttpRequest = function() {
+      const xhr = new OriginalXHR();
+      let method = 'GET';
+      let url = '';
+      let started = 0;
+      const open = xhr.open;
+      xhr.open = function(m, u) { method = m || 'GET'; url = u || ''; return open.apply(xhr, arguments); };
+      const send = xhr.send;
+      xhr.send = function() { started = performance.now(); return send.apply(xhr, arguments); };
+      xhr.addEventListener('loadend', function() {
+        if (looksArrayRelated(url) && xhr.status >= 400) {
+          const body = (xhr.responseText || '').slice(0, 800);
+          debug(`${method} ${maskUrlSecrets(url)} -> ${xhr.status}${body ? ': ' + body : ''} (${Math.round(performance.now() - started)}ms)`, 'err', 'network');
+        }
+      });
+      xhr.addEventListener('error', function() {
+        if (looksArrayRelated(url)) debug(`${method} ${maskUrlSecrets(url)} -> network error`, 'err', 'network');
+      });
+      return xhr;
+    };
+  }
+
+  const originalConsoleError = console.error.bind(console);
+  console.error = function(...args) {
+    originalConsoleError(...args);
+    const message = args.map(summarizeError).join(' ');
+    if (looksArrayRelated(message)) debug(message.slice(0, 1200), 'err', 'runtime');
+  };
+
+  window.addEventListener('error', event => {
+    const target = event.target;
+    if (target && target !== window && (target.src || target.href)) {
+      const resource = target.src || target.href;
+      if (looksArrayRelated(resource)) debug(`Resource failed to load: ${maskUrlSecrets(resource)}`, 'err', 'resource');
+      return;
+    }
+    const message = event.message || summarizeError(event.error);
+    if (looksArrayRelated(message) || looksArrayRelated(event.filename)) debug(`${message}${event.filename ? ' @ ' + maskUrlSecrets(event.filename) : ''}`, 'err', 'runtime');
+  }, true);
+
+  window.addEventListener('unhandledrejection', event => {
+    const message = summarizeError(event.reason);
+    if (looksArrayRelated(message)) debug(message.slice(0, 1200), 'err', 'promise');
+  });
+}
+function startRenderWatchdog(el, cfg, loadId) {
+  setTimeout(() => {
+    if (loadId !== activeLoadId || !el || !document.body.contains(el)) return;
+    const rect = el.getBoundingClientRect();
+    const hasSize = rect.width > 20 && rect.height > 20;
+    const hasContent = el.childNodes.length > 0 || !!el.shadowRoot;
+    if (!hasSize) debug(`<${cfg.tagName}> is registered but has no visible size after 8s. Check token/env/component compatibility.`, 'warn', 'render');
+    if (!hasContent) debug(`<${cfg.tagName}> has no visible child nodes/open shadowRoot after 8s. The component may use closed shadow DOM, or it may have failed internally.`, 'warn', 'render');
+  }, 8000);
+}
+
+function maskToken(value) {
+  if (!value) return '';
+  if (value.length <= 12) return `${value.slice(0, 3)}...`;
+  return `${value.slice(0, 6)}...${value.slice(-4)}`;
+}
+function camelToKebab(value) { return value.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase(); }
+function getComponentConfig(componentKey) {
+  const special = SPECIAL_COMPONENTS[componentKey] || {};
+  const override = $('scriptOverride').value.trim().replace(/\.js$/, '');
+  const baseName = override || special.baseName || `array-${camelToKebab(componentKey)}`;
+  return { key: componentKey, baseName, tagName: baseName, scriptUrl: `https://embed.array.io/cms/${baseName}.js`, attrs: special.attrs || {} };
+}
+function syncEnvDefaults() {
+  const env = ENVIRONMENTS[$('environment').value];
+  if ($('environment').value !== 'custom') $('apiUrl').value = env.apiUrl;
+  $('sandboxAttr').value = env.sandbox;
+}
+function parseExtraAttrs() {
+  const raw = $('extraAttrs').value.trim();
+  if (!raw) return {};
+  const parsed = JSON.parse(raw);
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Extra attributes must be a JSON object.');
+  return parsed;
+}
+function loadScript(src) {
+  if (SCRIPT_LOADS.has(src)) return SCRIPT_LOADS.get(src);
+  const promise = new Promise((resolve, reject) => {
+    const existing = [...document.scripts].find(s => s.src === src);
+    if (existing && existing.dataset.loaded === 'true') { debug(`already loaded: ${src}`, 'ok', 'script'); resolve(); return; }
+    const script = existing || document.createElement('script');
+    script.async = false;
+    script.onload = () => { script.dataset.loaded = 'true'; debug(`loaded: ${src}`, 'ok', 'script'); resolve(); };
+    script.onerror = () => { debug(`failed: ${src}`, 'err', 'script'); reject(new Error(`Could not load script: ${src}`)); };
+    if (!existing) { script.src = src; document.head.appendChild(script); }
+  });
+  SCRIPT_LOADS.set(src, promise);
+  return promise;
+}
+function waitForCustomElement(tagName, timeoutMs = 8000) {
+  if (!window.customElements) return Promise.resolve(false);
+  if (customElements.get(tagName)) return Promise.resolve(true);
+  return Promise.race([customElements.whenDefined(tagName).then(() => true), new Promise(resolve => setTimeout(() => resolve(false), timeoutMs))]);
+}
+
+function getTokenLifeMinutes() {
+  const value = $('tokenLife').value;
+  if (value === 'custom') return Math.max(1, parseInt($('customTokenLife').value, 10) || 30);
+  return parseInt(value, 10) || 30;
+}
+function formatRemaining(ms) {
+  if (ms <= 0) return 'Expired';
+  const totalSeconds = Math.ceil(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+function updateTokenTimer() {
+  const timer = $('tokenTimer');
+  if (!tokenExpiresAt) { timer.textContent = 'Not started'; timer.className = 'timer-display'; return; }
+  const remaining = tokenExpiresAt - Date.now();
+  timer.textContent = formatRemaining(remaining);
+  timer.className = 'timer-display';
+  if (remaining <= 60 * 1000) timer.classList.add('danger');
+  else if (remaining <= 5 * 60 * 1000) timer.classList.add('warn');
+  if (remaining <= 0) {
+    clearInterval(tokenTimerInterval);
+    tokenTimerInterval = null;
+    logStatus('Token likely expired. Paste a refreshed userToken and click Replace token only.', 'err');
+  }
+}
+function startTokenTimer() {
+  tokenExpiresAt = Date.now() + getTokenLifeMinutes() * 60 * 1000;
+  clearInterval(tokenTimerInterval);
+  updateTokenTimer();
+  tokenTimerInterval = setInterval(updateTokenTimer, 1000);
+}
+function savePreferences() {
+  const prefs = {
+    component: $('componentSelect').value,
+    environment: $('environment').value,
+    sandboxAttr: $('sandboxAttr').value,
+    apiUrl: $('apiUrl').value,
+    componentHeight: $('componentHeight').value,
+    tokenLife: $('tokenLife').value,
+    customTokenLife: $('customTokenLife').value,
+    rememberAppKey: $('rememberAppKey').checked,
+    appKey: $('rememberAppKey').checked ? $('appKey').value.trim() : ''
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+}
+function loadPreferences() {
+  try {
+    const prefs = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    if (prefs.component && [...$('componentSelect').options].some(o => o.value === prefs.component)) $('componentSelect').value = prefs.component;
+    if (prefs.environment && ENVIRONMENTS[prefs.environment]) $('environment').value = prefs.environment;
+    syncEnvDefaults();
+    if (prefs.apiUrl && prefs.environment === 'custom') $('apiUrl').value = prefs.apiUrl;
+    if (prefs.sandboxAttr) $('sandboxAttr').value = prefs.sandboxAttr;
+    if (prefs.componentHeight) $('componentHeight').value = prefs.componentHeight;
+    if (prefs.tokenLife) $('tokenLife').value = prefs.tokenLife;
+    if (prefs.customTokenLife) $('customTokenLife').value = prefs.customTokenLife;
+    $('rememberAppKey').checked = !!prefs.rememberAppKey;
+    if (prefs.rememberAppKey && prefs.appKey) $('appKey').value = prefs.appKey;
+    $('customTokenLifeWrap').hidden = $('tokenLife').value !== 'custom';
+    const opt = $('componentSelect').selectedOptions[0];
+    const cfg = getComponentConfig($('componentSelect').value);
+    $('previewTitle').textContent = opt.textContent;
+    $('previewMeta').textContent = `${cfg.tagName} · not loaded yet`;
+  } catch (err) { console.warn('Could not load preferences', err); }
+}
+async function loadComponent() {
+  installRelevantDiagnostics();
+  activeLoadId += 1;
+  const thisLoadId = activeLoadId;
+  debugEntries = []; debugEl.innerHTML = ''; debugEl.hidden = true; container.innerHTML = ''; currentComponentEl = null; currentLoadContext = null;
+  const appKey = $('appKey').value.trim();
+  const userToken = $('userToken').value.trim();
+  const apiUrl = $('apiUrl').value.trim().replace(/\/$/, '');
+  const selected = $('componentSelect').selectedOptions[0];
+  const componentKey = $('componentSelect').value;
+  const cfg = getComponentConfig(componentKey);
+  currentLoadContext = { componentKey, componentLabel: selected.textContent, tagName: cfg.tagName, scriptUrl: cfg.scriptUrl, startedAt: new Date() };
+  const minHeight = parseInt($('componentHeight').value, 10) || 640;
+  $('componentContainer').style.minHeight = `${minHeight}px`;
+  $('previewTitle').textContent = selected.textContent;
+  $('previewMeta').textContent = `${cfg.tagName} · ${apiUrl || 'no apiUrl'}`;
+  if (!appKey || !userToken) { logStatus('App Key and User Token are required.', 'err'); return; }
+  if (!apiUrl) { logStatus('API URL is required.', 'err'); return; }
+  validateEnvironmentSelection();
+  try {
+    const extraAttrs = parseExtraAttrs();
+    logStatus('Loading scripts...');
+    const baseScript = `https://embed.array.io/cms/array-web-component.js?appKey=${encodeURIComponent(appKey)}`;
+    const componentScript = `${cfg.scriptUrl}?appKey=${encodeURIComponent(appKey)}`;
+    debug(baseScript, 'info', 'base-script'); debug(componentScript, 'info', 'component-script');
+    await loadScript(baseScript);
+    await loadScript(componentScript);
+    logStatus('Waiting for component registration...');
+    const isDefined = await waitForCustomElement(cfg.tagName);
+    debug(`${cfg.tagName} registered: ${isDefined ? 'yes' : 'no'}`, isDefined ? 'ok' : 'err', 'custom-element');
+    if (!isDefined) throw new Error(`${cfg.tagName} was not registered by ${componentScript}. Check the script/tag mapping.`);
+    logStatus('Rendering component...');
+    const el = document.createElement(cfg.tagName);
+    currentComponentEl = el;
+    const attrs = Object.assign({}, cfg.attrs, extraAttrs);
+    el.setAttribute('appKey', appKey); el.setAttribute('appkey', appKey);
+    el.setAttribute('userToken', userToken); el.setAttribute('usertoken', userToken);
+    el.setAttribute('apiUrl', apiUrl); el.setAttribute('apiurl', apiUrl);
+    el.setAttribute('sandbox', $('sandboxAttr').value);
+    Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, String(value)));
+    currentLoadContext = Object.assign(currentLoadContext || {}, { apiUrl, sandbox: $('sandboxAttr').value, baseScript, componentScript, attrs: Object.fromEntries([...el.attributes].map(a => [a.name, a.value])) });
+    debug(`apiUrl=${apiUrl}`, 'info', 'attrs');
+    debug(`sandbox=${$('sandboxAttr').value}`, 'info', 'attrs');
+    debug(`appKey=${maskToken(appKey)} userToken=${maskToken(userToken)}`, 'warn', 'secrets');
+    const note = document.createElement('div');
+    note.className = 'render-note';
+    note.textContent = `Rendering <${cfg.tagName}> with apiUrl=${apiUrl} and sandbox=${$('sandboxAttr').value}.`;
+    container.innerHTML = ''; container.appendChild(note); container.appendChild(el);
+    requestAnimationFrame(() => { const rect = el.getBoundingClientRect(); debug(`rendered element size: ${Math.round(rect.width)}x${Math.round(rect.height)}`, rect.width && rect.height ? 'ok' : 'warn', 'render'); });
+    startRenderWatchdog(el, cfg, thisLoadId);
+    startTokenTimer();
+    savePreferences();
+    logStatus(`Loaded ${selected.textContent}`, 'ok');
+  } catch (err) { console.error(err); debug(err.stack || err.message || String(err), 'err', 'error'); logStatus(err.message || String(err), 'err'); }
+}
+
+function getCurrentComponentAttributes() {
+  const el = currentComponentEl || container.querySelector('[appkey], [appKey]');
+  if (!el) return null;
+  return Object.fromEntries([...el.attributes].map(a => [a.name, a.value]));
+}
+function runDiagnostics() {
+  debug('Running diagnostics...', 'diag', 'diagnose');
+  const cfg = getComponentConfig($('componentSelect').value);
+  const apiUrl = $('apiUrl').value.trim();
+  const appKey = $('appKey').value.trim();
+  const userToken = $('userToken').value.trim();
+  debug(`Selected: ${$('componentSelect').selectedOptions[0].textContent}`, 'diag', 'diagnose');
+  debug(`Tag: ${cfg.tagName}`, customElements.get(cfg.tagName) ? 'ok' : 'warn', 'diagnose');
+  debug(`Component script: ${cfg.scriptUrl}?appKey=${maskToken(appKey)}`, 'diag', 'diagnose');
+  debug(`API URL: ${apiUrl || '(missing)'}`, apiUrl ? 'ok' : 'err', 'diagnose');
+  debug(`Sandbox attr: ${$('sandboxAttr').value}`, 'diag', 'diagnose');
+  debug(`appKey present: ${appKey ? 'yes' : 'no'}`, appKey ? 'ok' : 'err', 'diagnose');
+  debug(`userToken present: ${userToken ? 'yes' : 'no'}`, userToken ? 'ok' : 'err', 'diagnose');
+  debug(`Token timer: ${tokenExpiresAt ? formatRemaining(tokenExpiresAt - Date.now()) : 'not started'}`, tokenExpiresAt ? 'diag' : 'warn', 'diagnose');
+  const attrs = getCurrentComponentAttributes();
+  debug(`Rendered component: ${currentComponentEl ? '<' + currentComponentEl.tagName.toLowerCase() + '>' : 'none'}`, currentComponentEl ? 'ok' : 'warn', 'diagnose');
+  if (attrs) debug(`Attributes: ${JSON.stringify(Object.assign({}, attrs, { appkey: maskToken(attrs.appkey || attrs.appKey), usertoken: maskToken(attrs.usertoken || attrs.userToken) }), null, 2)}`, 'diag', 'diagnose');
+}
+function inspectRenderedComponent() {
+  const el = currentComponentEl || container.querySelector('[appkey], [appKey]');
+  if (!el) { debug('No rendered component to inspect.', 'warn', 'inspect'); return; }
+  const rect = el.getBoundingClientRect();
+  const attrs = getCurrentComponentAttributes();
+  debug(`Element: <${el.tagName.toLowerCase()}>`, 'diag', 'inspect');
+  debug(`Defined: ${!!customElements.get(el.tagName.toLowerCase())}`, customElements.get(el.tagName.toLowerCase()) ? 'ok' : 'warn', 'inspect');
+  debug(`Size: ${Math.round(rect.width)}x${Math.round(rect.height)} at x=${Math.round(rect.x)}, y=${Math.round(rect.y)}`, rect.width && rect.height ? 'ok' : 'warn', 'inspect');
+  debug(`Child nodes: ${el.childNodes.length}; shadowRoot: ${el.shadowRoot ? 'open' : 'none/closed'}`, 'diag', 'inspect');
+  debug(JSON.stringify(Object.assign({}, attrs, { appkey: maskToken(attrs.appkey || attrs.appKey), usertoken: maskToken(attrs.usertoken || attrs.userToken) }), null, 2), 'diag', 'inspect');
+}
+function buildEmbedSnippet() {
+  const cfg = getComponentConfig($('componentSelect').value);
+  const appKey = $('appKey').value.trim();
+  const apiUrl = $('apiUrl').value.trim().replace(/\/$/, '');
+  let attrs = {};
+  try { attrs = Object.assign({}, cfg.attrs, parseExtraAttrs()); } catch (_) { attrs = Object.assign({}, cfg.attrs); }
+  const attrText = Object.entries(Object.assign({ appKey: appKey ? '<APP_KEY>' : '', userToken: '<USER_TOKEN>', apiUrl, sandbox: $('sandboxAttr').value }, attrs))
+    .filter(([, v]) => v !== '')
+    .map(([k, v]) => `  ${k}="${String(v).replace(/"/g, '&quot;')}"`).join('\n');
+  return `<script src="https://embed.array.io/cms/array-web-component.js?appKey=${appKey ? '<APP_KEY>' : ''}"><\/script>\n<script src="${cfg.scriptUrl}?appKey=${appKey ? '<APP_KEY>' : ''}"><\/script>\n<${cfg.tagName}\n${attrText}\n></${cfg.tagName}>`;
+}
+
+$('environment').addEventListener('change', () => { syncEnvDefaults(); savePreferences(); });
+$('componentSelect').addEventListener('change', () => {
+  const opt = $('componentSelect').selectedOptions[0]; const cfg = getComponentConfig($('componentSelect').value);
+  $('previewTitle').textContent = opt.textContent; $('previewMeta').textContent = `${cfg.tagName} · not loaded yet`;
+  savePreferences();
+});
+$('sandboxAttr').addEventListener('change', savePreferences);
+$('apiUrl').addEventListener('input', savePreferences);
+$('componentHeight').addEventListener('input', savePreferences);
+$('tokenLife').addEventListener('change', () => { $('customTokenLifeWrap').hidden = $('tokenLife').value !== 'custom'; savePreferences(); });
+$('customTokenLife').addEventListener('input', savePreferences);
+$('rememberAppKey').addEventListener('change', savePreferences);
+$('appKey').addEventListener('input', () => { if ($('rememberAppKey').checked) savePreferences(); });
+$('loadBtn').addEventListener('click', loadComponent);
+$('reloadBtn').addEventListener('click', loadComponent);
+$('replaceTokenBtn').addEventListener('click', () => {
+  if (!$('userToken').value.trim()) { logStatus('Paste the refreshed userToken first.', 'err'); return; }
+  if (!container.querySelector('[appKey], [appkey]')) { loadComponent(); return; }
+  loadComponent();
+});
+$('clearBtn').addEventListener('click', () => {
+  container.innerHTML = ''; debugEntries = []; debugEl.innerHTML = ''; debugEl.hidden = true; currentComponentEl = null; currentLoadContext = null; logStatus('Cleared.'); $('previewMeta').textContent = 'Not loaded yet.';
+  tokenExpiresAt = null; clearInterval(tokenTimerInterval); tokenTimerInterval = null; updateTokenTimer();
+});
+
+$('logFilter').addEventListener('change', renderDebugEntries);
+$('diagnoseBtn').addEventListener('click', runDiagnostics);
+$('inspectBtn').addEventListener('click', inspectRenderedComponent);
+$('copySnippetBtn').addEventListener('click', () => copyText(buildEmbedSnippet(), 'Embed snippet copied with secrets redacted.'));
+$('copyLogsBtn').addEventListener('click', () => copyText(getLogsText(), 'Logs copied.'));
+$('exportLogsBtn').addEventListener('click', () => downloadText(`array-playground-logs-${new Date().toISOString().replace(/[:.]/g, '-')}.txt`, getLogsText()));
+$('clearLogsBtn').addEventListener('click', () => { debugEntries = []; debugEl.innerHTML = ''; debugEl.hidden = true; });
+installRelevantDiagnostics();
+loadPreferences();
+</script>
+</body>
+</html>
