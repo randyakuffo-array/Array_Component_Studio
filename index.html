@@ -1,260 +1,722 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Array Component Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
+      --accent: #5E81F4;
+      --ok: #22C55E;
+      --warn: #F59E0B;
+      --danger: #EF4444;
+      --preview: #ffffff;
+      --r: 4px;
+      --r2: 6px;
+      --r3: 8px;
+      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --sans: "Geist", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --title-h: 36px;
+      --status-h: 24px;
+      --activity-w: 48px;
+      --explorer-w: 260px;
+      --inspector-w: 300px;
+      --devtools-h: 260px;
+    }
+
+    :root[data-theme="dark"] {
       color-scheme: dark;
-      --bg:#05070b;
-      --rail:#080d16;
-      --rail2:#0c1320;
-      --panel:#0b111d;
-      --panel2:#111827;
-      --ink:#f8fafc;
-      --muted:#9aa7ba;
-      --soft:#64748b;
-      --line:rgba(148,163,184,.18);
-      --line2:rgba(99,102,241,.35);
-      --accent:#7c3aed;
-      --accent2:#06b6d4;
-      --accent3:#22c55e;
-      --danger:#fb7185;
-      --warn:#fbbf24;
-      --ok:#34d399;
-      --shadow:0 22px 70px rgba(0,0,0,.45);
+      --bg: #111315;
+      --sidebar: #181B1F;
+      --panel: #20242A;
+      --border: #2C313A;
+      --text: #E6EDF3;
+      --muted: #8B949E;
+      --hover: #262B33;
+      --active: #2A3140;
+      --input: #161A1F;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0}
-    body{
-      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:var(--bg);
-      color:var(--ink);
-      overflow:hidden;
-    }
-    body::before{
-      content:"";position:fixed;inset:0;pointer-events:none;opacity:.7;
-      background:
-        radial-gradient(circle at 7% 12%, rgba(124,58,237,.25), transparent 26%),
-        radial-gradient(circle at 82% 0%, rgba(6,182,212,.20), transparent 28%),
-        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px),
-        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px);
-      background-size:auto,auto,36px 36px,36px 36px;
-      mask-image:linear-gradient(to bottom,#000 0%,#000 70%,transparent 100%);
-    }
-    .app{height:100vh;width:100vw;display:grid;grid-template-columns:360px 1fr;position:relative;z-index:1}
-    aside{
-      height:100vh;overflow:auto;background:linear-gradient(180deg,rgba(12,19,32,.96),rgba(8,13,22,.98));
-      border-right:1px solid var(--line);box-shadow:18px 0 60px rgba(0,0,0,.28);
-    }
-    .rail-head{padding:18px 18px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(8,13,22,.92);backdrop-filter:blur(16px);z-index:4}
-    .logo-row{display:flex;align-items:center;gap:11px}
-    .logo{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-weight:950;color:white;box-shadow:0 0 30px rgba(124,58,237,.3)}
-    h1{font-size:16px;line-height:1.1;margin:0;letter-spacing:-.03em}
-    .tagline{font-size:11px;color:var(--muted);margin-top:4px}
-    .rail-body{padding:16px}
-    .module{border:1px solid var(--line);background:rgba(15,23,42,.48);border-radius:18px;padding:14px;margin-bottom:12px}
-    .module-title{font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:#a5b4fc;font-weight:900;margin-bottom:10px}
-    label{display:block;font-size:12px;font-weight:750;color:#dbeafe;margin:10px 0 6px}
-    input,select,textarea{
-      width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 11px;background:#050a13;color:var(--ink);font:inherit;font-size:13px;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
-    }
-    textarea{min-height:76px;resize:vertical;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:11px;line-height:1.4}
-    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent2);box-shadow:0 0 0 4px rgba(6,182,212,.10)}
-    input::placeholder,textarea::placeholder{color:#64748b}
-    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-    .micro{font-size:11px;color:var(--muted);line-height:1.4;margin-top:8px}
-    .timer-card{border:1px solid rgba(6,182,212,.24);border-radius:16px;background:linear-gradient(135deg,rgba(6,182,212,.10),rgba(124,58,237,.08));padding:12px;margin-top:10px}
-    .timer-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-    .timer-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:900}
-    .timer-display{font-size:25px;font-weight:950;letter-spacing:-.05em;color:var(--ok);font-variant-numeric:tabular-nums;line-height:1.1}
-    .timer-display.warn{color:var(--warn)}.timer-display.danger{color:var(--danger)}
-    .actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
-    button,.link-button{
-      border:1px solid var(--line);border-radius:12px;padding:10px 11px;font-weight:850;font-size:12px;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;color:#dbeafe;background:rgba(148,163,184,.10);transition:transform .15s ease, background .15s ease, border-color .15s ease;
-    }
-    button:hover,.link-button:hover{transform:translateY(-1px);background:rgba(148,163,184,.16);border-color:rgba(148,163,184,.3)}
-    .primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border-color:transparent;box-shadow:0 14px 34px rgba(6,182,212,.16)}
-    .primary:hover{background:linear-gradient(135deg,#8b5cf6,#22d3ee)}
-    .full-actions{display:grid;grid-template-columns:1.35fr .65fr;gap:9px;position:sticky;bottom:0;background:linear-gradient(180deg,transparent,var(--rail) 25%);padding-top:12px}
-    .status{margin-top:10px;padding:10px 11px;border-radius:13px;background:rgba(148,163,184,.08);border:1px solid var(--line);font-size:12px;color:var(--muted);white-space:pre-wrap;min-height:38px}
-    .status.ok{color:var(--ok);border-color:rgba(52,211,153,.28);background:rgba(52,211,153,.08)}
-    .status.err{color:var(--danger);border-color:rgba(251,113,133,.28);background:rgba(251,113,133,.08)}
-    details{border:1px solid var(--line);border-radius:15px;background:rgba(2,6,23,.30);padding:0 11px 11px;margin-top:10px}
-    summary{cursor:pointer;list-style:none;padding:11px 0;font-size:12px;font-weight:850;color:#cbd5e1}
-    summary::-webkit-details-marker{display:none}summary::after{content:"+";float:right;color:var(--accent2)}details[open] summary::after{content:"–"}
-    .checkline{display:flex;align-items:center;gap:8px;margin-top:9px;color:var(--muted);font-size:11px}
-    .checkline input{width:auto;margin:0}
 
-    .workspace{height:100vh;display:grid;grid-template-rows:58px 1fr 190px;min-width:0;background:#03050a;transition:grid-template-rows .18s ease}
-    .workspace.console-collapsed{grid-template-rows:58px 1fr 36px}
-    .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 18px;border-bottom:1px solid var(--line);background:rgba(5,7,11,.72);backdrop-filter:blur(18px)}
-    .preview-heading{min-width:0}
-    .preview-title{font-weight:950;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .preview-meta{font-size:11px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .top-actions{display:flex;gap:9px;align-items:center;flex-shrink:0}
-    .top-actions button{width:auto;min-width:86px}
-    .live-pill{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:8px 11px;color:var(--muted);font-size:11px;background:rgba(15,23,42,.62)}
-    .pulse{width:7px;height:7px;border-radius:99px;background:var(--accent3);box-shadow:0 0 20px var(--accent3)}
-    .stage{min-height:0;overflow:auto;background:white;color:#0f172a}
-    #componentContainer{min-height:100%;padding:0;background:#fff;color:#0f172a}
-    .render-note{font-size:12px;color:#475569;background:#f8fafc;border-bottom:1px solid #e2e8f0;padding:10px 14px}
-    .debug-dock{border-top:1px solid var(--line);background:linear-gradient(180deg,#070b12,#05070b);display:grid;grid-template-rows:36px 1fr;min-height:0}
-    .dock-head{display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid var(--line);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:900}
-    .debug{margin:0;border:0;border-radius:0;max-height:none;height:100%;overflow:auto;background:#02040a;color:#bfdbfe;padding:12px 14px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:11px;white-space:pre-wrap}
-    .workspace.console-collapsed .debug{display:none}
-    .workspace.console-collapsed .debug-dock{grid-template-rows:36px 0}
-    .console-toggle{min-width:0!important;width:30px!important;padding:6px 0!important;font-size:14px!important;line-height:1}
-    .debug[hidden]{display:block;color:#475569}
-    .debug[hidden]::before{content:"Logs will appear here after loading a component."}
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #F3F4F6;
+      --sidebar: #EEF0F3;
+      --panel: #FFFFFF;
+      --border: #D0D7DE;
+      --text: #1F2328;
+      --muted: #656D76;
+      --hover: #E6E8EB;
+      --active: #DCE3F8;
+      --input: #FFFFFF;
+      --accent: #3B6AE8;
+    }
 
-    .dock-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-    .dock-tools button{width:auto;min-width:0;padding:6px 9px;border-radius:9px;font-size:10px;text-transform:none;letter-spacing:0;color:#cbd5e1}
-    .dock-tools .tool-select{width:auto;min-width:105px;padding:6px 9px;border-radius:9px;font-size:10px;background:#020617;color:#cbd5e1}
-    .debug-line{display:block;margin:0 0 4px}
-    .debug-line.info{color:#bfdbfe}.debug-line.ok{color:#86efac}.debug-line.warn{color:#fde68a}.debug-line.err{color:#fda4af}.debug-line.diag{color:#c4b5fd}
-    .debug-line .ts{color:#64748b}.debug-line .tag{color:#93c5fd;font-weight:800}
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: var(--sans);
+      font-size: 12px;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    button {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: var(--r);
+      padding: 4px 8px;
+      cursor: pointer;
+      color: var(--text);
+    }
+    button:hover { background: var(--hover); }
+    button.active, button[aria-pressed="true"] { background: var(--active); border-color: var(--accent); color: var(--text); }
+    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    button.primary:hover { filter: brightness(1.05); }
+    input, select, textarea {
+      width: 100%;
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 6px 8px;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    textarea { resize: vertical; font-family: var(--mono); font-size: 11px; }
+    label { display: block; color: var(--muted); font-size: 11px; margin: 0 0 4px; }
+    .field { margin-bottom: 10px; }
+    .mono { font-family: var(--mono); }
+    .hidden { display: none !important; }
 
-    @media(max-width:980px){body{overflow:auto}.app{height:auto;min-height:100vh;grid-template-columns:1fr}aside{height:auto;max-height:none}.workspace{height:900px;grid-template-rows:58px 1fr 170px}.workspace.console-collapsed{grid-template-rows:58px 1fr 36px}}
+    .app {
+      height: 100vh;
+      display: grid;
+      grid-template-rows: var(--title-h) 1fr var(--status-h);
+    }
+
+    .titlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 10px;
+      background: var(--sidebar);
+      border-bottom: 1px solid var(--border);
+      -webkit-app-region: drag;
+    }
+    .titlebar * { -webkit-app-region: no-drag; }
+    .title-left, .title-right { display: flex; align-items: center; gap: 8px; }
+    .app-mark {
+      width: 18px; height: 18px; border-radius: var(--r);
+      background: var(--accent); color: #fff;
+      display: grid; place-items: center; font-size: 10px; font-weight: 700;
+    }
+    .app-title { font-weight: 600; font-size: 12px; }
+    .title-meta { color: var(--muted); font-size: 11px; }
+
+    .main {
+      min-height: 0;
+      display: grid;
+      grid-template-rows: 1fr var(--devtools-h);
+    }
+    .workspace {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: var(--activity-w) var(--explorer-w) minmax(0, 1fr) var(--inspector-w);
+    }
+    .workspace > * { min-height: 0; }
+    .workspace.inspector-collapsed { grid-template-columns: var(--activity-w) var(--explorer-w) minmax(0, 1fr) 0px; }
+    .workspace.inspector-collapsed .inspector { display: none; }
+    .main.devtools-collapsed { grid-template-rows: 1fr 28px; }
+
+    .activity {
+      background: var(--sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 0;
+      gap: 4px;
+    }
+    .activity button {
+      width: 36px; height: 36px; padding: 0;
+      border: 0; background: transparent; border-radius: var(--r2);
+      color: var(--muted); font-size: 14px; font-weight: 700;
+    }
+    .activity button:hover { background: var(--hover); color: var(--text); }
+    .activity button.active {
+      background: transparent;
+      color: var(--text);
+      box-shadow: inset 2px 0 0 var(--accent);
+      border-radius: 0;
+    }
+
+    .explorer {
+      background: var(--sidebar);
+      border-right: 1px solid var(--border);
+      min-width: 200px;
+      max-width: 420px;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      resize: horizontal;
+    }
+    .side-head {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .side-top { padding: 8px; border-bottom: 1px solid var(--border); }
+    .search { margin-bottom: 0; }
+    .tree-wrap { overflow: auto; padding: 8px; min-height: 0; }
+
+    .session-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--r2);
+      background: var(--panel);
+    }
+    .session-strip .left { min-width: 0; }
+    .session-strip .label {
+      font-size: 10px; color: var(--muted); text-transform: uppercase;
+      letter-spacing: .06em; font-weight: 700;
+    }
+    .session-strip .timer {
+      font-family: var(--mono); font-size: 18px; font-weight: 600;
+      margin: 2px 0 0; color: var(--ok);
+    }
+    .session-strip .timer.warn { color: var(--warn); }
+    .session-strip .timer.danger, .session-strip .timer.expired { color: var(--danger); }
+
+    .side-footer {
+      border-top: 1px solid var(--border);
+      padding: 8px;
+      overflow: auto;
+      max-height: 46vh;
+      background: var(--sidebar);
+    }
+    .side-footer details.advanced {
+      margin-top: 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--r2);
+      background: var(--panel);
+      padding: 0 8px 8px;
+    }
+    .side-footer details.advanced summary {
+      list-style: none; cursor: pointer; padding: 8px 0;
+      color: var(--muted); font-size: 11px; font-weight: 600;
+    }
+    .side-footer details.advanced summary::-webkit-details-marker { display: none; }
+
+    .tree-group { margin-bottom: 6px; }
+    .tree-group summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: var(--r);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .tree-group summary::-webkit-details-marker { display: none; }
+    .tree-group summary::before { content: "▼ "; font-size: 9px; }
+    .tree-group:not([open]) summary::before { content: "▶ "; }
+    .tree-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: 0;
+      background: transparent;
+      border-radius: var(--r);
+      padding: 5px 8px 5px 18px;
+      color: var(--text);
+      font-size: 12px;
+    }
+    .tree-item:hover { background: var(--hover); }
+    .tree-item.active { background: var(--active); }
+
+    .preview-pane {
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: 34px minmax(0, 1fr);
+      background: var(--bg);
+    }
+    .preview-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 8px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+    }
+    .preview-toolbar .left, .preview-toolbar .right { display: flex; align-items: center; gap: 6px; }
+    .preview-url {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      max-width: 420px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .viewport {
+      min-height: 0;
+      height: 100%;
+      overflow: auto;
+      overflow-x: auto;
+      overflow-y: auto;
+      background: #0d0f11;
+      display: block;
+      padding: 0;
+      -webkit-overflow-scrolling: touch;
+    }
+    .viewport.desktop { padding: 0; }
+    .viewport.mobile {
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .browser-frame {
+      background: var(--preview);
+      color: #0f172a;
+      width: 100%;
+      min-height: 100%;
+      overflow: visible;
+    }
+    .viewport.mobile .browser-frame {
+      width: 390px;
+      max-width: 100%;
+      min-height: 720px;
+      height: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--r3);
+      box-shadow: 0 0 0 1px rgba(0,0,0,.2);
+      flex-shrink: 0;
+    }
+    .viewport.fullscreen {
+      overflow: auto;
+    }
+    .viewport.fullscreen .browser-frame {
+      position: fixed; inset: 0; z-index: 50; width: 100%; height: 100%;
+      border: 0; border-radius: 0; overflow: auto;
+    }
+    #componentContainer {
+      min-height: 100%;
+      background: #fff;
+      overflow: visible;
+    }
+    .render-note {
+      font-size: 11px; color: #475569; background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0; padding: 8px 10px;
+    }
+
+    .inspector {
+      background: var(--sidebar);
+      border-left: 1px solid var(--border);
+      min-width: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .inspector-body { flex: 1; overflow: auto; padding: 8px; }
+    .kv {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 6px;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+    }
+    .kv .k { color: var(--muted); }
+    .kv .v { font-family: var(--mono); word-break: break-word; }
+    .timer {
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -.03em;
+      color: var(--ok);
+      margin: 4px 0 10px;
+    }
+    .timer.warn { color: var(--warn); }
+    .timer.danger, .timer.expired { color: var(--danger); }
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      border: 1px solid var(--border); border-radius: 999px;
+      padding: 2px 7px; font-size: 10px; font-weight: 600; color: var(--muted);
+    }
+    .badge.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, var(--border)); }
+    .badge.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 40%, var(--border)); }
+    .badge.err { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, var(--border)); }
+    .health-row {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 11px;
+    }
+    .analysis {
+      border: 1px solid var(--border); border-radius: var(--r2);
+      background: var(--panel); padding: 8px; margin-top: 8px;
+    }
+    .analysis h4 { margin: 0 0 6px; font-size: 11px; }
+    .analysis p { margin: 0 0 4px; color: var(--muted); line-height: 1.4; }
+    .analysis strong { color: var(--text); }
+
+    .preflight-summary {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 8px; margin-bottom: 8px;
+    }
+    .preflight-list { display: flex; flex-direction: column; gap: 4px; }
+    .preflight-row {
+      display: grid;
+      grid-template-columns: 14px 1fr auto;
+      gap: 8px;
+      align-items: start;
+      padding: 6px 7px;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      background: var(--panel);
+      font-size: 11px;
+    }
+    .preflight-row .mark { font-weight: 700; line-height: 1.2; }
+    .preflight-row.ok .mark { color: var(--ok); }
+    .preflight-row.warn .mark { color: var(--warn); }
+    .preflight-row.err .mark { color: var(--danger); }
+    .preflight-row .meta { color: var(--muted); margin-top: 2px; line-height: 1.35; }
+    .insp-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+
+    details.acc {
+      border: 1px solid var(--border);
+      border-radius: var(--r2);
+      background: var(--panel);
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+    details.acc summary {
+      list-style: none; cursor: pointer; padding: 7px 8px;
+      font-weight: 600; font-size: 11px; background: var(--hover);
+    }
+    details.acc summary::-webkit-details-marker { display: none; }
+    details.acc .acc-body { padding: 8px; max-height: 240px; overflow: auto; }
+    details.acc[open] summary { border-bottom: 1px solid var(--border); }
+    .acc-body pre {
+      margin: 0; white-space: pre-wrap; word-break: break-word;
+      font-family: var(--mono); font-size: 11px; color: var(--text);
+    }
+
+    .devtools {
+      background: var(--panel);
+      border-top: 1px solid var(--border);
+      min-height: 28px;
+      display: grid;
+      grid-template-rows: 28px 1fr;
+      overflow: hidden;
+    }
+    .devtools-tabs {
+      display: flex; align-items: center; gap: 2px;
+      padding: 0 6px; border-bottom: 1px solid var(--border); background: var(--sidebar);
+    }
+    .devtools-tabs .tab {
+      border: 0; background: transparent; border-radius: var(--r);
+      padding: 4px 8px; color: var(--muted); font-size: 11px; font-weight: 600;
+    }
+    .devtools-tabs .tab.active { color: var(--text); background: var(--hover); }
+    .devtools-tabs .spacer { flex: 1; }
+    .devtools-body { min-height: 0; overflow: hidden; }
+    .tab-panel { display: none; height: 100%; min-height: 0; }
+    .tab-panel.active { display: grid; }
+    .http-layout {
+      grid-template-columns: 1.1fr 1fr;
+      height: 100%;
+    }
+    .http-list, .http-detail, .console-pane, .timing-pane, .events-pane, .lifecycle-pane, .network-pane {
+      min-height: 0; overflow: auto; border-right: 1px solid var(--border);
+    }
+    .http-detail { border-right: 0; }
+    .req-row {
+      display: grid;
+      grid-template-columns: 52px 56px 1fr 64px 56px;
+      gap: 8px;
+      padding: 5px 8px;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .req-row:hover, .req-row.active { background: var(--hover); }
+    .req-row .method { color: var(--accent); font-weight: 600; }
+    .req-row .status.ok { color: var(--ok); }
+    .req-row .status.warn { color: var(--warn); }
+    .req-row .status.err { color: var(--danger); }
+    .req-row .url { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+    .log-line { font-family: var(--mono); font-size: 11px; padding: 2px 8px; }
+    .log-line.err { color: var(--danger); }
+    .log-line.warn { color: var(--warn); }
+    .log-line.ok { color: var(--ok); }
+    .empty {
+      color: var(--muted); padding: 12px; font-size: 11px;
+    }
+
+    .statusbar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 0 10px;
+      background: var(--sidebar); border-top: 1px solid var(--border);
+      color: var(--muted); font-size: 11px;
+    }
+    .statusbar .left, .statusbar .right { display: flex; gap: 12px; align-items: center; }
+    .statusbar .ok { color: var(--ok); }
+    .statusbar .warn { color: var(--warn); }
+    .statusbar .err { color: var(--danger); }
+
+    .split-handle {
+      width: 4px; cursor: col-resize; background: transparent;
+    }
+
+    @media (max-width: 1100px) {
+      .workspace { grid-template-columns: var(--activity-w) 220px 1fr 260px; }
+    }
   </style>
 </head>
 <body>
   <div class="app">
-    <aside>
-      <div class="rail-head">
-        <div class="logo-row">
-          <div class="logo">A</div>
-          <div>
-            <h1>Array Component Studio</h1>
-            <div class="tagline">Local component studio · direct appKey + userToken</div>
-          </div>
-        </div>
+    <header class="titlebar">
+      <div class="title-left">
+        <div class="app-mark">A</div>
+        <div class="app-title">Array Component Studio</div>
+        <div class="title-meta" id="titleMeta">No session</div>
       </div>
-      <div class="rail-body">
-        <div class="module">
-          <div class="module-title">Target</div>
-          <label for="componentSelect">Component</label>
-          <select id="componentSelect"><optgroup label="Enrollment And Auth">
-  <option value="accountEnroll">Account Enroll</option>
-  <option value="authenticationKBA">Authentication KBA</option>
-  <option value="login">Account Login</option>
-</optgroup>
-<optgroup label="My Credit Manager">
-  <option value="creditOverview">Credit Overview</option>
-  <option value="creditReport1b">Credit Report v1 1B</option>
-  <option value="creditReport3b">Credit Report v1 3B</option>
-  <option value="creditReportCondensed1b">Credit Report v2 1B</option>
-  <option value="creditScoreDetails">Credit Score Details</option>
-  <option value="mcmCreditProtection">Credit Protection</option>
-  <option value="debtAnalysis">Debt Analysis</option>
-  <option value="scoreInsights">Credit Score Insights</option>
-  <option value="scoreSimulator">Credit Score Simulator</option>
-  <option value="scoreCoach">Credit Score Coach</option>
-  <option value="creditScore1b">Score Tracker 1B</option>
-  <option value="creditScore3b">Score Tracker 3B</option>
-  <option value="creditAlerts">Credit Alerts</option>
-</optgroup>
-<optgroup label="Offers Engine">
-  <option value="ads">Ad Component</option>
-</optgroup>
-<optgroup label="Identity Protect">
-  <option value="identityProtect">Identity Protect</option>
-  <option value="identityProtectPlus">Identity Protect - Plus</option>
-  <option value="neighborhoodWatch">Neighborhood Watch</option>
-  <option value="breachScan">Breach Scan</option>
-</optgroup>
-<optgroup label="Privacy Protect">
-  <option value="personalInfoProtectionScan">Personal Info Protection - Data Broker Scan</option>
-  <option value="personalInfoProtectionScanResults">Personal Info Protection - Data Broker Scan Results</option>
-  <option value="personalInfoProtectionDashboard">Personal Info Protection - User Dashboard</option>
-</optgroup>
-<optgroup label="BuildCredit Account">
-  <option value="creditBuilder">BuildCredit Account - Enroll</option>
-  <option value="creditBuilderDashboard">BuildCredit Account - Dashboard</option>
-</optgroup>
-<optgroup label="BuildCredit Rent">
-  <option value="rentReporting">BuildCredit Rent Enroll</option>
-</optgroup>
-<optgroup label="Subscription Manager">
-  <option value="subscriptionManager" selected>Subscription Manager</option>
-</optgroup>
-<optgroup label="Student Loan Aid">
-  <option value="studentLoanNavigator">Student Loan Aid - Enroll</option>
-  <option value="studentLoanAid">Student Loan Aid - Dashboard</option>
-</optgroup>
-<optgroup label="Debt Navigator">
-  <option value="debtNavigator">Debt Navigator</option>
-</optgroup>
-<optgroup label="Array+">
-  <option value="arrayPlusBasicMini">Basic - Mini</option>
-  <option value="arrayPlusBasic">Basic</option>
-  <option value="arrayPlusUpgradedMini">Upgraded - Mini</option>
-  <option value="arrayPlusUpgraded">Upgraded</option>
-</optgroup>
-<optgroup label="Financial Links">
-  <option value="financialLinks">Financial Links</option>
-</optgroup>
-<optgroup label="My Home Value">
-  <option value="myHomeValue">My Home Value</option>
-  <option value="myHomeValueMini">My Home Value Mini</option>
-</optgroup></select>
-          <div class="grid2">
-            <div>
+      <div class="title-right">
+        <button type="button" id="runPreflightBtn">Preflight</button>
+        <button type="button" id="copySnapshotBtn">Copy Snapshot</button>
+        <button type="button" id="downloadSnapshotBtn">Download Snapshot</button>
+        <button type="button" id="copyDiagnosticsBtn">Copy Diagnostics</button>
+        <button type="button" id="toggleInspectorBtn">Inspector</button>
+        <button type="button" id="themeToggleBtn">Theme</button>
+      </div>
+    </header>
+
+    <div class="main" id="main">
+      <div class="workspace" id="workspace">
+        <nav class="activity" aria-label="Activity bar">
+          <button type="button" class="active" data-activity="sidebar" title="Sidebar">⬚</button>
+          <button type="button" data-activity="http" title="HTTP DevTools">⇄</button>
+        </nav>
+
+        <aside class="explorer" id="explorer">
+          <div class="side-head"><span>Explorer</span><span style="color:var(--text);text-transform:none;letter-spacing:0">ACS</span></div>
+
+          <div class="side-top">
+            <input class="search" id="componentSearch" placeholder="Search components" />
+            <div class="session-strip">
+              <div class="left">
+                <div class="label">Session</div>
+                <div id="sessionRemaining" class="timer">--:--</div>
+              </div>
+              <div style="text-align:right">
+                <div id="sessionStatusPill" class="badge">No session</div>
+                <div id="sessionEnvironment" style="margin-top:4px;color:var(--muted);font-size:10px">—</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;font-size:10px;color:var(--muted)">
+              <div>Started <span id="sessionStarted" class="mono" style="color:var(--text)">—</span></div>
+              <div style="text-align:right">Expires <span id="sessionExpires" class="mono" style="color:var(--text)">—</span></div>
+            </div>
+          </div>
+
+          <div class="tree-wrap" id="componentTree"></div>
+
+          <div class="side-footer">
+            <div class="field">
               <label for="environment">Environment</label>
-              <select id="environment"><option value="sandbox" selected>Sandbox</option><option value="production">Production</option><option value="custom">Custom</option></select>
+              <select id="environment">
+                <option value="sandbox" selected>Sandbox</option>
+                <option value="production">Production</option>
+              </select>
             </div>
-            <div>
-              <label for="sandboxAttr">Sandbox attr</label>
-              <select id="sandboxAttr"><option value="true" selected>true</option><option value="false">false</option></select>
+            <div class="field">
+              <label for="tokenLife">Token life</label>
+              <select id="tokenLife">
+                <option value="15">15 min</option>
+                <option value="30" selected>30 min</option>
+                <option value="60">60 min</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+            <div class="field hidden" id="customTokenLifeWrap">
+              <label for="customTokenLife">Custom minutes</label>
+              <input id="customTokenLife" type="number" min="1" step="1" />
+            </div>
+            <div class="field">
+              <label for="appKey">App Key</label>
+              <input id="appKey" autocomplete="off" placeholder="Paste appKey" />
+            </div>
+            <div class="field">
+              <label for="userToken">User Token</label>
+              <textarea id="userToken" rows="3" placeholder="Paste userToken"></textarea>
+            </div>
+            <label style="display:flex;align-items:center;gap:6px;margin-bottom:8px;color:var(--text)">
+              <input id="rememberAppKey" type="checkbox" style="width:auto" /> Remember appKey
+            </label>
+            <div style="display:grid;grid-template-columns:1.4fr .8fr;gap:6px;margin-bottom:4px">
+              <button type="button" class="primary" id="loadBtn">Load / Reload</button>
+              <button type="button" id="resetSessionBtn">Reset</button>
+            </div>
+            <details class="advanced">
+              <summary>Advanced settings</summary>
+              <div class="field" style="margin-top:6px">
+                <label for="apiUrl">API URL</label>
+                <input id="apiUrl" />
+              </div>
+              <input id="sandboxAttr" type="hidden" value="true" />
+              <div class="field">
+                <label for="componentHeight">Preview min height</label>
+                <input id="componentHeight" value="640" />
+              </div>
+              <div class="field">
+                <label for="scriptOverride">Script/tag override</label>
+                <input id="scriptOverride" placeholder="optional" />
+              </div>
+              <div class="field">
+                <label for="extraAttrs">Extra attributes JSON</label>
+                <textarea id="extraAttrs" rows="4" placeholder='{"condensed":"true"}'></textarea>
+              </div>
+              <div class="empty" style="padding:0">Env changes apply on next Load. Timer restarts only when credentials change.</div>
+            </details>
+          </div>
+        </aside>
+
+        <section class="preview-pane">
+          <div class="preview-toolbar">
+            <div class="left">
+              <strong id="previewTitle">Subscription Manager</strong>
+              <span class="preview-url" id="previewMeta">Not loaded</span>
+            </div>
+            <div class="right">
+              <button type="button" id="reloadBtn">Reload</button>
+              <button type="button" id="mobileBtn">Mobile</button>
+              <button type="button" id="desktopBtn" class="active">Desktop</button>
+              <button type="button" id="fullscreenBtn">Fullscreen</button>
             </div>
           </div>
-        </div>
-
-        <div class="module">
-          <div class="module-title">Session</div>
-          <label for="appKey">App Key</label>
-          <input id="appKey" autocomplete="off" placeholder="Paste appKey" />
-          <label for="userToken">User Token</label>
-          <textarea id="userToken" autocomplete="off" placeholder="Paste userToken"></textarea>
-          <div class="timer-card">
-            <div class="timer-top">
-              <div><div class="timer-label">Token countdown</div><div id="tokenTimer" class="timer-display">Not started</div></div>
-              <div style="min-width:112px"><label for="tokenLife" style="margin-top:0">Token life</label><select id="tokenLife"><option value="15">15 min</option><option value="30" selected>30 min</option><option value="60">60 min</option><option value="custom">Custom</option></select></div>
+          <div class="viewport desktop" id="viewport">
+            <div class="browser-frame" id="browserFrame">
+              <div id="componentContainer"></div>
             </div>
-            <div id="customTokenLifeWrap" hidden><label for="customTokenLife">Custom minutes</label><input id="customTokenLife" type="number" min="1" step="1" placeholder="Example: 45" /></div>
-            <div class="actions" style="grid-template-columns:1fr"><button id="replaceTokenBtn" class="secondary" type="button">Replace token + reload</button></div>
-            <div class="checkline"><input id="rememberAppKey" type="checkbox" /><label for="rememberAppKey" style="margin:0;color:inherit;font-weight:650">Remember appKey locally</label></div>
           </div>
-        </div>
+        </section>
 
-        <div class="module">
-          <div class="module-title">Options</div>
-          <label for="apiUrl">API URL</label><input id="apiUrl" placeholder="Auto-filled from environment" />
-          <div class="grid2"><div><label for="componentHeight">Preview height</label><input id="componentHeight" value="640" /></div><div><label for="scriptOverride">Script/tag override</label><input id="scriptOverride" placeholder="optional" /></div></div>
-          <details><summary>Extra attributes</summary><textarea id="extraAttrs" placeholder='Optional JSON, e.g. {"condensed":"true"}'></textarea><div class="micro">Applied to the selected web component.</div></details>
-        </div>
+        <aside class="inspector" id="inspector">
+          <div class="side-head"><span>Inspector</span></div>
+          <div class="inspector-body">
+            <div style="margin-bottom:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px">
+                <div style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700">Preflight</div>
+                <button type="button" id="runPreflightBtn2">Run</button>
+              </div>
+              <div class="preflight-summary">
+                <span id="preflightSummary" class="badge">Not run</span>
+                <span id="preflightStamp" style="color:var(--muted);font-size:10px"></span>
+              </div>
+              <div class="preflight-list" id="preflightList">
+                <div class="empty" style="padding:6px 0">Run preflight before loading to catch credential/env issues early.</div>
+              </div>
+            </div>
 
-        <div class="full-actions"><button id="loadBtn" class="primary">Load Component</button><button id="clearBtn" class="secondary">Clear</button></div>
-        <div id="status" class="status">Ready. Paste appKey + userToken, then load a component.</div>
+            <div style="margin-bottom:10px">
+              <div style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:6px">Session</div>
+              <div id="inspectorRemaining" class="timer">--:--</div>
+              <div class="kv"><div class="k">Status</div><div class="v" id="inspectorStatus">Idle</div></div>
+              <div class="kv"><div class="k">Env</div><div class="v" id="inspectorEnv">—</div></div>
+            </div>
+
+            <div style="margin-bottom:10px">
+              <div style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:6px">Component Health</div>
+              <div class="health-row"><span>Base Script</span><span id="healthBase" class="badge">Idle</span></div>
+              <div class="health-row"><span>Component Script</span><span id="healthComponent" class="badge">Idle</span></div>
+              <div class="health-row"><span>Custom Element</span><span id="healthDefined" class="badge">Idle</span></div>
+              <div class="health-row"><span>Rendered</span><span id="healthRendered" class="badge">Idle</span></div>
+              <div class="health-row"><span>API Calls</span><span id="healthApi" class="badge">Idle</span></div>
+              <div class="health-row"><span>Session</span><span id="healthSession" class="badge">Idle</span></div>
+            </div>
+
+            <div id="smartAnalysis" class="analysis hidden">
+              <h4>Smart Analysis</h4>
+              <div id="smartAnalysisBody"></div>
+            </div>
+
+            <div style="margin-top:12px">
+              <div style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:6px">Incident Snapshot</div>
+              <div class="empty" style="padding:0 0 8px">Copy a ticket-ready summary or download a JSON bundle for engineering.</div>
+              <div class="insp-actions">
+                <button type="button" id="copySnapshotBtn2">Copy for ticket</button>
+                <button type="button" id="downloadSnapshotBtn2">Download JSON</button>
+              </div>
+            </div>
+          </div>
+        </aside>
       </div>
-    </aside>
 
-    <section class="workspace">
-      <div class="topbar">
-        <div class="preview-heading"><div class="preview-title" id="previewTitle">Subscription Manager</div><div class="preview-meta" id="previewMeta">Not loaded yet.</div></div>
-        <div class="top-actions"><div class="live-pill"><span class="pulse"></span>No auth calls</div><button class="secondary" id="reloadBtn">Reload</button></div>
+      <section class="devtools" id="devtools">
+        <div class="devtools-tabs">
+          <button type="button" class="tab active" data-tab="http">HTTP</button>
+          <button type="button" class="tab" data-tab="console">Console</button>
+          <button type="button" class="tab" data-tab="timing">Timing</button>
+          <button type="button" class="tab" data-tab="events">Events</button>
+          <button type="button" class="tab" data-tab="lifecycle">Lifecycle</button>
+          <button type="button" class="tab" data-tab="network">Network</button>
+          <div class="spacer"></div>
+          <button type="button" id="clearHttpBtn">Clear</button>
+          <button type="button" id="toggleDevtoolsBtn">Collapse</button>
+        </div>
+        <div class="devtools-body">
+          <div class="tab-panel http-layout active" data-tab-panel="http">
+            <div class="http-list" id="httpList"><div class="empty">No HTTP traffic yet.</div></div>
+            <div class="http-detail" id="httpDetail"><div class="empty">Select a request.</div></div>
+          </div>
+          <div class="tab-panel console-pane" data-tab-panel="console" id="consolePane"><div class="empty">Relevant logs only.</div></div>
+          <div class="tab-panel timing-pane" data-tab-panel="timing" id="timingPane"><div class="empty">Timing appears after loads and requests.</div></div>
+          <div class="tab-panel events-pane" data-tab-panel="events" id="eventsPane"><div class="empty">Session and component events.</div></div>
+          <div class="tab-panel lifecycle-pane" data-tab-panel="lifecycle" id="lifecyclePane"><div class="empty">Lifecycle markers will appear here.</div></div>
+          <div class="tab-panel network-pane" data-tab-panel="network" id="networkPane"><div class="empty">Network summary.</div></div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="statusbar">
+      <div class="left">
+        <span id="statusEnv">Sandbox</span>
+        <span id="statusComponent">Subscription Manager</span>
+        <span id="statusSession" class="ok">No session</span>
       </div>
-      <div class="stage"><div id="componentContainer"></div></div>
-      <div class="debug-dock"><div class="dock-head"><span>Filtered diagnostics</span><div class="dock-tools"><select id="logFilter" class="tool-select"><option value="relevant" selected>Relevant issues</option><option value="err">Errors</option><option value="warn">Warnings</option><option value="diag">Diagnostics</option><option value="all">All logs</option><option value="info">Info</option><option value="ok">Success</option></select><button id="diagnoseBtn" type="button">Diagnose</button><button id="inspectBtn" type="button">Inspect</button><button id="copySnippetBtn" type="button">Copy snippet</button><button id="copyLogsBtn" type="button">Copy logs</button><button id="exportLogsBtn" type="button">Export</button><button id="clearLogsBtn" type="button">Clear</button><button id="toggleConsoleBtn" class="console-toggle" type="button" title="Collapse diagnostics">⌄</button></div></div><div id="debug" class="debug" hidden></div></div>
-    </section>
+      <div class="right">
+        <span id="statusHttp">0 requests</span>
+        <span id="statusMessage">Ready</span>
+      </div>
+    </footer>
   </div>
+
   <script>
 const ENVIRONMENTS = {
-  sandbox: { apiUrl: 'https://sandbox.array.io', sandbox: 'true' },
-  production: { apiUrl: 'https://array.io', sandbox: 'false' },
-  custom: { apiUrl: '', sandbox: 'false' }
+  sandbox: { apiUrl: 'https://sandbox.array.io', sandbox: 'true', label: 'Sandbox' },
+  production: { apiUrl: 'https://array.io', sandbox: 'false', label: 'Production' }
 };
 
 const SPECIAL_COMPONENTS = {
@@ -265,223 +727,98 @@ const SPECIAL_COMPONENTS = {
   creditScore3b: { baseName: 'array-credit-score', attrs: { bureau: '3b' } }
 };
 
+const COMPONENT_GROUPS = [
+  { id: 'auth', label: 'Enrollment & Auth', items: [
+    { key: 'accountEnroll', label: 'Account Enroll' },
+    { key: 'authenticationKBA', label: 'Authentication KBA' },
+    { key: 'login', label: 'Account Login' }
+  ]},
+  { id: 'credit', label: 'Credit', items: [
+    { key: 'creditOverview', label: 'Credit Overview' },
+    { key: 'creditReport1b', label: 'Credit Report v1 1B' },
+    { key: 'creditReport3b', label: 'Credit Report v1 3B' },
+    { key: 'creditReportCondensed1b', label: 'Credit Report v2 1B' },
+    { key: 'creditScoreDetails', label: 'Credit Score Details' },
+    { key: 'mcmCreditProtection', label: 'Credit Protection' },
+    { key: 'debtAnalysis', label: 'Debt Analysis' },
+    { key: 'scoreInsights', label: 'Score Insights' },
+    { key: 'scoreSimulator', label: 'Score Simulator' },
+    { key: 'scoreCoach', label: 'Score Coach' },
+    { key: 'creditScore1b', label: 'Score Tracker 1B' },
+    { key: 'creditScore3b', label: 'Score Tracker 3B' },
+    { key: 'creditAlerts', label: 'Credit Alerts' }
+  ]},
+  { id: 'identity', label: 'Identity', items: [
+    { key: 'identityProtect', label: 'Identity Protect' },
+    { key: 'identityProtectPlus', label: 'Identity Protect Plus' },
+    { key: 'neighborhoodWatch', label: 'Neighborhood Watch' },
+    { key: 'breachScan', label: 'Breach Scan' }
+  ]},
+  { id: 'privacy', label: 'Privacy', items: [
+    { key: 'subscriptionManager', label: 'Subscription Manager' },
+    { key: 'personalInfoProtectionScan', label: 'PIP Data Broker Scan' },
+    { key: 'personalInfoProtectionScanResults', label: 'PIP Scan Results' },
+    { key: 'personalInfoProtectionDashboard', label: 'PIP Dashboard' }
+  ]},
+  { id: 'buildcredit', label: 'BuildCredit', items: [
+    { key: 'creditBuilder', label: 'BuildCredit Enroll' },
+    { key: 'creditBuilderDashboard', label: 'BuildCredit Dashboard' },
+    { key: 'rentReporting', label: 'BuildCredit Rent' }
+  ]},
+  { id: 'more', label: 'More', items: [
+    { key: 'ads', label: 'Ad Component' },
+    { key: 'studentLoanNavigator', label: 'Student Loan Enroll' },
+    { key: 'studentLoanAid', label: 'Student Loan Dashboard' },
+    { key: 'debtNavigator', label: 'Debt Navigator' },
+    { key: 'arrayPlusBasicMini', label: 'Array+ Basic Mini' },
+    { key: 'arrayPlusBasic', label: 'Array+ Basic' },
+    { key: 'arrayPlusUpgradedMini', label: 'Array+ Upgraded Mini' },
+    { key: 'arrayPlusUpgraded', label: 'Array+ Upgraded' },
+    { key: 'financialLinks', label: 'Financial Links' },
+    { key: 'myHomeValue', label: 'My Home Value' },
+    { key: 'myHomeValueMini', label: 'My Home Value Mini' }
+  ]}
+];
+
 const $ = id => document.getElementById(id);
-const statusEl = $('status');
-const debugEl = $('debug');
-const container = $('componentContainer');
+const THEME_KEY = 'acs.theme';
+const STORAGE_KEY = 'acs.ide.preferences.v1';
 const SCRIPT_LOADS = new Map();
-const STORAGE_KEY = 'array-component-playground-preferences-v2';
-let tokenTimerInterval = null;
-let tokenExpiresAt = null;
+
+let selectedComponentKey = 'subscriptionManager';
+let activeSession = {
+  appKey: null,
+  userToken: null,
+  environment: null,
+  startedAt: null,
+  expiresAt: null,
+  duration: 30 * 60 * 1000
+};
+let countdownInterval = null;
+let lastExpiryWarning = null;
 let currentComponentEl = null;
-let currentLoadContext = null;
-let debugEntries = [];
-const RELEVANT_LOG_LEVELS = new Set(['err', 'warn']);
-let diagnosticsInstalled = false;
 let activeLoadId = 0;
-let tokenPortalWindow = null;
+let httpRequests = [];
+let selectedRequestId = null;
+let consoleEntries = [];
+let eventEntries = [];
+let lifecycleEntries = [];
+let timingEntries = [];
+let health = {
+  base: 'idle', component: 'idle', defined: 'idle', rendered: 'idle', api: 'idle', session: 'idle'
+};
+let interceptInstalled = false;
+let lastPreflight = null;
+let lastLoadResult = null;
 
-function openTokenPortal(mode = 'popup') {
-  const width = mode === 'side' ? 720 : 980;
-  const height = mode === 'side' ? Math.max(720, Math.floor(screen.availHeight * 0.9)) : 760;
-  const left = mode === 'side' ? Math.max(0, screen.availWidth - width - 12) : Math.max(0, Math.floor((screen.availWidth - width) / 2));
-  const top = mode === 'side' ? 24 : Math.max(0, Math.floor((screen.availHeight - height) / 2));
-  const features = `popup=yes,width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`;
-  tokenPortalWindow = window.open(TOKEN_PORTAL_URL, 'arrayTokenExtender', features);
-  if (!tokenPortalWindow) {
-    debug('Popup blocked. Allow popups for this local file/page, then try Open portal again.', 'warn', 'token');
-    logStatus('Popup blocked. Allow popups and try again.', 'warn');
-    return;
-  }
-  try { tokenPortalWindow.focus(); } catch (_) {}
-  debug(`Opened token portal (${mode}).`, 'diag', 'token');
-  logStatus('Token portal opened. Paste refreshed token back into the workflow panel.', 'ok');
+function applyTheme(theme) {
+  const next = theme === 'light' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = next;
+  localStorage.setItem(THEME_KEY, next);
+  $('themeToggleBtn').textContent = next === 'dark' ? 'Light' : 'Dark';
 }
-
-function openTokenSidecar() {
-  $('tokenSidecar').classList.add('open');
-  setTimeout(() => $('refreshedUserToken')?.focus(), 50);
-}
-function closeTokenSidecar() {
-  $('tokenSidecar').classList.remove('open');
-}
-function applyRefreshedToken(shouldReload) {
-  const token = $('refreshedUserToken').value.trim();
-  if (!token) {
-    logStatus('Paste the refreshed userToken first.', 'err');
-    debug('No refreshed token was provided.', 'warn', 'token');
-    return;
-  }
-  $('userToken').value = token;
-  $('refreshedUserToken').value = '';
-  startTokenTimer();
-  savePrefs();
-  debug('Refreshed userToken applied. Token value was not logged.', 'ok', 'token');
-  logStatus(shouldReload ? 'Refreshed token applied. Reloading component...' : 'Refreshed token applied.', 'ok');
-  if (shouldReload) loadComponent();
-}
-
-function logStatus(message, type = '') { statusEl.textContent = message; statusEl.className = `status ${type}`; }
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch]));
-}
-function debug(message, level = 'info', tag = 'log') {
-  const entry = { time: new Date(), level, tag, message: String(message) };
-  debugEntries.push(entry);
-  renderDebugEntries();
-}
-function renderDebugEntries() {
-  const filter = $('logFilter') ? $('logFilter').value : 'relevant';
-  debugEl.hidden = false;
-  const visible = debugEntries.filter(e => filter === 'all' || (filter === 'relevant' ? RELEVANT_LOG_LEVELS.has(e.level) : e.level === filter));
-  debugEl.innerHTML = visible.map(e => `<span class="debug-line ${e.level}"><span class="ts">[${e.time.toLocaleTimeString()}]</span> <span class="tag">${escapeHtml(e.tag)}</span> ${escapeHtml(e.message)}</span>`).join('');
-  if (!visible.length) debugEl.innerHTML = '<span class="debug-line info"><span class="ts">No relevant issues yet. Switch to All logs for full trace.</span></span>'; 
-  debugEl.scrollTop = debugEl.scrollHeight;
-}
-function getLogsText() {
-  return debugEntries.map(e => `[${e.time.toLocaleTimeString()}] [${e.level}] [${e.tag}] ${e.message}`).join('\n');
-}
-async function copyText(text, successMessage) {
-  try {
-    await navigator.clipboard.writeText(text);
-    debug(successMessage || 'Copied to clipboard.', 'ok', 'copy');
-  } catch (err) {
-    debug(`Clipboard failed: ${err.message || err}`, 'err', 'copy');
-  }
-}
-function downloadText(filename, text) {
-  const blob = new Blob([text], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename; a.click();
-  URL.revokeObjectURL(url);
-}
-
-function looksArrayRelated(text) {
-  const value = String(text || '').toLowerCase();
-  return value.includes('array.io') || value.includes('array.com') || value.includes('array-') || value.includes('appkey') || value.includes('usertoken') || value.includes('apiurl') || value.includes('sandbox') || value.includes('unauthorized') || value.includes('forbidden') || value.includes('cors') || value.includes('failed to fetch') || value.includes('networkerror') || value.includes('not found') || value.includes('token');
-}
-function summarizeError(value) {
-  if (!value) return 'Unknown error';
-  if (value instanceof Error) return value.stack || value.message || String(value);
-  if (typeof value === 'object') {
-    try { return JSON.stringify(value, null, 2); } catch (_) { return String(value); }
-  }
-  return String(value);
-}
-function maskUrlSecrets(url) {
-  return String(url || '')
-    .replace(/(appKey=)[^&]+/ig, '$1...')
-    .replace(/(userToken=)[^&]+/ig, '$1...')
-    .replace(/(clientKey=)[^&]+/ig, '$1...')
-    .replace(/(token=)[^&]+/ig, '$1...');
-}
-function getRequestUrl(input) {
-  try {
-    if (typeof input === 'string') return input;
-    if (input && input.url) return input.url;
-    return String(input || '');
-  } catch (_) { return ''; }
-}
-async function safeReadResponse(response) {
-  try {
-    const clone = response.clone();
-    const text = await clone.text();
-    return text ? text.slice(0, 800) : '';
-  } catch (_) { return ''; }
-}
-function validateEnvironmentSelection() {
-  const selectedEnv = $('environment').value;
-  const apiUrl = $('apiUrl').value.trim();
-  const sandbox = $('sandboxAttr').value;
-  if (selectedEnv === 'sandbox' && (!apiUrl.includes('sandbox') || sandbox !== 'true')) {
-    debug(`Sandbox environment mismatch: apiUrl=${apiUrl || '(blank)'}, sandbox=${sandbox}. Expected sandbox API URL and sandbox=true.`, 'warn', 'env');
-  }
-  if (selectedEnv === 'production' && (apiUrl.includes('sandbox') || sandbox !== 'false')) {
-    debug(`Production environment mismatch: apiUrl=${apiUrl || '(blank)'}, sandbox=${sandbox}. Expected production API URL and sandbox=false.`, 'warn', 'env');
-  }
-}
-function installRelevantDiagnostics() {
-  if (diagnosticsInstalled) return;
-  diagnosticsInstalled = true;
-
-  const originalFetch = window.fetch ? window.fetch.bind(window) : null;
-  if (originalFetch) {
-    window.fetch = async function(input, init) {
-      const url = getRequestUrl(input);
-      const started = performance.now();
-      try {
-        const response = await originalFetch(input, init);
-        if (!response.ok && looksArrayRelated(url)) {
-          const body = await safeReadResponse(response);
-          debug(`${init && init.method ? init.method : 'GET'} ${maskUrlSecrets(url)} -> ${response.status} ${response.statusText}${body ? ': ' + body : ''} (${Math.round(performance.now() - started)}ms)`, 'err', 'network');
-        }
-        return response;
-      } catch (err) {
-        if (looksArrayRelated(url) || looksArrayRelated(err && err.message)) {
-          debug(`${maskUrlSecrets(url)} -> ${err.message || err}`, 'err', 'network');
-        }
-        throw err;
-      }
-    };
-  }
-
-  const OriginalXHR = window.XMLHttpRequest;
-  if (OriginalXHR) {
-    window.XMLHttpRequest = function() {
-      const xhr = new OriginalXHR();
-      let method = 'GET';
-      let url = '';
-      let started = 0;
-      const open = xhr.open;
-      xhr.open = function(m, u) { method = m || 'GET'; url = u || ''; return open.apply(xhr, arguments); };
-      const send = xhr.send;
-      xhr.send = function() { started = performance.now(); return send.apply(xhr, arguments); };
-      xhr.addEventListener('loadend', function() {
-        if (looksArrayRelated(url) && xhr.status >= 400) {
-          const body = (xhr.responseText || '').slice(0, 800);
-          debug(`${method} ${maskUrlSecrets(url)} -> ${xhr.status}${body ? ': ' + body : ''} (${Math.round(performance.now() - started)}ms)`, 'err', 'network');
-        }
-      });
-      xhr.addEventListener('error', function() {
-        if (looksArrayRelated(url)) debug(`${method} ${maskUrlSecrets(url)} -> network error`, 'err', 'network');
-      });
-      return xhr;
-    };
-  }
-
-  const originalConsoleError = console.error.bind(console);
-  console.error = function(...args) {
-    originalConsoleError(...args);
-    const message = args.map(summarizeError).join(' ');
-    if (looksArrayRelated(message)) debug(message.slice(0, 1200), 'err', 'runtime');
-  };
-
-  window.addEventListener('error', event => {
-    const target = event.target;
-    if (target && target !== window && (target.src || target.href)) {
-      const resource = target.src || target.href;
-      if (looksArrayRelated(resource)) debug(`Resource failed to load: ${maskUrlSecrets(resource)}`, 'err', 'resource');
-      return;
-    }
-    const message = event.message || summarizeError(event.error);
-    if (looksArrayRelated(message) || looksArrayRelated(event.filename)) debug(`${message}${event.filename ? ' @ ' + maskUrlSecrets(event.filename) : ''}`, 'err', 'runtime');
-  }, true);
-
-  window.addEventListener('unhandledrejection', event => {
-    const message = summarizeError(event.reason);
-    if (looksArrayRelated(message)) debug(message.slice(0, 1200), 'err', 'promise');
-  });
-}
-function startRenderWatchdog(el, cfg, loadId) {
-  setTimeout(() => {
-    if (loadId !== activeLoadId || !el || !document.body.contains(el)) return;
-    const rect = el.getBoundingClientRect();
-    const hasSize = rect.width > 20 && rect.height > 20;
-    const hasContent = el.childNodes.length > 0 || !!el.shadowRoot;
-    if (!hasSize) debug(`<${cfg.tagName}> is registered but has no visible size after 8s. Check token/env/component compatibility.`, 'warn', 'render');
-    if (!hasContent) debug(`<${cfg.tagName}> has no visible child nodes/open shadowRoot after 8s. The component may use closed shadow DOM, or it may have failed internally.`, 'warn', 'render');
-  }, 8000);
+function toggleTheme() {
+  applyTheme((document.documentElement.dataset.theme || 'dark') === 'dark' ? 'light' : 'dark');
 }
 
 function maskToken(value) {
@@ -496,10 +833,22 @@ function getComponentConfig(componentKey) {
   const baseName = override || special.baseName || `array-${camelToKebab(componentKey)}`;
   return { key: componentKey, baseName, tagName: baseName, scriptUrl: `https://embed.array.io/cms/${baseName}.js`, attrs: special.attrs || {} };
 }
+function findComponentLabel(key) {
+  for (const group of COMPONENT_GROUPS) {
+    const item = group.items.find(i => i.key === key);
+    if (item) return item.label;
+  }
+  return key;
+}
 function syncEnvDefaults() {
   const env = ENVIRONMENTS[$('environment').value];
-  if ($('environment').value !== 'custom') $('apiUrl').value = env.apiUrl;
+  $('apiUrl').value = env.apiUrl;
   $('sandboxAttr').value = env.sandbox;
+  $('statusEnv').textContent = env.label;
+}
+function getTokenLifeMinutes() {
+  if ($('tokenLife').value === 'custom') return Math.max(1, parseInt($('customTokenLife').value, 10) || 30);
+  return parseInt($('tokenLife').value, 10) || 30;
 }
 function parseExtraAttrs() {
   const raw = $('extraAttrs').value.trim();
@@ -508,228 +857,1019 @@ function parseExtraAttrs() {
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Extra attributes must be a JSON object.');
   return parsed;
 }
-function loadScript(src) {
+function formatClock(ms) {
+  if (ms == null) return '—';
+  return new Date(ms).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+function formatRemaining(ms) {
+  if (ms == null) return '--:--';
+  if (ms <= 0) return '00:00';
+  const total = Math.ceil(ms / 1000);
+  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+}
+function getSessionStatus(remainingMs) {
+  if (activeSession.startedAt == null || remainingMs == null) return { key: 'idle', label: 'No session' };
+  if (remainingMs <= 0) return { key: 'expired', label: 'Expired' };
+  if (remainingMs <= 60 * 1000) return { key: 'expiring', label: 'Expiring' };
+  if (remainingMs <= 5 * 60 * 1000) return { key: 'refresh', label: 'Refresh soon' };
+  return { key: 'valid', label: 'Valid' };
+}
+function setStatusMessage(msg) { $('statusMessage').textContent = msg; }
+function setBadge(el, state, label) {
+  el.className = `badge ${state === 'ok' ? 'ok' : state === 'warn' ? 'warn' : state === 'err' ? 'err' : ''}`;
+  el.textContent = label;
+}
+function updateHealthUi() {
+  setBadge($('healthBase'), health.base === 'ok' ? 'ok' : health.base === 'err' ? 'err' : health.base === 'warn' ? 'warn' : '', labelForHealth(health.base));
+  setBadge($('healthComponent'), health.component === 'ok' ? 'ok' : health.component === 'err' ? 'err' : health.component === 'warn' ? 'warn' : '', labelForHealth(health.component));
+  setBadge($('healthDefined'), health.defined === 'ok' ? 'ok' : health.defined === 'err' ? 'err' : health.defined === 'warn' ? 'warn' : '', labelForHealth(health.defined));
+  setBadge($('healthRendered'), health.rendered === 'ok' ? 'ok' : health.rendered === 'err' ? 'err' : health.rendered === 'warn' ? 'warn' : '', labelForHealth(health.rendered));
+  setBadge($('healthApi'), health.api === 'ok' ? 'ok' : health.api === 'err' ? 'err' : health.api === 'warn' ? 'warn' : '', labelForHealth(health.api));
+  setBadge($('healthSession'), health.session === 'ok' ? 'ok' : health.session === 'err' ? 'err' : health.session === 'warn' ? 'warn' : '', labelForHealth(health.session));
+}
+function labelForHealth(state) {
+  return ({ idle: 'Idle', ok: 'OK', warn: 'Warn', err: 'Fail' })[state] || state;
+}
+
+function logConsole(message, level = 'ok', tag = 'app') {
+  consoleEntries.push({ time: new Date(), level, tag, message: String(message) });
+  renderConsole();
+}
+function pushEvent(message) {
+  eventEntries.push({ time: new Date(), message });
+  renderEvents();
+}
+function pushLifecycle(message) {
+  lifecycleEntries.push({ time: new Date(), message });
+  renderLifecycle();
+}
+function pushTiming(label, ms) {
+  timingEntries.push({ time: new Date(), label, ms });
+  renderTiming();
+}
+
+function renderConsole() {
+  if (!consoleEntries.length) { $('consolePane').innerHTML = '<div class="empty">Relevant logs only.</div>'; return; }
+  $('consolePane').innerHTML = consoleEntries.map(e =>
+    `<div class="log-line ${e.level}">[${e.time.toLocaleTimeString()}] [${e.tag}] ${escapeHtml(e.message)}</div>`
+  ).join('');
+  $('consolePane').scrollTop = $('consolePane').scrollHeight;
+}
+function renderEvents() {
+  $('eventsPane').innerHTML = eventEntries.length
+    ? eventEntries.map(e => `<div class="log-line">[${e.time.toLocaleTimeString()}] ${escapeHtml(e.message)}</div>`).join('')
+    : '<div class="empty">Session and component events.</div>';
+}
+function renderLifecycle() {
+  $('lifecyclePane').innerHTML = lifecycleEntries.length
+    ? lifecycleEntries.map(e => `<div class="log-line">[${e.time.toLocaleTimeString()}] ${escapeHtml(e.message)}</div>`).join('')
+    : '<div class="empty">Lifecycle markers will appear here.</div>';
+}
+function renderTiming() {
+  $('timingPane').innerHTML = timingEntries.length
+    ? timingEntries.map(e => `<div class="log-line mono">[${e.time.toLocaleTimeString()}] ${escapeHtml(e.label)} — ${e.ms}ms</div>`).join('')
+    : '<div class="empty">Timing appears after loads and requests.</div>';
+}
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, ch => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch]));
+}
+
+function updateSessionUi() {
+  const remaining = activeSession.startedAt == null ? null : activeSession.expiresAt - Date.now();
+  const status = getSessionStatus(remaining);
+  const remClass = status.key === 'refresh' ? 'warn' : (status.key === 'expiring' || status.key === 'expired') ? (status.key === 'expired' ? 'expired' : 'danger') : '';
+
+  $('sessionRemaining').textContent = formatRemaining(remaining);
+  $('sessionRemaining').className = `timer ${remClass}`;
+  $('inspectorRemaining').textContent = formatRemaining(remaining);
+  $('inspectorRemaining').className = `timer ${remClass}`;
+  $('sessionEnvironment').textContent = ENVIRONMENTS[activeSession.environment]?.label || '—';
+  $('sessionStarted').textContent = formatClock(activeSession.startedAt);
+  $('sessionExpires').textContent = formatClock(activeSession.expiresAt);
+  $('sessionStatusPill').className = `badge ${status.key === 'valid' ? 'ok' : status.key === 'refresh' ? 'warn' : status.key === 'idle' ? '' : 'err'}`;
+  $('sessionStatusPill').textContent = status.label;
+  $('inspectorStatus').textContent = status.label;
+  $('inspectorEnv').textContent = ENVIRONMENTS[activeSession.environment]?.label || '—';
+  $('titleMeta').textContent = activeSession.startedAt ? `${status.label} · ${formatRemaining(remaining)}` : 'No session';
+  $('statusSession').textContent = status.label;
+  $('statusSession').className = status.key === 'valid' ? 'ok' : status.key === 'refresh' ? 'warn' : status.key === 'idle' ? '' : 'err';
+
+  if (activeSession.startedAt) {
+    health.session = status.key === 'valid' ? 'ok' : status.key === 'refresh' ? 'warn' : 'err';
+  } else {
+    health.session = 'idle';
+  }
+  updateHealthUi();
+
+  if (status.key === 'refresh' && lastExpiryWarning !== 'refresh') {
+    lastExpiryWarning = 'refresh';
+    logConsole('Token refresh soon — 5 minutes or less remaining.', 'warn', 'session');
+  } else if (status.key === 'expiring' && lastExpiryWarning !== 'expiring') {
+    lastExpiryWarning = 'expiring';
+    logConsole('Token expiring — 1 minute or less remaining.', 'warn', 'session');
+  } else if (status.key === 'expired' && lastExpiryWarning !== 'expired') {
+    lastExpiryWarning = 'expired';
+    logConsole('Token expired. Paste a refreshed userToken and Load again.', 'err', 'session');
+    setStatusMessage('Token expired');
+  }
+}
+
+function startCountdown() {
+  clearInterval(countdownInterval);
+  lastExpiryWarning = null;
+  updateSessionUi();
+  countdownInterval = setInterval(updateSessionUi, 1000);
+}
+
+function ensureSession(appKey, userToken, environment, durationMinutes) {
+  const sameSession = activeSession.appKey === appKey && activeSession.userToken === userToken;
+  if (sameSession && activeSession.startedAt) {
+    logConsole('Same appKey/userToken detected. Countdown preserved.', 'ok', 'session');
+    pushEvent('Same session detected — timer preserved');
+    return false;
+  }
+  activeSession = {
+    appKey,
+    userToken,
+    environment,
+    startedAt: Date.now(),
+    expiresAt: Date.now() + Number(durationMinutes) * 60 * 1000,
+    duration: Number(durationMinutes) * 60 * 1000
+  };
+  startCountdown();
+  logConsole('New session detected. Countdown restarted.', 'warn', 'session');
+  pushEvent('New session created');
+  pushLifecycle('session:created');
+  return true;
+}
+
+function resetSession() {
+  clearInterval(countdownInterval);
+  countdownInterval = null;
+  lastExpiryWarning = null;
+  activeSession = { appKey: null, userToken: null, environment: null, startedAt: null, expiresAt: null, duration: 30 * 60 * 1000 };
+  health.session = 'idle';
+  updateSessionUi();
+  logConsole('Session reset.', 'warn', 'session');
+  pushEvent('Session reset');
+  setStatusMessage('Session reset');
+}
+
+function analyzeRequest(req) {
+  if (req.error) {
+    return { problem: 'Request never reached server.', confidence: '90%', fix: 'Check internet connection or CORS.', code: 'network' };
+  }
+  if (req.status === 401) {
+    return { problem: 'User token likely expired.', confidence: '98%', fix: 'Refresh user token.', code: '401' };
+  }
+  if (req.status === 403) {
+    return { problem: 'Environment mismatch.', confidence: '92%', fix: 'Verify Production vs Sandbox.', code: '403' };
+  }
+  if (req.status === 404) {
+    return { problem: 'Component script or endpoint missing.', confidence: '95%', fix: 'Verify component path.', code: '404' };
+  }
+  if (req.status >= 500) {
+    return { problem: 'Upstream server error.', confidence: '85%', fix: 'Retry later or check Array status.', code: String(req.status) };
+  }
+  return null;
+}
+
+function renderSmartAnalysis(req) {
+  const box = $('smartAnalysis');
+  const body = $('smartAnalysisBody');
+  const analysis = req ? analyzeRequest(req) : null;
+  if (!analysis) { box.classList.add('hidden'); body.innerHTML = ''; return; }
+  box.classList.remove('hidden');
+  body.innerHTML = `
+    <p><strong>Problem</strong><br>${escapeHtml(analysis.problem)}</p>
+    <p><strong>Confidence</strong><br>${escapeHtml(analysis.confidence)}</p>
+    <p><strong>Suggested Fix</strong><br>${escapeHtml(analysis.fix)}</p>
+  `;
+}
+
+function maskUrl(url) {
+  return String(url || '')
+    .replace(/(appKey=)[^&]+/ig, '$1...')
+    .replace(/(userToken=)[^&]+/ig, '$1...')
+    .replace(/(token=)[^&]+/ig, '$1...');
+}
+
+function statusClass(status, error) {
+  if (error || !status || status >= 400) return 'err';
+  if (status >= 300) return 'warn';
+  return 'ok';
+}
+
+function renderHttp() {
+  $('statusHttp').textContent = `${httpRequests.length} request${httpRequests.length === 1 ? '' : 's'}`;
+  const failed = httpRequests.filter(r => r.error || (r.status && r.status >= 400)).length;
+  health.api = !httpRequests.length ? (health.api === 'idle' ? 'idle' : health.api) : failed ? 'err' : 'ok';
+  updateHealthUi();
+
+  if (!httpRequests.length) {
+    $('httpList').innerHTML = '<div class="empty">No HTTP traffic yet.</div>';
+    $('networkPane').innerHTML = '<div class="empty">Network summary.</div>';
+    return;
+  }
+  const rows = httpRequests.map(r => {
+    const active = r.id === selectedRequestId ? ' active' : '';
+    return `<div class="req-row${active}" data-id="${r.id}">
+      <span class="method">${escapeHtml(r.method)}</span>
+      <span class="status ${statusClass(r.status, r.error)}">${r.error ? 'ERR' : (r.status || '…')}</span>
+      <span class="url" title="${escapeHtml(maskUrl(r.url))}">${escapeHtml(maskUrl(r.url))}</span>
+      <span>${r.duration != null ? r.duration + 'ms' : '—'}</span>
+      <span>${r.size != null ? r.size + 'B' : '—'}</span>
+    </div>`;
+  }).join('');
+  $('httpList').innerHTML = rows;
+  $('networkPane').innerHTML = httpRequests.map(r =>
+    `<div class="log-line mono">${escapeHtml(r.method)} ${r.status || 'ERR'} ${r.duration || 0}ms ${escapeHtml(maskUrl(r.url))}</div>`
+  ).join('');
+
+  if (selectedRequestId) {
+    const req = httpRequests.find(r => r.id === selectedRequestId);
+    if (req) renderHttpDetail(req);
+  }
+}
+
+function renderHttpDetail(req) {
+  selectedRequestId = req.id;
+  renderSmartAnalysis(req);
+  const analysis = analyzeRequest(req);
+  $('httpDetail').innerHTML = `
+    <div style="padding:8px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px">
+      <div><strong>${escapeHtml(req.method)}</strong> ${escapeHtml(maskUrl(req.url))}</div>
+      <div style="color:var(--muted);margin-top:4px">${req.error ? 'Network Error' : req.status} · ${req.duration || 0}ms · ${req.size || 0}B</div>
+    </div>
+    ${analysis ? `<div class="analysis" style="margin:8px"><h4>Smart Analysis</h4>
+      <p><strong>Problem</strong><br>${escapeHtml(analysis.problem)}</p>
+      <p><strong>Confidence</strong><br>${escapeHtml(analysis.confidence)}</p>
+      <p><strong>Suggested Fix</strong><br>${escapeHtml(analysis.fix)}</p></div>` : ''}
+    <details class="acc" open><summary>Request</summary><div class="acc-body"><pre>${escapeHtml(req.requestBody || '(empty)')}</pre></div></details>
+    <details class="acc" open><summary>Headers</summary><div class="acc-body"><pre>${escapeHtml(formatHeaders(req.responseHeaders))}</pre></div></details>
+    <details class="acc" open><summary>Response</summary><div class="acc-body"><pre>${escapeHtml(req.responseBody || '(empty)')}</pre></div></details>
+    <details class="acc" open><summary>Timing</summary><div class="acc-body"><pre>Started: ${formatClock(req.startedAt)}
+Duration: ${req.duration != null ? req.duration + 'ms' : '—'}
+Payload: ${req.size != null ? req.size + ' bytes' : '—'}</pre></div></details>
+  `;
+}
+
+function formatHeaders(headers) {
+  if (!headers) return '(none)';
+  if (typeof headers === 'string') return headers;
+  try { return Object.entries(headers).map(([k, v]) => `${k}: ${v}`).join('\n') || '(none)'; }
+  catch (_) { return String(headers); }
+}
+
+function installHttpInterceptor() {
+  if (interceptInstalled) return;
+  interceptInstalled = true;
+  const originalFetch = window.fetch.bind(window);
+  window.fetch = async function(input, init = {}) {
+    const id = `r${Date.now()}_${Math.random().toString(16).slice(2, 7)}`;
+    const method = (init.method || 'GET').toUpperCase();
+    const url = typeof input === 'string' ? input : (input && input.url) || String(input);
+    const startedAt = Date.now();
+    const t0 = performance.now();
+    const entry = {
+      id, method, url, startedAt, duration: null, status: null, size: null,
+      requestBody: typeof init.body === 'string' ? init.body.slice(0, 4000) : init.body ? '[non-text body]' : '',
+      responseHeaders: {}, responseBody: '', error: null
+    };
+    httpRequests = [entry, ...httpRequests].slice(0, 200);
+    renderHttp();
+    try {
+      const response = await originalFetch(input, init);
+      const clone = response.clone();
+      let text = '';
+      try { text = await clone.text(); } catch (_) {}
+      entry.status = response.status;
+      entry.duration = Math.round(performance.now() - t0);
+      entry.size = text ? text.length : 0;
+      entry.responseBody = text.slice(0, 8000);
+      const headers = {};
+      response.headers.forEach((v, k) => { headers[k] = v; });
+      entry.responseHeaders = headers;
+      if (response.status >= 400) {
+        logConsole(`${method} ${maskUrl(url)} → ${response.status}`, 'err', 'http');
+        const analysis = analyzeRequest(entry);
+        if (analysis) logConsole(`${analysis.problem} Fix: ${analysis.fix}`, 'warn', 'analysis');
+      }
+      pushTiming(`${method} ${maskUrl(url)}`, entry.duration);
+      renderHttp();
+      if (selectedRequestId === id) renderHttpDetail(entry);
+      return response;
+    } catch (err) {
+      entry.error = err.message || String(err);
+      entry.duration = Math.round(performance.now() - t0);
+      logConsole(`${method} ${maskUrl(url)} → network error`, 'err', 'http');
+      const analysis = analyzeRequest(entry);
+      if (analysis) logConsole(`${analysis.problem} Fix: ${analysis.fix}`, 'warn', 'analysis');
+      renderHttp();
+      if (selectedRequestId === id) renderHttpDetail(entry);
+      throw err;
+    }
+  };
+}
+
+function loadScript(src, kind) {
   if (SCRIPT_LOADS.has(src)) return SCRIPT_LOADS.get(src);
   const promise = new Promise((resolve, reject) => {
     const existing = [...document.scripts].find(s => s.src === src);
-    if (existing && existing.dataset.loaded === 'true') { debug(`already loaded: ${src}`, 'ok', 'script'); resolve(); return; }
+    if (existing && existing.dataset.loaded === 'true') { resolve(); return; }
     const script = existing || document.createElement('script');
     script.async = false;
-    script.onload = () => { script.dataset.loaded = 'true'; debug(`loaded: ${src}`, 'ok', 'script'); resolve(); };
-    script.onerror = () => { debug(`failed: ${src}`, 'err', 'script'); reject(new Error(`Could not load script: ${src}`)); };
+    script.onload = () => {
+      script.dataset.loaded = 'true';
+      if (kind === 'base') health.base = 'ok';
+      if (kind === 'component') health.component = 'ok';
+      updateHealthUi();
+      resolve();
+    };
+    script.onerror = () => {
+      if (kind === 'base') health.base = 'err';
+      if (kind === 'component') health.component = 'err';
+      updateHealthUi();
+      logConsole(`Failed to load script: ${src}`, 'err', 'script');
+      reject(new Error(`Could not load script: ${src}`));
+    };
     if (!existing) { script.src = src; document.head.appendChild(script); }
   });
   SCRIPT_LOADS.set(src, promise);
   return promise;
 }
+
 function waitForCustomElement(tagName, timeoutMs = 8000) {
   if (!window.customElements) return Promise.resolve(false);
   if (customElements.get(tagName)) return Promise.resolve(true);
-  return Promise.race([customElements.whenDefined(tagName).then(() => true), new Promise(resolve => setTimeout(() => resolve(false), timeoutMs))]);
+  return Promise.race([
+    customElements.whenDefined(tagName).then(() => true),
+    new Promise(resolve => setTimeout(() => resolve(false), timeoutMs))
+  ]);
 }
 
-function getTokenLifeMinutes() {
-  const value = $('tokenLife').value;
-  if (value === 'custom') return Math.max(1, parseInt($('customTokenLife').value, 10) || 30);
-  return parseInt(value, 10) || 30;
+function renderComponentTree(filter = '') {
+  const q = filter.trim().toLowerCase();
+  const html = COMPONENT_GROUPS.map(group => {
+    const items = group.items.filter(i => !q || i.label.toLowerCase().includes(q) || i.key.toLowerCase().includes(q));
+    if (!items.length) return '';
+    return `<details class="tree-group" open>
+      <summary>${escapeHtml(group.label)}</summary>
+      ${items.map(i => `<button type="button" class="tree-item${i.key === selectedComponentKey ? ' active' : ''}" data-key="${i.key}">${escapeHtml(i.label)}</button>`).join('')}
+    </details>`;
+  }).join('');
+  $('componentTree').innerHTML = html || '<div class="empty">No matches.</div>';
 }
-function formatRemaining(ms) {
-  if (ms <= 0) return 'Expired';
-  const totalSeconds = Math.ceil(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+function updatePreviewChrome(extra) {
+  const label = findComponentLabel(selectedComponentKey);
+  const cfg = getComponentConfig(selectedComponentKey);
+  $('previewTitle').textContent = label;
+  $('previewMeta').textContent = extra || `${cfg.tagName} · not loaded`;
+  $('statusComponent').textContent = label;
 }
-function updateTokenTimer() {
-  const timer = $('tokenTimer');
-  if (!tokenExpiresAt) { timer.textContent = 'Not started'; timer.className = 'timer-display'; return; }
-  const remaining = tokenExpiresAt - Date.now();
-  timer.textContent = formatRemaining(remaining);
-  timer.className = 'timer-display';
-  if (remaining <= 60 * 1000) timer.classList.add('danger');
-  else if (remaining <= 5 * 60 * 1000) timer.classList.add('warn');
-  if (remaining <= 0) {
-    clearInterval(tokenTimerInterval);
-    tokenTimerInterval = null;
-    logStatus('Token likely expired. Paste a refreshed userToken and click Replace token only.', 'err');
-  }
-}
-function startTokenTimer() {
-  tokenExpiresAt = Date.now() + getTokenLifeMinutes() * 60 * 1000;
-  clearInterval(tokenTimerInterval);
-  updateTokenTimer();
-  tokenTimerInterval = setInterval(updateTokenTimer, 1000);
-}
-function savePreferences() {
-  const prefs = {
-    component: $('componentSelect').value,
-    environment: $('environment').value,
-    sandboxAttr: $('sandboxAttr').value,
-    apiUrl: $('apiUrl').value,
-    componentHeight: $('componentHeight').value,
-    tokenLife: $('tokenLife').value,
-    customTokenLife: $('customTokenLife').value,
-    rememberAppKey: $('rememberAppKey').checked,
-    appKey: $('rememberAppKey').checked ? $('appKey').value.trim() : ''
-  };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
-}
-function loadPreferences() {
-  try {
-    const prefs = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-    if (prefs.component && [...$('componentSelect').options].some(o => o.value === prefs.component)) $('componentSelect').value = prefs.component;
-    if (prefs.environment && ENVIRONMENTS[prefs.environment]) $('environment').value = prefs.environment;
-    syncEnvDefaults();
-    if (prefs.apiUrl && prefs.environment === 'custom') $('apiUrl').value = prefs.apiUrl;
-    if (prefs.sandboxAttr) $('sandboxAttr').value = prefs.sandboxAttr;
-    if (prefs.componentHeight) $('componentHeight').value = prefs.componentHeight;
-    if (prefs.tokenLife) $('tokenLife').value = prefs.tokenLife;
-    if (prefs.customTokenLife) $('customTokenLife').value = prefs.customTokenLife;
-    $('rememberAppKey').checked = !!prefs.rememberAppKey;
-    if (prefs.rememberAppKey && prefs.appKey) $('appKey').value = prefs.appKey;
-    $('customTokenLifeWrap').hidden = $('tokenLife').value !== 'custom';
-    const opt = $('componentSelect').selectedOptions[0];
-    const cfg = getComponentConfig($('componentSelect').value);
-    $('previewTitle').textContent = opt.textContent;
-    $('previewMeta').textContent = `${cfg.tagName} · not loaded yet`;
-  } catch (err) { console.warn('Could not load preferences', err); }
-}
-async function loadComponent() {
-  installRelevantDiagnostics();
+
+async function loadComponent({ fromComponentSwitch = false } = {}) {
+  installHttpInterceptor();
   activeLoadId += 1;
   const thisLoadId = activeLoadId;
-  debugEntries = []; debugEl.innerHTML = ''; debugEl.hidden = true; container.innerHTML = ''; currentComponentEl = null; currentLoadContext = null;
+  const container = $('componentContainer');
+  container.innerHTML = '';
+  currentComponentEl = null;
+  health = { base: 'warn', component: 'warn', defined: 'warn', rendered: 'warn', api: health.api, session: health.session };
+  updateHealthUi();
+
   const appKey = $('appKey').value.trim();
   const userToken = $('userToken').value.trim();
-  const apiUrl = $('apiUrl').value.trim().replace(/\/$/, '');
-  const selected = $('componentSelect').selectedOptions[0];
-  const componentKey = $('componentSelect').value;
-  const cfg = getComponentConfig(componentKey);
-  currentLoadContext = { componentKey, componentLabel: selected.textContent, tagName: cfg.tagName, scriptUrl: cfg.scriptUrl, startedAt: new Date() };
+  const environment = $('environment').value;
+  const apiUrl = ($('apiUrl').value.trim().replace(/\/$/, '') || ENVIRONMENTS[environment].apiUrl);
+  const sandbox = ENVIRONMENTS[environment].sandbox;
+  $('sandboxAttr').value = sandbox;
+  const cfg = getComponentConfig(selectedComponentKey);
+  const label = findComponentLabel(selectedComponentKey);
   const minHeight = parseInt($('componentHeight').value, 10) || 640;
-  $('componentContainer').style.minHeight = `${minHeight}px`;
-  $('previewTitle').textContent = selected.textContent;
-  $('previewMeta').textContent = `${cfg.tagName} · ${apiUrl || 'no apiUrl'}`;
-  if (!appKey || !userToken) { logStatus('App Key and User Token are required.', 'err'); return; }
-  if (!apiUrl) { logStatus('API URL is required.', 'err'); return; }
-  validateEnvironmentSelection();
+  container.style.minHeight = `${minHeight}px`;
+  updatePreviewChrome(`${cfg.tagName} · ${ENVIRONMENTS[environment].label}`);
+
+  if (!appKey || !userToken) {
+    logConsole('App Key and User Token are required.', 'err', 'session');
+    setStatusMessage('Missing credentials');
+    health.session = 'err';
+    updateHealthUi();
+    lastLoadResult = { ok: false, at: new Date().toISOString(), reason: 'missing-credentials' };
+    runPreflight({ probeScripts: false, silent: true });
+    $('appKey').focus();
+    return;
+  }
+
+  await runPreflight({ probeScripts: false, silent: true });
+  if (lastPreflight && !lastPreflight.passed) {
+    logConsole('Preflight reported issues; continuing load anyway.', 'warn', 'preflight');
+  }
+
+  if (fromComponentSwitch) {
+    logConsole(`Component switched to ${label}. Countdown preserved.`, 'ok', 'session');
+    pushEvent(`Component switched → ${label}`);
+  }
+
+  ensureSession(appKey, userToken, environment, getTokenLifeMinutes());
+  pushLifecycle(`load:start:${cfg.tagName}`);
+  setStatusMessage(`Loading ${label}…`);
+
   try {
     const extraAttrs = parseExtraAttrs();
-    logStatus('Loading scripts...');
     const baseScript = `https://embed.array.io/cms/array-web-component.js?appKey=${encodeURIComponent(appKey)}`;
     const componentScript = `${cfg.scriptUrl}?appKey=${encodeURIComponent(appKey)}`;
-    debug(baseScript, 'info', 'base-script'); debug(componentScript, 'info', 'component-script');
-    await loadScript(baseScript);
-    await loadScript(componentScript);
-    logStatus('Waiting for component registration...');
-    const isDefined = await waitForCustomElement(cfg.tagName);
-    debug(`${cfg.tagName} registered: ${isDefined ? 'yes' : 'no'}`, isDefined ? 'ok' : 'err', 'custom-element');
-    if (!isDefined) throw new Error(`${cfg.tagName} was not registered by ${componentScript}. Check the script/tag mapping.`);
-    logStatus('Rendering component...');
+    const t0 = performance.now();
+    await loadScript(baseScript, 'base');
+    await loadScript(componentScript, 'component');
+    if (thisLoadId !== activeLoadId) return;
+
+    const defined = await waitForCustomElement(cfg.tagName);
+    health.defined = defined ? 'ok' : 'err';
+    updateHealthUi();
+    if (!defined) throw new Error(`${cfg.tagName} was not registered.`);
+
     const el = document.createElement(cfg.tagName);
     currentComponentEl = el;
     const attrs = Object.assign({}, cfg.attrs, extraAttrs);
     el.setAttribute('appKey', appKey); el.setAttribute('appkey', appKey);
     el.setAttribute('userToken', userToken); el.setAttribute('usertoken', userToken);
     el.setAttribute('apiUrl', apiUrl); el.setAttribute('apiurl', apiUrl);
-    el.setAttribute('sandbox', $('sandboxAttr').value);
-    Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, String(value)));
-    currentLoadContext = Object.assign(currentLoadContext || {}, { apiUrl, sandbox: $('sandboxAttr').value, baseScript, componentScript, attrs: Object.fromEntries([...el.attributes].map(a => [a.name, a.value])) });
-    debug(`apiUrl=${apiUrl}`, 'info', 'attrs');
-    debug(`sandbox=${$('sandboxAttr').value}`, 'info', 'attrs');
-    debug(`appKey=${maskToken(appKey)} userToken=${maskToken(userToken)}`, 'warn', 'secrets');
+    el.setAttribute('sandbox', sandbox);
+    Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, String(v)));
+
     const note = document.createElement('div');
     note.className = 'render-note';
-    note.textContent = `Rendering <${cfg.tagName}> with apiUrl=${apiUrl} and sandbox=${$('sandboxAttr').value}.`;
-    container.innerHTML = ''; container.appendChild(note); container.appendChild(el);
-    requestAnimationFrame(() => { const rect = el.getBoundingClientRect(); debug(`rendered element size: ${Math.round(rect.width)}x${Math.round(rect.height)}`, rect.width && rect.height ? 'ok' : 'warn', 'render'); });
-    startRenderWatchdog(el, cfg, thisLoadId);
-    startTokenTimer();
+    note.textContent = `<${cfg.tagName}> · ${ENVIRONMENTS[environment].label} · ${apiUrl}`;
+    container.appendChild(note);
+    container.appendChild(el);
+
+    requestAnimationFrame(() => {
+      const rect = el.getBoundingClientRect();
+      health.rendered = rect.width > 10 && rect.height > 10 ? 'ok' : 'warn';
+      updateHealthUi();
+      runPreflight({ probeScripts: false, silent: true });
+    });
+
+    pushTiming(`load ${cfg.tagName}`, Math.round(performance.now() - t0));
+    pushLifecycle(`load:success:${cfg.tagName}`);
+    lastLoadResult = {
+      ok: true,
+      at: new Date().toISOString(),
+      component: cfg.tagName,
+      environment,
+      durationMs: Math.round(performance.now() - t0)
+    };
     savePreferences();
-    logStatus(`Loaded ${selected.textContent}`, 'ok');
-  } catch (err) { console.error(err); debug(err.stack || err.message || String(err), 'err', 'error'); logStatus(err.message || String(err), 'err'); }
+    updatePreviewChrome(`${cfg.tagName} · ${ENVIRONMENTS[environment].label}`);
+    setStatusMessage(`Loaded ${label}`);
+  } catch (err) {
+    console.error(err);
+    health.rendered = 'err';
+    updateHealthUi();
+    logConsole(err.message || String(err), 'err', 'error');
+    pushLifecycle(`load:error:${cfg.tagName}`);
+    lastLoadResult = {
+      ok: false,
+      at: new Date().toISOString(),
+      component: cfg.tagName,
+      environment,
+      error: err.message || String(err)
+    };
+    setStatusMessage(err.message || 'Load failed');
+    runPreflight({ probeScripts: false, silent: true });
+  }
 }
 
-function getCurrentComponentAttributes() {
-  const el = currentComponentEl || container.querySelector('[appkey], [appKey]');
-  if (!el) return null;
-  return Object.fromEntries([...el.attributes].map(a => [a.name, a.value]));
+function buildDiagnostics() {
+  const remaining = activeSession.startedAt == null ? null : activeSession.expiresAt - Date.now();
+  const status = getSessionStatus(remaining);
+  const failed = httpRequests.filter(r => r.error || (r.status && r.status >= 400));
+  const latestFail = failed[0];
+  const analysis = latestFail ? analyzeRequest(latestFail) : null;
+  const lines = [
+    'Array Component Studio — Diagnostics',
+    `Environment: ${ENVIRONMENTS[$('environment').value]?.label}`,
+    `Component: ${findComponentLabel(selectedComponentKey)} (${getComponentConfig(selectedComponentKey).tagName})`,
+    `App Key: ${maskToken($('appKey').value.trim()) || '—'}`,
+    `User Token: ${maskToken($('userToken').value.trim()) || '—'}`,
+    `Session: ${status.label} · Remaining ${formatRemaining(remaining)}`,
+    `Started: ${formatClock(activeSession.startedAt)}`,
+    `Expires: ${formatClock(activeSession.expiresAt)}`,
+    '',
+    'HTTP Timeline:'
+  ];
+  if (!httpRequests.length) lines.push('(none)');
+  httpRequests.slice(0, 30).forEach(r => {
+    lines.push(`${r.method} ${r.status || 'ERR'} ${r.duration || 0}ms ${maskUrl(r.url)}`);
+  });
+  if (latestFail) {
+    lines.push('', 'Latest Failure Response Body:', (latestFail.responseBody || '(empty)').slice(0, 1500));
+  }
+  if (analysis) {
+    lines.push('', `Likely Cause: ${analysis.problem}`, `Confidence: ${analysis.confidence}`, `Suggested Fix: ${analysis.fix}`);
+  }
+  lines.push('', 'Health:',
+    `Base Script=${health.base}`, `Component Script=${health.component}`, `Custom Element=${health.defined}`,
+    `Rendered=${health.rendered}`, `API Calls=${health.api}`, `Session=${health.session}`);
+  return lines.join('\n');
 }
-function runDiagnostics() {
-  debug('Running diagnostics...', 'diag', 'diagnose');
-  const cfg = getComponentConfig($('componentSelect').value);
-  const apiUrl = $('apiUrl').value.trim();
+
+function preflightMark(status) {
+  return status === 'ok' ? '✓' : status === 'warn' ? '!' : '✕';
+}
+
+function renderPreflight(result) {
+  lastPreflight = result;
+  const summary = $('preflightSummary');
+  const list = $('preflightList');
+  const stamp = $('preflightStamp');
+  if (!result) {
+    summary.className = 'badge';
+    summary.textContent = 'Not run';
+    stamp.textContent = '';
+    list.innerHTML = '<div class="empty" style="padding:6px 0">Run preflight before loading to catch credential/env issues early.</div>';
+    return;
+  }
+  const failed = result.checks.filter(c => c.status === 'err').length;
+  const warned = result.checks.filter(c => c.status === 'warn').length;
+  summary.className = `badge ${failed ? 'err' : warned ? 'warn' : 'ok'}`;
+  summary.textContent = failed ? `${failed} failed` : warned ? `${warned} warnings` : 'All clear';
+  stamp.textContent = result.ranAt.toLocaleTimeString();
+  list.innerHTML = result.checks.map(c => `
+    <div class="preflight-row ${c.status}">
+      <span class="mark">${preflightMark(c.status)}</span>
+      <div>
+        <div>${escapeHtml(c.label)}</div>
+        ${c.detail ? `<div class="meta">${escapeHtml(c.detail)}</div>` : ''}
+      </div>
+      <span class="badge ${c.status === 'ok' ? 'ok' : c.status === 'warn' ? 'warn' : 'err'}">${c.status.toUpperCase()}</span>
+    </div>
+  `).join('');
+}
+
+async function probeScriptUrl(url) {
+  try {
+    const response = await fetch(url, { method: 'GET', mode: 'no-cors', cache: 'no-store' });
+    // Opaque responses (no-cors) have type 'opaque' and status 0 when the network request succeeded.
+    if (response.type === 'opaque' || response.ok) {
+      return { ok: true, status: response.status || 'reachable', opaque: response.type === 'opaque' };
+    }
+    return { ok: false, status: response.status };
+  } catch (err) {
+    return { ok: false, status: 0, error: err.message || String(err) };
+  }
+}
+
+async function runPreflight({ probeScripts = true, silent = false } = {}) {
   const appKey = $('appKey').value.trim();
   const userToken = $('userToken').value.trim();
-  debug(`Selected: ${$('componentSelect').selectedOptions[0].textContent}`, 'diag', 'diagnose');
-  debug(`Tag: ${cfg.tagName}`, customElements.get(cfg.tagName) ? 'ok' : 'warn', 'diagnose');
-  debug(`Component script: ${cfg.scriptUrl}?appKey=${maskToken(appKey)}`, 'diag', 'diagnose');
-  debug(`API URL: ${apiUrl || '(missing)'}`, apiUrl ? 'ok' : 'err', 'diagnose');
-  debug(`Sandbox attr: ${$('sandboxAttr').value}`, 'diag', 'diagnose');
-  debug(`appKey present: ${appKey ? 'yes' : 'no'}`, appKey ? 'ok' : 'err', 'diagnose');
-  debug(`userToken present: ${userToken ? 'yes' : 'no'}`, userToken ? 'ok' : 'err', 'diagnose');
-  debug(`Token timer: ${tokenExpiresAt ? formatRemaining(tokenExpiresAt - Date.now()) : 'not started'}`, tokenExpiresAt ? 'diag' : 'warn', 'diagnose');
-  const attrs = getCurrentComponentAttributes();
-  debug(`Rendered component: ${currentComponentEl ? '<' + currentComponentEl.tagName.toLowerCase() + '>' : 'none'}`, currentComponentEl ? 'ok' : 'warn', 'diagnose');
-  if (attrs) debug(`Attributes: ${JSON.stringify(Object.assign({}, attrs, { appkey: maskToken(attrs.appkey || attrs.appKey), usertoken: maskToken(attrs.usertoken || attrs.userToken) }), null, 2)}`, 'diag', 'diagnose');
-}
-function inspectRenderedComponent() {
-  const el = currentComponentEl || container.querySelector('[appkey], [appKey]');
-  if (!el) { debug('No rendered component to inspect.', 'warn', 'inspect'); return; }
-  const rect = el.getBoundingClientRect();
-  const attrs = getCurrentComponentAttributes();
-  debug(`Element: <${el.tagName.toLowerCase()}>`, 'diag', 'inspect');
-  debug(`Defined: ${!!customElements.get(el.tagName.toLowerCase())}`, customElements.get(el.tagName.toLowerCase()) ? 'ok' : 'warn', 'inspect');
-  debug(`Size: ${Math.round(rect.width)}x${Math.round(rect.height)} at x=${Math.round(rect.x)}, y=${Math.round(rect.y)}`, rect.width && rect.height ? 'ok' : 'warn', 'inspect');
-  debug(`Child nodes: ${el.childNodes.length}; shadowRoot: ${el.shadowRoot ? 'open' : 'none/closed'}`, 'diag', 'inspect');
-  debug(JSON.stringify(Object.assign({}, attrs, { appkey: maskToken(attrs.appkey || attrs.appKey), usertoken: maskToken(attrs.usertoken || attrs.userToken) }), null, 2), 'diag', 'inspect');
-}
-function buildEmbedSnippet() {
-  const cfg = getComponentConfig($('componentSelect').value);
-  const appKey = $('appKey').value.trim();
-  const apiUrl = $('apiUrl').value.trim().replace(/\/$/, '');
-  let attrs = {};
-  try { attrs = Object.assign({}, cfg.attrs, parseExtraAttrs()); } catch (_) { attrs = Object.assign({}, cfg.attrs); }
-  const attrText = Object.entries(Object.assign({ appKey: appKey ? '<APP_KEY>' : '', userToken: '<USER_TOKEN>', apiUrl, sandbox: $('sandboxAttr').value }, attrs))
-    .filter(([, v]) => v !== '')
-    .map(([k, v]) => `  ${k}="${String(v).replace(/"/g, '&quot;')}"`).join('\n');
-  return `<script src="https://embed.array.io/cms/array-web-component.js?appKey=${appKey ? '<APP_KEY>' : ''}"><\/script>\n<script src="${cfg.scriptUrl}?appKey=${appKey ? '<APP_KEY>' : ''}"><\/script>\n<${cfg.tagName}\n${attrText}\n></${cfg.tagName}>`;
+  const environment = $('environment').value;
+  const env = ENVIRONMENTS[environment];
+  const apiUrl = ($('apiUrl').value.trim().replace(/\/$/, '') || env.apiUrl);
+  const sandbox = env.sandbox;
+  const cfg = getComponentConfig(selectedComponentKey);
+  const checks = [];
+
+  checks.push({
+    id: 'appKey',
+    label: 'App Key present',
+    status: appKey ? 'ok' : 'err',
+    detail: appKey ? `Masked: ${maskToken(appKey)}` : 'Paste an appKey before loading.'
+  });
+  checks.push({
+    id: 'userToken',
+    label: 'User Token present',
+    status: userToken ? 'ok' : 'err',
+    detail: userToken ? `Masked: ${maskToken(userToken)}` : 'Paste a userToken before loading.'
+  });
+  checks.push({
+    id: 'component',
+    label: 'Component selected',
+    status: selectedComponentKey ? 'ok' : 'err',
+    detail: `${findComponentLabel(selectedComponentKey)} · ${cfg.tagName}`
+  });
+  checks.push({
+    id: 'environment',
+    label: 'Environment configured',
+    status: env ? 'ok' : 'err',
+    detail: `${env.label} · apiUrl=${apiUrl} · sandbox=${sandbox}`
+  });
+
+  const sandboxMismatch =
+    (environment === 'sandbox' && (!apiUrl.includes('sandbox') || sandbox !== 'true')) ||
+    (environment === 'production' && (apiUrl.includes('sandbox') || sandbox !== 'false'));
+  checks.push({
+    id: 'envMatch',
+    label: 'Environment / API URL alignment',
+    status: sandboxMismatch ? 'err' : 'ok',
+    detail: sandboxMismatch
+      ? `Selected ${env.label}, but apiUrl/sandbox look inconsistent.`
+      : 'Environment selection matches API URL and sandbox attr.'
+  });
+
+  let extraAttrsOk = true;
+  let extraAttrsDetail = 'No extra attributes.';
+  try {
+    const extra = parseExtraAttrs();
+    extraAttrsDetail = Object.keys(extra).length ? `JSON OK (${Object.keys(extra).length} keys)` : 'No extra attributes.';
+  } catch (err) {
+    extraAttrsOk = false;
+    extraAttrsDetail = err.message || String(err);
+  }
+  checks.push({
+    id: 'extraAttrs',
+    label: 'Extra attributes JSON',
+    status: extraAttrsOk ? 'ok' : 'err',
+    detail: extraAttrsDetail
+  });
+
+  if (activeSession.startedAt) {
+    const remaining = activeSession.expiresAt - Date.now();
+    const status = getSessionStatus(remaining);
+    checks.push({
+      id: 'session',
+      label: 'Active session token timer',
+      status: status.key === 'expired' ? 'err' : status.key === 'valid' ? 'ok' : 'warn',
+      detail: `${status.label} · remaining ${formatRemaining(remaining)}`
+    });
+  } else {
+    checks.push({
+      id: 'session',
+      label: 'Active session token timer',
+      status: 'warn',
+      detail: 'No session yet. Timer starts on first successful credentialed Load.'
+    });
+  }
+
+  const failedHttp = httpRequests.filter(r => r.error || (r.status && r.status >= 400));
+  checks.push({
+    id: 'http',
+    label: 'Recent HTTP failures',
+    status: failedHttp.length ? 'err' : 'ok',
+    detail: failedHttp.length
+      ? `${failedHttp.length} failing request(s); latest ${failedHttp[0].method} ${failedHttp[0].status || 'ERR'}`
+      : 'No failing requests captured in this session.'
+  });
+
+  if (probeScripts && appKey) {
+    if (!silent) setStatusMessage('Running preflight…');
+    const baseScript = `https://embed.array.io/cms/array-web-component.js?appKey=${encodeURIComponent(appKey)}`;
+    const componentScript = `${cfg.scriptUrl}?appKey=${encodeURIComponent(appKey)}`;
+    const [baseProbe, componentProbe] = await Promise.all([
+      probeScriptUrl(baseScript),
+      probeScriptUrl(componentScript)
+    ]);
+    checks.push({
+      id: 'baseScript',
+      label: 'Base script reachable',
+      status: baseProbe.ok ? 'ok' : 'err',
+      detail: baseProbe.ok
+        ? (baseProbe.opaque ? 'Network reachable (CORS opaque)' : `HTTP ${baseProbe.status}`)
+        : (baseProbe.error || `HTTP ${baseProbe.status || 'failed'}`)
+    });
+    checks.push({
+      id: 'componentScript',
+      label: 'Component script reachable',
+      status: componentProbe.ok ? 'ok' : 'err',
+      detail: componentProbe.ok
+        ? (componentProbe.opaque
+          ? `Network reachable (CORS opaque) · ${cfg.scriptUrl}`
+          : `HTTP ${componentProbe.status} · ${cfg.scriptUrl}`)
+        : (componentProbe.error || `HTTP ${componentProbe.status || 'failed'} · ${cfg.scriptUrl}`)
+    });
+  }
+
+  if (currentComponentEl) {
+    const defined = !!customElements.get(cfg.tagName);
+    const rect = currentComponentEl.getBoundingClientRect();
+    checks.push({
+      id: 'defined',
+      label: 'Custom element registered',
+      status: defined ? 'ok' : 'err',
+      detail: defined ? `${cfg.tagName} is defined` : `${cfg.tagName} is not registered`
+    });
+    checks.push({
+      id: 'rendered',
+      label: 'Component rendered in preview',
+      status: rect.width > 10 && rect.height > 10 ? 'ok' : 'warn',
+      detail: `${Math.round(rect.width)}×${Math.round(rect.height)}`
+    });
+  }
+
+  const result = {
+    ranAt: new Date(),
+    checks,
+    passed: checks.every(c => c.status !== 'err')
+  };
+  renderPreflight(result);
+  const failed = checks.filter(c => c.status === 'err').length;
+  if (!silent) {
+    setStatusMessage(failed ? `Preflight: ${failed} issue(s)` : 'Preflight clear');
+    logConsole(failed ? `Preflight found ${failed} issue(s).` : 'Preflight passed.', failed ? 'warn' : 'ok', 'preflight');
+    pushEvent(failed ? `Preflight failed (${failed})` : 'Preflight passed');
+  }
+  return result;
 }
 
-$('environment').addEventListener('change', () => { syncEnvDefaults(); savePreferences(); });
-$('componentSelect').addEventListener('change', () => {
-  const opt = $('componentSelect').selectedOptions[0]; const cfg = getComponentConfig($('componentSelect').value);
-  $('previewTitle').textContent = opt.textContent; $('previewMeta').textContent = `${cfg.tagName} · not loaded yet`;
+function buildIncidentSnapshot() {
+  const environment = $('environment').value;
+  const env = ENVIRONMENTS[environment];
+  const apiUrl = ($('apiUrl').value.trim().replace(/\/$/, '') || env.apiUrl);
+  const cfg = getComponentConfig(selectedComponentKey);
+  const remaining = activeSession.startedAt == null ? null : activeSession.expiresAt - Date.now();
+  const status = getSessionStatus(remaining);
+  const failed = httpRequests.filter(r => r.error || (r.status && r.status >= 400));
+  const latestFail = failed[0] || null;
+  const analysis = latestFail ? analyzeRequest(latestFail) : null;
+
+  const snapshot = {
+    version: 1,
+    type: 'array-component-studio-incident-snapshot',
+    createdAt: new Date().toISOString(),
+    component: {
+      key: selectedComponentKey,
+      label: findComponentLabel(selectedComponentKey),
+      tagName: cfg.tagName,
+      scriptUrl: cfg.scriptUrl
+    },
+    environment: {
+      name: environment,
+      label: env.label,
+      apiUrl,
+      sandbox: env.sandbox
+    },
+    credentials: {
+      appKey: maskToken($('appKey').value.trim()) || null,
+      userToken: maskToken($('userToken').value.trim()) || null
+    },
+    session: {
+      status: status.label,
+      startedAt: activeSession.startedAt ? new Date(activeSession.startedAt).toISOString() : null,
+      expiresAt: activeSession.expiresAt ? new Date(activeSession.expiresAt).toISOString() : null,
+      remainingMs: remaining,
+      durationMs: activeSession.duration
+    },
+    health: { ...health },
+    preflight: lastPreflight ? {
+      ranAt: lastPreflight.ranAt.toISOString(),
+      passed: lastPreflight.passed,
+      checks: lastPreflight.checks
+    } : null,
+    http: httpRequests.slice(0, 40).map(r => ({
+      method: r.method,
+      url: maskUrl(r.url),
+      status: r.status,
+      durationMs: r.duration,
+      size: r.size,
+      error: r.error,
+      responseBody: (r.responseBody || '').slice(0, 2000)
+    })),
+    console: consoleEntries.slice(-40).map(e => ({
+      time: e.time.toISOString(),
+      level: e.level,
+      tag: e.tag,
+      message: e.message
+    })),
+    analysis,
+    lastLoadResult
+  };
+
+  const ticketLines = [
+    '### Array Component Studio — Incident Snapshot',
+    '',
+    `**When:** ${snapshot.createdAt}`,
+    `**Component:** ${snapshot.component.label} (\`${snapshot.component.tagName}\`)`,
+    `**Environment:** ${snapshot.environment.label} · apiUrl=\`${snapshot.environment.apiUrl}\` · sandbox=\`${snapshot.environment.sandbox}\``,
+    `**Credentials:** appKey=\`${snapshot.credentials.appKey || '—'}\` · userToken=\`${snapshot.credentials.userToken || '—'}\``,
+    `**Session:** ${snapshot.session.status} · remaining ${formatRemaining(snapshot.session.remainingMs)} · started ${formatClock(activeSession.startedAt)} · expires ${formatClock(activeSession.expiresAt)}`,
+    '',
+    '**Preflight**'
+  ];
+  if (!lastPreflight) {
+    ticketLines.push('- Not run');
+  } else {
+    lastPreflight.checks.forEach(c => {
+      ticketLines.push(`- ${c.status.toUpperCase()} ${c.label}${c.detail ? ` — ${c.detail}` : ''}`);
+    });
+  }
+  ticketLines.push('', '**Component Health**',
+    `- Base Script: ${health.base}`,
+    `- Component Script: ${health.component}`,
+    `- Custom Element: ${health.defined}`,
+    `- Rendered: ${health.rendered}`,
+    `- API Calls: ${health.api}`,
+    `- Session: ${health.session}`,
+    '',
+    '**HTTP Timeline**'
+  );
+  if (!snapshot.http.length) ticketLines.push('- (none)');
+  snapshot.http.slice(0, 20).forEach(r => {
+    ticketLines.push(`- \`${r.method}\` ${r.status || 'ERR'} ${r.durationMs || 0}ms \`${r.url}\``);
+  });
+  if (analysis) {
+    ticketLines.push('', '**Likely Cause**', analysis.problem, '', '**Suggested Fix**', analysis.fix, `Confidence: ${analysis.confidence}`);
+  }
+  if (latestFail && latestFail.responseBody) {
+    ticketLines.push('', '**Latest Failure Body (truncated)**', '```', latestFail.responseBody.slice(0, 1200), '```');
+  }
+  ticketLines.push('', '_Secrets are masked. Attach the downloaded JSON for full engineering detail._');
+
+  snapshot.ticketMarkdown = ticketLines.join('\n');
+  return snapshot;
+}
+
+async function copyIncidentSnapshot() {
+  const snapshot = buildIncidentSnapshot();
+  await navigator.clipboard.writeText(snapshot.ticketMarkdown);
+  setStatusMessage('Incident snapshot copied');
+  logConsole('Incident snapshot copied for ticket.', 'ok', 'snapshot');
+}
+
+function downloadIncidentSnapshot() {
+  const snapshot = buildIncidentSnapshot();
+  const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  a.href = url;
+  a.download = `acs-incident-${selectedComponentKey}-${stamp}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  setStatusMessage('Incident snapshot downloaded');
+  logConsole('Incident snapshot JSON downloaded.', 'ok', 'snapshot');
+}
+
+function savePreferences() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    component: selectedComponentKey,
+    environment: $('environment').value,
+    tokenLife: $('tokenLife').value,
+    customTokenLife: $('customTokenLife').value,
+    rememberAppKey: $('rememberAppKey').checked,
+    appKey: $('rememberAppKey').checked ? $('appKey').value.trim() : '',
+    componentHeight: $('componentHeight').value,
+    scriptOverride: $('scriptOverride').value,
+    extraAttrs: $('extraAttrs').value,
+    inspectorCollapsed: $('workspace').classList.contains('inspector-collapsed'),
+    devtoolsCollapsed: $('main').classList.contains('devtools-collapsed'),
+    viewport: $('viewport').classList.contains('mobile') ? 'mobile' : 'desktop'
+  }));
+}
+
+function loadPreferences() {
+  try {
+    const prefs = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    if (prefs.component) selectedComponentKey = prefs.component;
+    if (prefs.environment && ENVIRONMENTS[prefs.environment]) $('environment').value = prefs.environment;
+    syncEnvDefaults();
+    if (prefs.tokenLife) $('tokenLife').value = prefs.tokenLife;
+    if (prefs.customTokenLife) $('customTokenLife').value = prefs.customTokenLife;
+    $('customTokenLifeWrap').classList.toggle('hidden', $('tokenLife').value !== 'custom');
+    $('rememberAppKey').checked = !!prefs.rememberAppKey;
+    if (prefs.rememberAppKey && prefs.appKey) $('appKey').value = prefs.appKey;
+    if (prefs.componentHeight) $('componentHeight').value = prefs.componentHeight;
+    if (prefs.scriptOverride) $('scriptOverride').value = prefs.scriptOverride;
+    if (prefs.extraAttrs) $('extraAttrs').value = prefs.extraAttrs;
+    if (prefs.inspectorCollapsed) $('workspace').classList.add('inspector-collapsed');
+    if (prefs.devtoolsCollapsed) {
+      $('main').classList.add('devtools-collapsed');
+      $('toggleDevtoolsBtn').textContent = 'Expand';
+    }
+    if (prefs.viewport === 'mobile') setViewport('mobile');
+    updatePreviewChrome();
+  } catch (_) {}
+}
+
+function setActivity(name) {
+  document.querySelectorAll('.activity button').forEach(btn => btn.classList.toggle('active', btn.dataset.activity === name));
+  if (name === 'http') {
+    setDevtoolsTab('http');
+    if ($('main').classList.contains('devtools-collapsed')) {
+      $('main').classList.remove('devtools-collapsed');
+      $('toggleDevtoolsBtn').textContent = 'Collapse';
+    }
+  }
+}
+function setDevtoolsTab(name) {
+  document.querySelectorAll('.devtools-tabs .tab').forEach(tab => tab.classList.toggle('active', tab.dataset.tab === name));
+  document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.toggle('active', panel.dataset.tabPanel === name));
+}
+function setViewport(mode) {
+  const viewport = $('viewport');
+  viewport.classList.remove('mobile', 'desktop', 'fullscreen');
+  viewport.classList.add(mode === 'mobile' ? 'mobile' : 'desktop');
+  $('mobileBtn').classList.toggle('active', mode === 'mobile');
+  $('desktopBtn').classList.toggle('active', mode !== 'mobile');
+  savePreferences();
+}
+
+document.querySelectorAll('.activity button').forEach(btn => {
+  btn.addEventListener('click', () => setActivity(btn.dataset.activity));
+});
+document.querySelectorAll('.devtools-tabs .tab').forEach(tab => {
+  tab.addEventListener('click', () => setDevtoolsTab(tab.dataset.tab));
+});
+
+$('componentTree').addEventListener('click', e => {
+  const btn = e.target.closest('[data-key]');
+  if (!btn) return;
+  selectedComponentKey = btn.dataset.key;
+  renderComponentTree($('componentSearch').value);
+  updatePreviewChrome();
+  savePreferences();
+  if ($('appKey').value.trim() && $('userToken').value.trim()) {
+    loadComponent({ fromComponentSwitch: true });
+  } else {
+    $('appKey').focus();
+    setStatusMessage('Enter credentials below to load component');
+  }
+});
+
+$('componentSearch').addEventListener('input', () => renderComponentTree($('componentSearch').value));
+$('environment').addEventListener('change', () => {
+  syncEnvDefaults();
+  savePreferences();
+  setStatusMessage(`Environment set to ${ENVIRONMENTS[$('environment').value].label} (applies on next Load)`);
+});
+$('tokenLife').addEventListener('change', () => {
+  $('customTokenLifeWrap').classList.toggle('hidden', $('tokenLife').value !== 'custom');
   savePreferences();
 });
-$('sandboxAttr').addEventListener('change', savePreferences);
-$('apiUrl').addEventListener('input', savePreferences);
-$('componentHeight').addEventListener('input', savePreferences);
-$('tokenLife').addEventListener('change', () => { $('customTokenLifeWrap').hidden = $('tokenLife').value !== 'custom'; savePreferences(); });
 $('customTokenLife').addEventListener('input', savePreferences);
 $('rememberAppKey').addEventListener('change', savePreferences);
 $('appKey').addEventListener('input', () => { if ($('rememberAppKey').checked) savePreferences(); });
-$('loadBtn').addEventListener('click', loadComponent);
-$('reloadBtn').addEventListener('click', loadComponent);
-$('replaceTokenBtn').addEventListener('click', () => {
-  if (!$('userToken').value.trim()) { logStatus('Paste the refreshed userToken first.', 'err'); return; }
-  if (!container.querySelector('[appKey], [appkey]')) { loadComponent(); return; }
-  loadComponent();
+$('componentHeight').addEventListener('input', savePreferences);
+$('scriptOverride').addEventListener('input', savePreferences);
+$('extraAttrs').addEventListener('input', savePreferences);
+$('apiUrl').addEventListener('input', savePreferences);
+
+$('loadBtn').addEventListener('click', () => loadComponent());
+$('reloadBtn').addEventListener('click', () => loadComponent());
+$('resetSessionBtn').addEventListener('click', resetSession);
+$('themeToggleBtn').addEventListener('click', toggleTheme);
+$('mobileBtn').addEventListener('click', () => setViewport('mobile'));
+$('desktopBtn').addEventListener('click', () => setViewport('desktop'));
+$('fullscreenBtn').addEventListener('click', () => {
+  $('viewport').classList.toggle('fullscreen');
 });
-$('clearBtn').addEventListener('click', () => {
-  container.innerHTML = ''; debugEntries = []; debugEl.innerHTML = ''; debugEl.hidden = true; currentComponentEl = null; currentLoadContext = null; logStatus('Cleared.'); $('previewMeta').textContent = 'Not loaded yet.';
-  tokenExpiresAt = null; clearInterval(tokenTimerInterval); tokenTimerInterval = null; updateTokenTimer();
+$('toggleInspectorBtn').addEventListener('click', () => {
+  $('workspace').classList.toggle('inspector-collapsed');
+  savePreferences();
+});
+$('toggleDevtoolsBtn').addEventListener('click', () => {
+  const collapsed = $('main').classList.toggle('devtools-collapsed');
+  $('toggleDevtoolsBtn').textContent = collapsed ? 'Expand' : 'Collapse';
+  savePreferences();
+});
+$('clearHttpBtn').addEventListener('click', () => {
+  httpRequests = [];
+  selectedRequestId = null;
+  $('httpDetail').innerHTML = '<div class="empty">Select a request.</div>';
+  renderSmartAnalysis(null);
+  renderHttp();
+});
+$('copyDiagnosticsBtn').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(buildDiagnostics());
+    setStatusMessage('Diagnostics copied');
+  } catch (err) {
+    setStatusMessage(`Copy failed: ${err.message || err}`);
+  }
+});
+$('runPreflightBtn').addEventListener('click', () => runPreflight({ probeScripts: true }));
+$('runPreflightBtn2').addEventListener('click', () => runPreflight({ probeScripts: true }));
+$('copySnapshotBtn').addEventListener('click', async () => {
+  try { await copyIncidentSnapshot(); }
+  catch (err) { setStatusMessage(`Copy failed: ${err.message || err}`); }
+});
+$('copySnapshotBtn2').addEventListener('click', async () => {
+  try { await copyIncidentSnapshot(); }
+  catch (err) { setStatusMessage(`Copy failed: ${err.message || err}`); }
+});
+$('downloadSnapshotBtn').addEventListener('click', downloadIncidentSnapshot);
+$('downloadSnapshotBtn2').addEventListener('click', downloadIncidentSnapshot);
+
+document.addEventListener('click', e => {
+  const row = e.target.closest('.req-row[data-id]');
+  if (!row) return;
+  const req = httpRequests.find(r => r.id === row.dataset.id);
+  if (!req) return;
+  renderHttpDetail(req);
+  renderHttp();
+  setDevtoolsTab('http');
 });
 
-$('logFilter').addEventListener('change', renderDebugEntries);
-$('diagnoseBtn').addEventListener('click', runDiagnostics);
-$('inspectBtn').addEventListener('click', inspectRenderedComponent);
-$('copySnippetBtn').addEventListener('click', () => copyText(buildEmbedSnippet(), 'Embed snippet copied with secrets redacted.'));
-$('copyLogsBtn').addEventListener('click', () => copyText(getLogsText(), 'Logs copied.'));
-$('exportLogsBtn').addEventListener('click', () => downloadText(`array-playground-logs-${new Date().toISOString().replace(/[:.]/g, '-')}.txt`, getLogsText()));
-$('clearLogsBtn').addEventListener('click', () => { debugEntries = []; debugEl.innerHTML = ''; debugEl.hidden = true; });
-installRelevantDiagnostics();
+applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+syncEnvDefaults();
 loadPreferences();
-</script>
+renderComponentTree();
+updateSessionUi();
+updateHealthUi();
+renderConsole();
+renderHttp();
+setStatusMessage('Ready');
+  </script>
 </body>
 </html>
