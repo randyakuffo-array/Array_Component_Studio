@@ -1172,31 +1172,77 @@ function installHttpInterceptor() {
   };
 }
 
-function loadScript(src, kind) {
-  if (SCRIPT_LOADS.has(src)) return SCRIPT_LOADS.get(src);
-  const promise = new Promise((resolve, reject) => {
+function markScriptHealth(kind, state) {
+  if (kind === 'base') health.base = state;
+  if (kind === 'component') health.component = state;
+  updateHealthUi();
+}
+
+function loadScriptViaTag(src) {
+  return new Promise((resolve, reject) => {
     const existing = [...document.scripts].find(s => s.src === src);
-    if (existing && existing.dataset.loaded === 'true') { resolve(); return; }
-    const script = existing || document.createElement('script');
+    if (existing && existing.dataset.loaded === 'true') {
+      resolve();
+      return;
+    }
+    if (existing) existing.remove();
+
+    const script = document.createElement('script');
     script.async = false;
     script.onload = () => {
       script.dataset.loaded = 'true';
-      if (kind === 'base') health.base = 'ok';
-      if (kind === 'component') health.component = 'ok';
-      updateHealthUi();
       resolve();
     };
     script.onerror = () => {
-      if (kind === 'base') health.base = 'err';
-      if (kind === 'component') health.component = 'err';
-      updateHealthUi();
-      logConsole(`Failed to load script: ${src}`, 'err', 'script');
+      script.remove();
       reject(new Error(`Could not load script: ${src}`));
     };
-    if (!existing) { script.src = src; document.head.appendChild(script); }
+    script.src = src;
+    document.head.appendChild(script);
   });
+}
+
+async function loadScriptViaFetch(src) {
+  const response = await fetch(src, { cache: 'no-store' });
+  if (!response.ok) throw new Error(`HTTP ${response.status} loading script: ${src}`);
+  const code = await response.text();
+  if (!code || !code.trim()) throw new Error(`Empty script response: ${src}`);
+  const script = document.createElement('script');
+  script.dataset.loaded = 'true';
+  script.dataset.acsSrc = src;
+  script.textContent = code;
+  document.head.appendChild(script);
+}
+
+function loadScript(src, kind) {
+  if (SCRIPT_LOADS.has(src)) {
+    return SCRIPT_LOADS.get(src).then(() => {
+      markScriptHealth(kind, 'ok');
+    });
+  }
+
+  const promise = (async () => {
+    try {
+      await loadScriptViaTag(src);
+    } catch (tagErr) {
+      logConsole(`Script tag failed, retrying via fetch: ${maskUrl(src)}`, 'warn', 'script');
+      try {
+        await loadScriptViaFetch(src);
+      } catch (fetchErr) {
+        markScriptHealth(kind, 'err');
+        logConsole(`Failed to load script: ${maskUrl(src)}`, 'err', 'script');
+        throw fetchErr;
+      }
+    }
+    markScriptHealth(kind, 'ok');
+    logConsole(`Loaded script: ${maskUrl(src)}`, 'ok', 'script');
+  })();
+
   SCRIPT_LOADS.set(src, promise);
-  return promise;
+  return promise.catch(err => {
+    SCRIPT_LOADS.delete(src);
+    throw err;
+  });
 }
 
 function waitForCustomElement(tagName, timeoutMs = 8000) {
@@ -1327,6 +1373,10 @@ async function loadComponent({ fromComponentSwitch = false } = {}) {
   } catch (err) {
     console.error(err);
     health.rendered = 'err';
+    if (/script/i.test(err.message || '')) {
+      if (/array-web-component/i.test(err.message || '')) health.base = 'err';
+      else health.component = 'err';
+    }
     updateHealthUi();
     logConsole(err.message || String(err), 'err', 'error');
     pushLifecycle(`load:error:${cfg.tagName}`);
@@ -1411,12 +1461,16 @@ function renderPreflight(result) {
 
 async function probeScriptUrl(url) {
   try {
-    const response = await fetch(url, { method: 'GET', mode: 'no-cors', cache: 'no-store' });
-    // Opaque responses (no-cors) have type 'opaque' and status 0 when the network request succeeded.
-    if (response.type === 'opaque' || response.ok) {
-      return { ok: true, status: response.status || 'reachable', opaque: response.type === 'opaque' };
-    }
-    return { ok: false, status: response.status };
+    const head = await fetch(url, { method: 'HEAD', cache: 'no-store' });
+    if (head.ok) return { ok: true, status: head.status };
+    // Some CDNs reject HEAD; fall back to a ranged GET.
+    const response = await fetch(url, {
+      method: 'GET',
+      cache: 'no-store',
+      headers: { Range: 'bytes=0-0' }
+    });
+    if (response.ok || response.status === 206) return { ok: true, status: response.status };
+    return { ok: false, status: response.status, error: `HTTP ${response.status}` };
   } catch (err) {
     return { ok: false, status: 0, error: err.message || String(err) };
   }
@@ -1526,7 +1580,7 @@ async function runPreflight({ probeScripts = true, silent = false } = {}) {
       label: 'Base script reachable',
       status: baseProbe.ok ? 'ok' : 'err',
       detail: baseProbe.ok
-        ? (baseProbe.opaque ? 'Network reachable (CORS opaque)' : `HTTP ${baseProbe.status}`)
+        ? `HTTP ${baseProbe.status}`
         : (baseProbe.error || `HTTP ${baseProbe.status || 'failed'}`)
     });
     checks.push({
@@ -1534,9 +1588,7 @@ async function runPreflight({ probeScripts = true, silent = false } = {}) {
       label: 'Component script reachable',
       status: componentProbe.ok ? 'ok' : 'err',
       detail: componentProbe.ok
-        ? (componentProbe.opaque
-          ? `Network reachable (CORS opaque) · ${cfg.scriptUrl}`
-          : `HTTP ${componentProbe.status} · ${cfg.scriptUrl}`)
+        ? `HTTP ${componentProbe.status} · ${cfg.scriptUrl}`
         : (componentProbe.error || `HTTP ${componentProbe.status || 'failed'} · ${cfg.scriptUrl}`)
     });
   }
