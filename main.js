@@ -1,5 +1,27 @@
-const { app, BrowserWindow, shell } = require('electron');
+const { app, BrowserWindow, shell, ipcMain, session } = require('electron');
 const path = require('path');
+
+ipcMain.handle('acs:clear-http-cache', async () => {
+  await session.defaultSession.clearCache();
+  return { ok: true };
+});
+
+ipcMain.handle('acs:clear-storage-data', async (_event, options = {}) => {
+  await session.defaultSession.clearStorageData({
+    storages: options.storages || [
+      'appcache',
+      'cookies',
+      'filesystem',
+      'indexdb',
+      'localstorage',
+      'shadercache',
+      'websql',
+      'serviceworkers',
+      'cachestorage'
+    ]
+  });
+  return { ok: true };
+});
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -10,6 +32,7 @@ function createWindow() {
     title: 'Array Component Studio',
     backgroundColor: '#05070b',
     webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
       sandbox: true,

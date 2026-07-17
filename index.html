@@ -91,6 +91,40 @@
     .mono { font-family: var(--mono); }
     .hidden { display: none !important; }
 
+    .profile-box {
+      border: 1px solid var(--border);
+      border-radius: var(--r2);
+      background: var(--panel);
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+    .profile-box .profile-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .profile-box .profile-head .label {
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-weight: 700;
+    }
+    .profile-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .profile-actions .span2 { grid-column: 1 / -1; }
+    .key-count {
+      color: var(--muted);
+      font-size: 10px;
+      font-family: var(--mono);
+    }
+
     .app {
       height: 100vh;
       display: grid;
@@ -507,6 +541,7 @@
         <button type="button" id="runPreflightBtn">Preflight</button>
         <button type="button" id="copySnapshotBtn">Copy Snapshot</button>
         <button type="button" id="downloadSnapshotBtn">Download Snapshot</button>
+        <button type="button" id="clearCacheBtn">Clear Cache</button>
         <button type="button" id="copyDiagnosticsBtn">Copy Diagnostics</button>
         <button type="button" id="toggleInspectorBtn">Inspector</button>
         <button type="button" id="themeToggleBtn">Theme</button>
@@ -544,6 +579,37 @@
           <div class="tree-wrap" id="componentTree"></div>
 
           <div class="side-footer">
+            <div class="profile-box">
+              <div class="profile-head">
+                <span class="label">Client profiles</span>
+                <span class="key-count" id="profileKeyCount"></span>
+              </div>
+              <div class="field">
+                <label for="clientProfileSelect">Saved client</label>
+                <select id="clientProfileSelect">
+                  <option value="">— New / unsaved —</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="clientName">Client name</label>
+                <input id="clientName" autocomplete="off" placeholder="e.g. Acme Bank" />
+              </div>
+              <div class="field">
+                <label for="clientKeySelect">App key for this client</label>
+                <select id="clientKeySelect">
+                  <option value="">— Use field below —</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="clientKeyLabel">Key label (optional)</label>
+                <input id="clientKeyLabel" autocomplete="off" placeholder="e.g. Prod, Sandbox, Brand B" />
+              </div>
+              <div class="profile-actions">
+                <button type="button" class="primary span2" id="saveClientProfileBtn">Save client / key</button>
+                <button type="button" id="deleteClientKeyBtn">Remove key</button>
+                <button type="button" id="deleteClientProfileBtn">Delete client</button>
+              </div>
+            </div>
             <div class="field">
               <label for="environment">Environment</label>
               <select id="environment">
@@ -570,11 +636,8 @@
             </div>
             <div class="field">
               <label for="userToken">User Token</label>
-              <textarea id="userToken" rows="3" placeholder="Paste userToken"></textarea>
+              <textarea id="userToken" rows="3" placeholder="Paste userToken (not saved in profiles)"></textarea>
             </div>
-            <label style="display:flex;align-items:center;gap:6px;margin-bottom:8px;color:var(--text)">
-              <input id="rememberAppKey" type="checkbox" style="width:auto" /> Remember appKey
-            </label>
             <div style="display:grid;grid-template-columns:1.4fr .8fr;gap:6px;margin-bottom:4px">
               <button type="button" class="primary" id="loadBtn">Load / Reload</button>
               <button type="button" id="resetSessionBtn">Reset</button>
@@ -598,7 +661,11 @@
                 <label for="extraAttrs">Extra attributes JSON</label>
                 <textarea id="extraAttrs" rows="4" placeholder='{"condensed":"true"}'></textarea>
               </div>
-              <div class="empty" style="padding:0">Env changes apply on next Load. Timer restarts only when credentials change.</div>
+              <div class="profile-actions" style="margin-top:10px">
+                <button type="button" class="span2" id="clearCacheBtn2">Clear runtime cache</button>
+                <button type="button" class="span2" id="resetLocalDataBtn">Reset all local data…</button>
+              </div>
+              <div class="empty" style="padding:0">Profiles store client name + app keys only. User tokens are never saved. Clear cache keeps profiles; reset all local data removes profiles too.</div>
             </details>
           </div>
         </aside>
@@ -783,9 +850,13 @@ const COMPONENT_GROUPS = [
 const $ = id => document.getElementById(id);
 const THEME_KEY = 'acs.theme';
 const STORAGE_KEY = 'acs.ide.preferences.v1';
+const PROFILES_KEY = 'acs.clientProfiles.v1';
 const SCRIPT_LOADS = new Map();
 
 let selectedComponentKey = 'subscriptionManager';
+let clientProfiles = [];
+let activeProfileId = '';
+let activeKeyId = '';
 let activeSession = {
   appKey: null,
   userToken: null,
@@ -1010,9 +1081,135 @@ function resetSession() {
   activeSession = { appKey: null, userToken: null, environment: null, startedAt: null, expiresAt: null, duration: 30 * 60 * 1000 };
   health.session = 'idle';
   updateSessionUi();
+  updateHealthUi();
   logConsole('Session reset.', 'warn', 'session');
   pushEvent('Session reset');
   setStatusMessage('Session reset');
+}
+
+function clearArraySessionStorage() {
+  const keys = [];
+  for (let i = 0; i < sessionStorage.length; i += 1) {
+    const key = sessionStorage.key(i);
+    if (!key) continue;
+    if (/array/i.test(key)) keys.push(key);
+  }
+  keys.forEach(key => sessionStorage.removeItem(key));
+  return keys.length;
+}
+
+function resetScriptLoadCache() {
+  SCRIPT_LOADS.clear();
+  // Keep already-executed embed scripts registered; only reset the loader map.
+  [...document.scripts].forEach(script => {
+    const src = script.src || script.dataset.acsSrc;
+    if (!src) return;
+    if (!/embed\.array\.io/i.test(src) && !script.dataset.acsSrc) return;
+    script.dataset.loaded = 'true';
+    SCRIPT_LOADS.set(src, Promise.resolve());
+  });
+}
+
+function clearRuntimeMemory() {
+  httpRequests = [];
+  selectedRequestId = null;
+  consoleEntries = [];
+  eventEntries = [];
+  lifecycleEntries = [];
+  timingEntries = [];
+  lastPreflight = null;
+  lastLoadResult = null;
+  currentComponentEl = null;
+  resetScriptLoadCache();
+
+  if (window._cacheHtml) window._cacheHtml = {};
+
+  const container = $('componentContainer');
+  if (container) container.innerHTML = '';
+
+  health = {
+    base: 'idle', component: 'idle', defined: 'idle', rendered: 'idle', api: 'idle', session: health.session
+  };
+
+  $('httpDetail').innerHTML = '<div class="empty">Select a request.</div>';
+  renderSmartAnalysis(null);
+  renderHttp();
+  renderConsole();
+  renderEvents();
+  renderLifecycle();
+  renderTiming();
+  renderPreflight(null);
+  updateHealthUi();
+  updatePreviewChrome('Cache cleared · not loaded');
+}
+
+async function clearCache({ includeHttpCache = true } = {}) {
+  const removedSessionKeys = clearArraySessionStorage();
+  clearRuntimeMemory();
+
+  let httpCacheCleared = false;
+  if (includeHttpCache && window.acsNative?.clearHttpCache) {
+    try {
+      await window.acsNative.clearHttpCache();
+      httpCacheCleared = true;
+    } catch (err) {
+      logConsole(`HTTP cache clear failed: ${err.message || err}`, 'warn', 'cache');
+    }
+  }
+
+  if (window.caches?.keys) {
+    try {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(key => caches.delete(key)));
+    } catch (_) {}
+  }
+
+  logConsole(
+    `Cache cleared (devtools, script map, Array HTML cache, ${removedSessionKeys} sessionStorage key(s)${httpCacheCleared ? ', HTTP cache' : ''}). Client profiles kept.`,
+    'ok',
+    'cache'
+  );
+  pushEvent('Cache cleared');
+  setStatusMessage('Cache cleared · profiles kept');
+}
+
+async function resetAllLocalData() {
+  const ok = confirm(
+    'Reset ALL local data?\n\nThis removes:\n• Client profiles\n• IDE preferences\n• Theme\n• Runtime cache / HTTP cache\n• Array sessionStorage\n\nYou will need to re-enter credentials and rebuild client profiles.'
+  );
+  if (!ok) return;
+
+  clearRuntimeMemory();
+  clearArraySessionStorage();
+  clientProfiles = [];
+  activeProfileId = '';
+  activeKeyId = '';
+  localStorage.removeItem(PROFILES_KEY);
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(THEME_KEY);
+
+  $('clientName').value = '';
+  $('clientKeyLabel').value = '';
+  $('appKey').value = '';
+  $('userToken').value = '';
+  $('scriptOverride').value = '';
+  $('extraAttrs').value = '';
+  renderClientProfileSelects();
+
+  if (window.acsNative?.clearHttpCache) {
+    try { await window.acsNative.clearHttpCache(); } catch (_) {}
+  }
+  if (window.caches?.keys) {
+    try {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(key => caches.delete(key)));
+    } catch (_) {}
+  }
+
+  applyTheme('dark');
+  logConsole('All local data reset.', 'warn', 'cache');
+  pushEvent('All local data reset');
+  setStatusMessage('All local data reset');
 }
 
 function analyzeRequest(req) {
@@ -1368,6 +1565,9 @@ async function loadComponent({ fromComponentSwitch = false } = {}) {
       durationMs: Math.round(performance.now() - t0)
     };
     savePreferences();
+    if (normalizeClientName($('clientName').value)) {
+      upsertClientProfile({ silent: true });
+    }
     updatePreviewChrome(`${cfg.tagName} · ${ENVIRONMENTS[environment].label}`);
     setStatusMessage(`Loaded ${label}`);
   } catch (err) {
@@ -1753,14 +1953,270 @@ function downloadIncidentSnapshot() {
   logConsole('Incident snapshot JSON downloaded.', 'ok', 'snapshot');
 }
 
+function newId(prefix = 'id') {
+  return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(16).slice(2, 8)}`;
+}
+
+function normalizeClientName(name) {
+  return String(name || '').trim().replace(/\s+/g, ' ');
+}
+
+function loadClientProfilesStore() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(PROFILES_KEY) || '{}');
+    clientProfiles = Array.isArray(raw.profiles) ? raw.profiles : [];
+    activeProfileId = raw.lastProfileId || '';
+    activeKeyId = raw.lastKeyId || '';
+  } catch (_) {
+    clientProfiles = [];
+    activeProfileId = '';
+    activeKeyId = '';
+  }
+}
+
+function persistClientProfilesStore() {
+  localStorage.setItem(PROFILES_KEY, JSON.stringify({
+    profiles: clientProfiles,
+    lastProfileId: activeProfileId || '',
+    lastKeyId: activeKeyId || ''
+  }));
+}
+
+function findClientProfile(id) {
+  return clientProfiles.find(p => p.id === id) || null;
+}
+
+function findClientProfileByName(name) {
+  const needle = normalizeClientName(name).toLowerCase();
+  if (!needle) return null;
+  return clientProfiles.find(p => normalizeClientName(p.name).toLowerCase() === needle) || null;
+}
+
+function defaultKeyLabel(appKey, environment) {
+  const envLabel = ENVIRONMENTS[environment]?.label;
+  if (envLabel) return envLabel;
+  return maskToken(appKey) || 'App key';
+}
+
+function formatKeyOption(key) {
+  const label = key.label || defaultKeyLabel(key.appKey, key.environment);
+  return `${label} · ${maskToken(key.appKey)}`;
+}
+
+function renderClientProfileSelects() {
+  const profileSelect = $('clientProfileSelect');
+  const keySelect = $('clientKeySelect');
+  const selectedProfileId = activeProfileId;
+  const selectedKeyId = activeKeyId;
+
+  const sorted = [...clientProfiles].sort((a, b) =>
+    normalizeClientName(a.name).localeCompare(normalizeClientName(b.name))
+  );
+
+  profileSelect.innerHTML = `<option value="">— New / unsaved —</option>` + sorted.map(p => {
+    const count = (p.keys || []).length;
+    return `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)} (${count} key${count === 1 ? '' : 's'})</option>`;
+  }).join('');
+
+  if (selectedProfileId && findClientProfile(selectedProfileId)) {
+    profileSelect.value = selectedProfileId;
+  } else {
+    profileSelect.value = '';
+  }
+
+  const profile = findClientProfile(profileSelect.value);
+  const keys = profile?.keys || [];
+  keySelect.innerHTML = `<option value="">— Use field below —</option>` + keys.map(k =>
+    `<option value="${escapeHtml(k.id)}">${escapeHtml(formatKeyOption(k))}</option>`
+  ).join('');
+
+  if (selectedKeyId && keys.some(k => k.id === selectedKeyId)) {
+    keySelect.value = selectedKeyId;
+  } else {
+    keySelect.value = '';
+  }
+
+  const totalKeys = clientProfiles.reduce((n, p) => n + (p.keys?.length || 0), 0);
+  $('profileKeyCount').textContent = clientProfiles.length
+    ? `${clientProfiles.length} client${clientProfiles.length === 1 ? '' : 's'} · ${totalKeys} key${totalKeys === 1 ? '' : 's'}`
+    : 'None saved yet';
+}
+
+function applySelectedClientKey() {
+  const profile = findClientProfile($('clientProfileSelect').value);
+  const key = profile?.keys?.find(k => k.id === $('clientKeySelect').value);
+  if (!profile || !key) return;
+  $('clientName').value = profile.name;
+  $('clientKeyLabel').value = key.label || '';
+  $('appKey').value = key.appKey;
+  if (key.environment && ENVIRONMENTS[key.environment]) {
+    $('environment').value = key.environment;
+    syncEnvDefaults();
+  }
+  activeProfileId = profile.id;
+  activeKeyId = key.id;
+  persistClientProfilesStore();
+  setStatusMessage(`Loaded profile: ${profile.name} · ${key.label || maskToken(key.appKey)}`);
+}
+
+function onClientProfileSelected() {
+  activeProfileId = $('clientProfileSelect').value || '';
+  const profile = findClientProfile(activeProfileId);
+  if (!profile) {
+    activeKeyId = '';
+    $('clientName').value = '';
+    $('clientKeyLabel').value = '';
+    renderClientProfileSelects();
+    persistClientProfilesStore();
+    return;
+  }
+  $('clientName').value = profile.name;
+  const preferred = profile.keys.find(k => k.id === activeKeyId) || profile.keys[0];
+  activeKeyId = preferred?.id || '';
+  renderClientProfileSelects();
+  if (preferred) applySelectedClientKey();
+  else persistClientProfilesStore();
+}
+
+function upsertClientProfile({ silent = false } = {}) {
+  const name = normalizeClientName($('clientName').value);
+  const appKey = $('appKey').value.trim();
+  const label = $('clientKeyLabel').value.trim();
+  const environment = $('environment').value;
+
+  if (!name) {
+    if (!silent) {
+      setStatusMessage('Enter a client name to save');
+      $('clientName').focus();
+    }
+    return null;
+  }
+  if (!appKey) {
+    if (!silent) {
+      setStatusMessage('Paste an appKey to save');
+      $('appKey').focus();
+    }
+    return null;
+  }
+
+  let profile = findClientProfile(activeProfileId) || findClientProfileByName(name);
+  if (!profile) {
+    profile = { id: newId('client'), name, keys: [], updatedAt: new Date().toISOString() };
+    clientProfiles.push(profile);
+  } else {
+    profile.name = name;
+    profile.updatedAt = new Date().toISOString();
+  }
+
+  let key = profile.keys.find(k => k.appKey === appKey);
+  if (!key) {
+    key = {
+      id: newId('key'),
+      label: label || defaultKeyLabel(appKey, environment),
+      appKey,
+      environment
+    };
+    profile.keys.push(key);
+    if (!silent) logConsole(`Added app key to ${profile.name}: ${key.label}`, 'ok', 'profile');
+  } else {
+    if (label) key.label = label;
+    key.environment = environment;
+    if (!silent) logConsole(`Updated app key on ${profile.name}: ${key.label || maskToken(appKey)}`, 'ok', 'profile');
+  }
+
+  activeProfileId = profile.id;
+  activeKeyId = key.id;
+  persistClientProfilesStore();
+  renderClientProfileSelects();
+  $('clientProfileSelect').value = profile.id;
+  $('clientKeySelect').value = key.id;
+  $('clientKeyLabel').value = key.label || '';
+
+  if (!silent) {
+    setStatusMessage(`Saved ${profile.name} (${profile.keys.length} key${profile.keys.length === 1 ? '' : 's'})`);
+    pushEvent(`Profile saved: ${profile.name}`);
+  }
+  return { profile, key };
+}
+
+function deleteSelectedClientKey() {
+  const profile = findClientProfile($('clientProfileSelect').value || activeProfileId);
+  if (!profile) {
+    setStatusMessage('Select a saved client first');
+    return;
+  }
+  const keyId = $('clientKeySelect').value || activeKeyId;
+  const key = profile.keys.find(k => k.id === keyId);
+  if (!key) {
+    setStatusMessage('Select a saved app key to remove');
+    return;
+  }
+  if (!confirm(`Remove key "${key.label || maskToken(key.appKey)}" from ${profile.name}?`)) return;
+
+  profile.keys = profile.keys.filter(k => k.id !== key.id);
+  profile.updatedAt = new Date().toISOString();
+  if (!profile.keys.length) {
+    clientProfiles = clientProfiles.filter(p => p.id !== profile.id);
+    activeProfileId = '';
+    activeKeyId = '';
+    $('clientName').value = '';
+    $('clientKeyLabel').value = '';
+  } else {
+    activeProfileId = profile.id;
+    activeKeyId = profile.keys[0].id;
+  }
+  persistClientProfilesStore();
+  renderClientProfileSelects();
+  if (activeKeyId) applySelectedClientKey();
+  setStatusMessage('App key removed');
+  logConsole(`Removed key from ${profile.name}`, 'warn', 'profile');
+}
+
+function deleteSelectedClientProfile() {
+  const profile = findClientProfile($('clientProfileSelect').value || activeProfileId);
+  if (!profile) {
+    setStatusMessage('Select a saved client first');
+    return;
+  }
+  if (!confirm(`Delete client profile "${profile.name}" and all ${profile.keys.length} app key(s)?`)) return;
+  clientProfiles = clientProfiles.filter(p => p.id !== profile.id);
+  activeProfileId = '';
+  activeKeyId = '';
+  $('clientName').value = '';
+  $('clientKeyLabel').value = '';
+  persistClientProfilesStore();
+  renderClientProfileSelects();
+  setStatusMessage(`Deleted client ${profile.name}`);
+  logConsole(`Deleted client profile: ${profile.name}`, 'warn', 'profile');
+}
+
+function migrateRememberedAppKey(prefs) {
+  if (!prefs?.appKey || findClientProfileByName('Saved app key') || clientProfiles.some(p => p.keys?.some(k => k.appKey === prefs.appKey))) {
+    return;
+  }
+  const profile = {
+    id: newId('client'),
+    name: 'Saved app key',
+    keys: [{
+      id: newId('key'),
+      label: defaultKeyLabel(prefs.appKey, prefs.environment || 'sandbox'),
+      appKey: prefs.appKey,
+      environment: prefs.environment || 'sandbox'
+    }],
+    updatedAt: new Date().toISOString()
+  };
+  clientProfiles.push(profile);
+  activeProfileId = profile.id;
+  activeKeyId = profile.keys[0].id;
+  persistClientProfilesStore();
+}
+
 function savePreferences() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({
     component: selectedComponentKey,
     environment: $('environment').value,
     tokenLife: $('tokenLife').value,
     customTokenLife: $('customTokenLife').value,
-    rememberAppKey: $('rememberAppKey').checked,
-    appKey: $('rememberAppKey').checked ? $('appKey').value.trim() : '',
     componentHeight: $('componentHeight').value,
     scriptOverride: $('scriptOverride').value,
     extraAttrs: $('extraAttrs').value,
@@ -1779,8 +2235,6 @@ function loadPreferences() {
     if (prefs.tokenLife) $('tokenLife').value = prefs.tokenLife;
     if (prefs.customTokenLife) $('customTokenLife').value = prefs.customTokenLife;
     $('customTokenLifeWrap').classList.toggle('hidden', $('tokenLife').value !== 'custom');
-    $('rememberAppKey').checked = !!prefs.rememberAppKey;
-    if (prefs.rememberAppKey && prefs.appKey) $('appKey').value = prefs.appKey;
     if (prefs.componentHeight) $('componentHeight').value = prefs.componentHeight;
     if (prefs.scriptOverride) $('scriptOverride').value = prefs.scriptOverride;
     if (prefs.extraAttrs) $('extraAttrs').value = prefs.extraAttrs;
@@ -1790,6 +2244,16 @@ function loadPreferences() {
       $('toggleDevtoolsBtn').textContent = 'Expand';
     }
     if (prefs.viewport === 'mobile') setViewport('mobile');
+
+    loadClientProfilesStore();
+    migrateRememberedAppKey(prefs);
+    renderClientProfileSelects();
+    if (activeProfileId && findClientProfile(activeProfileId)) {
+      $('clientProfileSelect').value = activeProfileId;
+      onClientProfileSelected();
+    } else if (prefs.rememberAppKey && prefs.appKey) {
+      $('appKey').value = prefs.appKey;
+    }
     updatePreviewChrome();
   } catch (_) {}
 }
@@ -1850,12 +2314,21 @@ $('tokenLife').addEventListener('change', () => {
   savePreferences();
 });
 $('customTokenLife').addEventListener('input', savePreferences);
-$('rememberAppKey').addEventListener('change', savePreferences);
-$('appKey').addEventListener('input', () => { if ($('rememberAppKey').checked) savePreferences(); });
+$('appKey').addEventListener('input', savePreferences);
 $('componentHeight').addEventListener('input', savePreferences);
 $('scriptOverride').addEventListener('input', savePreferences);
 $('extraAttrs').addEventListener('input', savePreferences);
 $('apiUrl').addEventListener('input', savePreferences);
+
+$('clientProfileSelect').addEventListener('change', onClientProfileSelected);
+$('clientKeySelect').addEventListener('change', () => {
+  activeKeyId = $('clientKeySelect').value || '';
+  if (activeKeyId) applySelectedClientKey();
+  else persistClientProfilesStore();
+});
+$('saveClientProfileBtn').addEventListener('click', () => upsertClientProfile());
+$('deleteClientKeyBtn').addEventListener('click', deleteSelectedClientKey);
+$('deleteClientProfileBtn').addEventListener('click', deleteSelectedClientProfile);
 
 $('loadBtn').addEventListener('click', () => loadComponent());
 $('reloadBtn').addEventListener('click', () => loadComponent());
@@ -1882,6 +2355,9 @@ $('clearHttpBtn').addEventListener('click', () => {
   renderSmartAnalysis(null);
   renderHttp();
 });
+$('clearCacheBtn').addEventListener('click', () => clearCache());
+$('clearCacheBtn2').addEventListener('click', () => clearCache());
+$('resetLocalDataBtn').addEventListener('click', () => resetAllLocalData());
 $('copyDiagnosticsBtn').addEventListener('click', async () => {
   try {
     await navigator.clipboard.writeText(buildDiagnostics());
