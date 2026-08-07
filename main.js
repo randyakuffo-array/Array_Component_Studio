@@ -30,7 +30,7 @@ function createWindow() {
     minWidth: 1100,
     minHeight: 760,
     title: 'Array Component Studio',
-    backgroundColor: '#05070b',
+    backgroundColor: '#1A1A1F',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,

@@ -6,97 +6,142 @@
   <title>Array Component Studio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --accent: #5E81F4;
-      --ok: #22C55E;
-      --warn: #F59E0B;
-      --danger: #EF4444;
+      --accent: #6C5FC7;
+      --accent-2: #584C9E;
+      --accent-soft: rgba(108, 95, 199, .16);
+      --ok: #2AC27B;
+      --warn: #F5B000;
+      --danger: #F55459;
+      --info: #3D74DB;
       --preview: #ffffff;
-      --r: 4px;
-      --r2: 6px;
-      --r3: 8px;
-      --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      --sans: "Geist", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      --title-h: 36px;
-      --status-h: 24px;
-      --activity-w: 48px;
-      --explorer-w: 260px;
-      --inspector-w: 300px;
-      --devtools-h: 260px;
+      --r: 3px;
+      --r2: 4px;
+      --r3: 6px;
+      --mono: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --sans: "Rubik", "Helvetica Neue", Arial, sans-serif;
+      --title-h: 42px;
+      --status-h: 26px;
+      --activity-w: 54px;
+      --explorer-w: 272px;
+      --inspector-w: 308px;
+      --devtools-h: 268px;
+      --shadow-sm: 0 1px 0 rgba(255,255,255,.04) inset, 0 1px 2px rgba(0,0,0,.25);
+      --inset: inset 0 1px 2px rgba(0,0,0,.28);
     }
 
     :root[data-theme="dark"] {
       color-scheme: dark;
-      --bg: #111315;
-      --sidebar: #181B1F;
-      --panel: #20242A;
-      --border: #2C313A;
-      --text: #E6EDF3;
-      --muted: #8B949E;
-      --hover: #262B33;
-      --active: #2A3140;
-      --input: #161A1F;
+      --bg: #1A1A1F;
+      --bg-deep: #121217;
+      --sidebar: #16161A;
+      --panel: #232329;
+      --panel-2: #2A2A32;
+      --border: #34343B;
+      --border-strong: #45454F;
+      --text: #EBE6EF;
+      --muted: #9585A3;
+      --hover: #2C2C34;
+      --active: rgba(108, 95, 199, .22);
+      --input: #1C1C22;
+      --chip: #2F2A3D;
     }
 
     :root[data-theme="light"] {
       color-scheme: light;
-      --bg: #F3F4F6;
-      --sidebar: #EEF0F3;
+      --bg: #F7F5FA;
+      --bg-deep: #EFEAF6;
+      --sidebar: #FFFFFF;
       --panel: #FFFFFF;
-      --border: #D0D7DE;
-      --text: #1F2328;
-      --muted: #656D76;
-      --hover: #E6E8EB;
-      --active: #DCE3F8;
+      --panel-2: #F3F0F8;
+      --border: #E2DCEB;
+      --border-strong: #C9C0D8;
+      --text: #2B2438;
+      --muted: #6E647F;
+      --hover: #F0ECF7;
+      --active: rgba(108, 95, 199, .12);
       --input: #FFFFFF;
-      --accent: #3B6AE8;
+      --chip: #EDE8F7;
+      --accent: #5B4DB8;
+      --accent-2: #4A3E9A;
+      --accent-soft: rgba(108, 95, 199, .10);
+      --shadow-sm: 0 1px 2px rgba(43, 36, 56, .08);
+      --inset: inset 0 1px 2px rgba(43, 36, 56, .06);
     }
 
     * { box-sizing: border-box; }
     html, body { height: 100%; margin: 0; }
     body {
       font-family: var(--sans);
-      font-size: 12px;
+      font-size: 13px;
       background: var(--bg);
       color: var(--text);
       overflow: hidden;
+      letter-spacing: .01em;
     }
     button, input, select, textarea { font: inherit; color: inherit; }
     button {
       border: 1px solid var(--border);
       background: var(--panel);
-      border-radius: var(--r);
-      padding: 4px 8px;
+      border-radius: var(--r2);
+      padding: 5px 10px;
       cursor: pointer;
       color: var(--text);
+      font-weight: 500;
+      box-shadow: var(--shadow-sm);
+      transition: transform .08s ease, background .12s ease, border-color .12s ease;
     }
-    button:hover { background: var(--hover); }
-    button.active, button[aria-pressed="true"] { background: var(--active); border-color: var(--accent); color: var(--text); }
-    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-    button.primary:hover { filter: brightness(1.05); }
+    button:hover {
+      background: var(--hover);
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+    }
+    button:active { transform: translateY(0); }
+    button.active, button[aria-pressed="true"] {
+      background: var(--accent-soft);
+      border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+      color: var(--text);
+      box-shadow: none;
+    }
+    button.primary {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 92%, #fff), var(--accent));
+      border-color: var(--accent-2);
+      color: #fff;
+      box-shadow: 0 1px 0 rgba(255,255,255,.12) inset, 0 1px 2px rgba(0,0,0,.25);
+    }
+    button.primary:hover {
+      filter: brightness(1.06);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 92%, #fff), var(--accent));
+    }
     input, select, textarea {
       width: 100%;
       background: var(--input);
       border: 1px solid var(--border);
-      border-radius: var(--r);
-      padding: 6px 8px;
+      border-radius: var(--r2);
+      padding: 7px 9px;
       outline: none;
+      box-shadow: var(--inset);
+      transition: border-color .12s ease, box-shadow .12s ease;
     }
-    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: var(--inset), 0 0 0 2px var(--accent-soft);
+    }
     textarea { resize: vertical; font-family: var(--mono); font-size: 11px; }
-    label { display: block; color: var(--muted); font-size: 11px; margin: 0 0 4px; }
+    label { display: block; color: var(--muted); font-size: 11px; margin: 0 0 4px; font-weight: 500; }
     .field { margin-bottom: 10px; }
     .mono { font-family: var(--mono); }
     .hidden { display: none !important; }
 
     .profile-box {
       border: 1px solid var(--border);
-      border-radius: var(--r2);
+      border-radius: var(--r3);
       background: var(--panel);
-      padding: 8px;
+      padding: 10px;
       margin-bottom: 10px;
+      box-shadow: var(--shadow-sm);
     }
     .profile-box .profile-head {
       display: flex;
@@ -129,6 +174,7 @@
       height: 100vh;
       display: grid;
       grid-template-rows: var(--title-h) 1fr var(--status-h);
+      background: var(--bg);
     }
 
     .titlebar {
@@ -136,20 +182,39 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 0 10px;
+      padding: 0 12px;
       background: var(--sidebar);
       border-bottom: 1px solid var(--border);
       -webkit-app-region: drag;
     }
     .titlebar * { -webkit-app-region: no-drag; }
     .title-left, .title-right { display: flex; align-items: center; gap: 8px; }
+    .title-right { flex-wrap: wrap; justify-content: flex-end; }
     .app-mark {
-      width: 18px; height: 18px; border-radius: var(--r);
-      background: var(--accent); color: #fff;
-      display: grid; place-items: center; font-size: 10px; font-weight: 700;
+      width: 22px; height: 22px; border-radius: 6px;
+      background: linear-gradient(145deg, #8B7CE8, var(--accent) 45%, #F2B712);
+      color: #fff;
+      display: grid; place-items: center;
+      font-size: 11px; font-weight: 700;
+      box-shadow: 0 0 0 1px rgba(0,0,0,.25), 0 2px 6px rgba(108,95,199,.35);
     }
-    .app-title { font-weight: 600; font-size: 12px; }
-    .title-meta { color: var(--muted); font-size: 11px; }
+    .app-title { font-weight: 600; font-size: 13px; }
+    .title-crumb {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--muted); font-size: 12px;
+    }
+    .title-crumb::before {
+      content: "";
+      width: 1px; height: 14px; background: var(--border);
+      margin: 0 2px 0 4px;
+    }
+    .title-meta {
+      color: var(--muted); font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--chip);
+      border: 1px solid var(--border);
+    }
 
     .main {
       min-height: 0;
@@ -164,7 +229,7 @@
     .workspace > * { min-height: 0; }
     .workspace.inspector-collapsed { grid-template-columns: var(--activity-w) var(--explorer-w) minmax(0, 1fr) 0px; }
     .workspace.inspector-collapsed .inspector { display: none; }
-    .main.devtools-collapsed { grid-template-rows: 1fr 28px; }
+    .main.devtools-collapsed { grid-template-rows: 1fr 30px; }
 
     .activity {
       background: var(--sidebar);
@@ -172,20 +237,39 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 8px 0;
-      gap: 4px;
+      padding: 10px 0;
+      gap: 6px;
     }
     .activity button {
-      width: 36px; height: 36px; padding: 0;
-      border: 0; background: transparent; border-radius: var(--r2);
-      color: var(--muted); font-size: 14px; font-weight: 700;
-    }
-    .activity button:hover { background: var(--hover); color: var(--text); }
-    .activity button.active {
+      width: 38px; height: 38px; padding: 0;
+      border: 1px solid transparent;
       background: transparent;
+      border-radius: 10px;
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 700;
+      box-shadow: none;
+      position: relative;
+    }
+    .activity button:hover {
+      background: var(--hover);
       color: var(--text);
-      box-shadow: inset 2px 0 0 var(--accent);
-      border-radius: 0;
+      transform: none;
+      border-color: var(--border);
+    }
+    .activity button.active {
+      background: var(--accent-soft);
+      color: #C4BBF0;
+      border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+      box-shadow: none;
+    }
+    .activity button.active::before {
+      content: "";
+      position: absolute;
+      left: -7px; top: 8px; bottom: 8px;
+      width: 3px;
+      border-radius: 999px;
+      background: var(--accent);
     }
 
     .explorer {
@@ -199,10 +283,10 @@
       resize: horizontal;
     }
     .side-head {
-      padding: 8px 10px;
+      padding: 10px 12px;
       border-bottom: 1px solid var(--border);
-      font-size: 10px;
-      letter-spacing: .08em;
+      font-size: 11px;
+      letter-spacing: .06em;
       text-transform: uppercase;
       color: var(--muted);
       font-weight: 700;
@@ -210,7 +294,18 @@
       justify-content: space-between;
       align-items: center;
     }
-    .side-top { padding: 8px; border-bottom: 1px solid var(--border); }
+    .side-head .org-chip {
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 600;
+      font-size: 11px;
+      color: var(--text);
+      background: var(--chip);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 2px 8px;
+    }
+    .side-top { padding: 10px; border-bottom: 1px solid var(--border); }
     .search { margin-bottom: 0; }
     .tree-wrap { overflow: auto; padding: 8px; min-height: 0; }
 
@@ -220,10 +315,11 @@
       align-items: center;
       gap: 8px;
       margin-top: 8px;
-      padding: 8px;
+      padding: 10px;
       border: 1px solid var(--border);
-      border-radius: var(--r2);
-      background: var(--panel);
+      border-radius: var(--r3);
+      background: linear-gradient(180deg, var(--panel-2), var(--panel));
+      box-shadow: var(--shadow-sm);
     }
     .session-strip .left { min-width: 0; }
     .session-strip .label {
@@ -231,7 +327,7 @@
       letter-spacing: .06em; font-weight: 700;
     }
     .session-strip .timer {
-      font-family: var(--mono); font-size: 18px; font-weight: 600;
+      font-family: var(--mono); font-size: 20px; font-weight: 600;
       margin: 2px 0 0; color: var(--ok);
     }
     .session-strip .timer.warn { color: var(--warn); }
@@ -239,7 +335,7 @@
 
     .side-footer {
       border-top: 1px solid var(--border);
-      padding: 8px;
+      padding: 10px;
       overflow: auto;
       max-height: 46vh;
       background: var(--sidebar);
@@ -247,7 +343,7 @@
     .side-footer details.advanced {
       margin-top: 8px;
       border: 1px solid var(--border);
-      border-radius: var(--r2);
+      border-radius: var(--r3);
       background: var(--panel);
       padding: 0 8px 8px;
     }
@@ -261,8 +357,8 @@
     .tree-group summary {
       list-style: none;
       cursor: pointer;
-      padding: 4px 6px;
-      border-radius: var(--r);
+      padding: 5px 8px;
+      border-radius: var(--r2);
       color: var(--muted);
       font-weight: 600;
       font-size: 11px;
@@ -270,40 +366,48 @@
       letter-spacing: .04em;
     }
     .tree-group summary::-webkit-details-marker { display: none; }
-    .tree-group summary::before { content: "▼ "; font-size: 9px; }
-    .tree-group:not([open]) summary::before { content: "▶ "; }
+    .tree-group summary::before { content: "▾ "; font-size: 10px; color: var(--accent); }
+    .tree-group:not([open]) summary::before { content: "▸ "; }
     .tree-item {
       display: block;
       width: 100%;
       text-align: left;
       border: 0;
       background: transparent;
-      border-radius: var(--r);
-      padding: 5px 8px 5px 18px;
+      border-radius: var(--r2);
+      padding: 6px 8px 6px 18px;
       color: var(--text);
       font-size: 12px;
+      box-shadow: none;
+      font-weight: 400;
     }
-    .tree-item:hover { background: var(--hover); }
-    .tree-item.active { background: var(--active); }
+    .tree-item:hover { background: var(--hover); transform: none; }
+    .tree-item.active {
+      background: var(--active);
+      color: var(--text);
+      box-shadow: inset 2px 0 0 var(--accent);
+      border-radius: 0 var(--r2) var(--r2) 0;
+    }
 
     .preview-pane {
       min-width: 0;
       min-height: 0;
       overflow: hidden;
       display: grid;
-      grid-template-rows: 34px minmax(0, 1fr);
-      background: var(--bg);
+      grid-template-rows: 40px minmax(0, 1fr);
+      background: var(--bg-deep);
     }
     .preview-toolbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      padding: 0 8px;
+      padding: 0 10px;
       background: var(--panel);
       border-bottom: 1px solid var(--border);
     }
     .preview-toolbar .left, .preview-toolbar .right { display: flex; align-items: center; gap: 6px; }
+    .preview-toolbar strong { font-size: 13px; font-weight: 600; }
     .preview-url {
       font-family: var(--mono);
       font-size: 11px;
@@ -312,6 +416,10 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--chip);
+      border: 1px solid var(--border);
     }
     .viewport {
       min-height: 0;
@@ -319,7 +427,9 @@
       overflow: auto;
       overflow-x: auto;
       overflow-y: auto;
-      background: #0d0f11;
+      background:
+        radial-gradient(ellipse at top, rgba(108,95,199,.08), transparent 42%),
+        var(--bg-deep);
       display: block;
       padding: 0;
       -webkit-overflow-scrolling: touch;
@@ -344,13 +454,11 @@
       min-height: 720px;
       height: auto;
       border: 1px solid var(--border);
-      border-radius: var(--r3);
-      box-shadow: 0 0 0 1px rgba(0,0,0,.2);
+      border-radius: 12px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.35);
       flex-shrink: 0;
     }
-    .viewport.fullscreen {
-      overflow: auto;
-    }
+    .viewport.fullscreen { overflow: auto; }
     .viewport.fullscreen .browser-frame {
       position: fixed; inset: 0; z-index: 50; width: 100%; height: 100%;
       border: 0; border-radius: 0; overflow: auto;
@@ -373,12 +481,12 @@
       display: flex;
       flex-direction: column;
     }
-    .inspector-body { flex: 1; overflow: auto; padding: 8px; }
+    .inspector-body { flex: 1; overflow: auto; padding: 10px; }
     .kv {
       display: grid;
       grid-template-columns: 88px 1fr;
       gap: 6px;
-      padding: 4px 0;
+      padding: 6px 0;
       border-bottom: 1px solid var(--border);
       font-size: 11px;
     }
@@ -386,7 +494,7 @@
     .kv .v { font-family: var(--mono); word-break: break-word; }
     .timer {
       font-family: var(--mono);
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 600;
       letter-spacing: -.03em;
       color: var(--ok);
@@ -396,57 +504,54 @@
     .timer.danger, .timer.expired { color: var(--danger); }
     .badge {
       display: inline-flex; align-items: center; gap: 5px;
-      border: 1px solid var(--border); border-radius: 999px;
-      padding: 2px 7px; font-size: 10px; font-weight: 600; color: var(--muted);
+      border: 1px solid transparent; border-radius: 999px;
+      padding: 2px 8px; font-size: 10px; font-weight: 600;
+      color: var(--muted);
+      background: var(--chip);
     }
-    .badge.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, var(--border)); }
-    .badge.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 40%, var(--border)); }
-    .badge.err { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, var(--border)); }
+    .badge.ok {
+      color: #8EF0C2;
+      background: rgba(42, 194, 123, .14);
+      border-color: rgba(42, 194, 123, .25);
+    }
+    .badge.warn {
+      color: #FFD56A;
+      background: rgba(245, 176, 0, .14);
+      border-color: rgba(245, 176, 0, .25);
+    }
+    .badge.err {
+      color: #FFB0B3;
+      background: rgba(245, 84, 89, .14);
+      border-color: rgba(245, 84, 89, .28);
+    }
+    :root[data-theme="light"] .badge.ok { color: #178A52; }
+    :root[data-theme="light"] .badge.warn { color: #9A6B00; }
+    :root[data-theme="light"] .badge.err { color: #C23036; }
     .health-row {
       display: flex; justify-content: space-between; align-items: center;
-      gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 11px;
+      gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 11px;
     }
     .analysis {
-      border: 1px solid var(--border); border-radius: var(--r2);
-      background: var(--panel); padding: 8px; margin-top: 8px;
+      border: 1px solid var(--border); border-radius: var(--r3);
+      background: var(--panel); padding: 10px; margin-top: 8px;
+      box-shadow: var(--shadow-sm);
     }
-    .analysis h4 { margin: 0 0 6px; font-size: 11px; }
-    .analysis p { margin: 0 0 4px; color: var(--muted); line-height: 1.4; }
+    .analysis h4 { margin: 0 0 6px; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+    .analysis p { margin: 0 0 4px; color: var(--muted); line-height: 1.45; }
     .analysis strong { color: var(--text); }
 
-    .preflight-summary {
-      display: flex; justify-content: space-between; align-items: center;
-      gap: 8px; margin-bottom: 8px;
-    }
-    .preflight-list { display: flex; flex-direction: column; gap: 4px; }
-    .preflight-row {
-      display: grid;
-      grid-template-columns: 14px 1fr auto;
-      gap: 8px;
-      align-items: start;
-      padding: 6px 7px;
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      background: var(--panel);
-      font-size: 11px;
-    }
-    .preflight-row .mark { font-weight: 700; line-height: 1.2; }
-    .preflight-row.ok .mark { color: var(--ok); }
-    .preflight-row.warn .mark { color: var(--warn); }
-    .preflight-row.err .mark { color: var(--danger); }
-    .preflight-row .meta { color: var(--muted); margin-top: 2px; line-height: 1.35; }
     .insp-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
 
     details.acc {
       border: 1px solid var(--border);
-      border-radius: var(--r2);
+      border-radius: var(--r3);
       background: var(--panel);
       margin-bottom: 8px;
       overflow: hidden;
     }
     details.acc summary {
-      list-style: none; cursor: pointer; padding: 7px 8px;
-      font-weight: 600; font-size: 11px; background: var(--hover);
+      list-style: none; cursor: pointer; padding: 8px 10px;
+      font-weight: 600; font-size: 11px; background: var(--panel-2);
     }
     details.acc summary::-webkit-details-marker { display: none; }
     details.acc .acc-body { padding: 8px; max-height: 240px; overflow: auto; }
@@ -459,22 +564,29 @@
     .devtools {
       background: var(--panel);
       border-top: 1px solid var(--border);
-      min-height: 28px;
+      min-height: 30px;
       display: grid;
-      grid-template-rows: 28px 1fr;
+      grid-template-rows: 30px 1fr;
       overflow: hidden;
     }
     .devtools-tabs {
       display: flex; align-items: center; gap: 2px;
-      padding: 0 6px; border-bottom: 1px solid var(--border); background: var(--sidebar);
+      padding: 0 8px; border-bottom: 1px solid var(--border); background: var(--sidebar);
     }
     .devtools-tabs .tab {
-      border: 0; background: transparent; border-radius: var(--r);
-      padding: 4px 8px; color: var(--muted); font-size: 11px; font-weight: 600;
+      border: 0; background: transparent; border-radius: var(--r2);
+      padding: 5px 10px; color: var(--muted); font-size: 12px; font-weight: 500;
+      box-shadow: none;
     }
-    .devtools-tabs .tab.active { color: var(--text); background: var(--hover); }
+    .devtools-tabs .tab:hover { transform: none; color: var(--text); background: var(--hover); }
+    .devtools-tabs .tab.active {
+      color: var(--text);
+      background: var(--accent-soft);
+      box-shadow: inset 0 -2px 0 var(--accent);
+      border-radius: var(--r2) var(--r2) 0 0;
+    }
     .devtools-tabs .spacer { flex: 1; }
-    .devtools-body { min-height: 0; overflow: hidden; }
+    .devtools-body { min-height: 0; overflow: hidden; background: var(--bg); }
     .tab-panel { display: none; height: 100%; min-height: 0; }
     .tab-panel.active { display: grid; }
     .http-layout {
@@ -483,37 +595,44 @@
     }
     .http-list, .http-detail, .console-pane, .timing-pane, .events-pane, .lifecycle-pane, .network-pane {
       min-height: 0; overflow: auto; border-right: 1px solid var(--border);
+      background: var(--bg);
     }
     .http-detail { border-right: 0; }
     .req-row {
       display: grid;
       grid-template-columns: 52px 56px 1fr 64px 56px;
       gap: 8px;
-      padding: 5px 8px;
+      padding: 7px 10px;
       border-bottom: 1px solid var(--border);
       font-family: var(--mono);
       font-size: 11px;
       cursor: pointer;
     }
-    .req-row:hover, .req-row.active { background: var(--hover); }
+    .req-row:hover { background: var(--hover); }
+    .req-row.active {
+      background: var(--active);
+      box-shadow: inset 2px 0 0 var(--accent);
+    }
     .req-row .method { color: var(--accent); font-weight: 600; }
     .req-row .status.ok { color: var(--ok); }
     .req-row .status.warn { color: var(--warn); }
     .req-row .status.err { color: var(--danger); }
     .req-row .url { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
-    .log-line { font-family: var(--mono); font-size: 11px; padding: 2px 8px; }
+    .log-line { font-family: var(--mono); font-size: 11px; padding: 3px 10px; }
     .log-line.err { color: var(--danger); }
     .log-line.warn { color: var(--warn); }
     .log-line.ok { color: var(--ok); }
     .empty {
-      color: var(--muted); padding: 12px; font-size: 11px;
+      color: var(--muted); padding: 14px; font-size: 12px;
     }
 
     .statusbar {
       display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; padding: 0 10px;
-      background: var(--sidebar); border-top: 1px solid var(--border);
+      gap: 12px; padding: 0 12px;
+      background: var(--sidebar);
+      border-top: 1px solid var(--border);
       color: var(--muted); font-size: 11px;
+      box-shadow: inset 0 1px 0 rgba(108,95,199,.12);
     }
     .statusbar .left, .statusbar .right { display: flex; gap: 12px; align-items: center; }
     .statusbar .ok { color: var(--ok); }
@@ -535,10 +654,10 @@
       <div class="title-left">
         <div class="app-mark">A</div>
         <div class="app-title">Array Component Studio</div>
+        <div class="title-crumb">Issues</div>
         <div class="title-meta" id="titleMeta">No session</div>
       </div>
       <div class="title-right">
-        <button type="button" id="runPreflightBtn">Preflight</button>
         <button type="button" id="copySnapshotBtn">Copy Snapshot</button>
         <button type="button" id="downloadSnapshotBtn">Download Snapshot</button>
         <button type="button" id="clearCacheBtn">Clear Cache</button>
@@ -551,12 +670,12 @@
     <div class="main" id="main">
       <div class="workspace" id="workspace">
         <nav class="activity" aria-label="Activity bar">
-          <button type="button" class="active" data-activity="sidebar" title="Sidebar">⬚</button>
-          <button type="button" data-activity="http" title="HTTP DevTools">⇄</button>
+          <button type="button" class="active" data-activity="sidebar" title="Explorer">☰</button>
+          <button type="button" data-activity="http" title="HTTP Issues">⚡</button>
         </nav>
 
         <aside class="explorer" id="explorer">
-          <div class="side-head"><span>Explorer</span><span style="color:var(--text);text-transform:none;letter-spacing:0">ACS</span></div>
+          <div class="side-head"><span>Explorer</span><span class="org-chip">ACS</span></div>
 
           <div class="side-top">
             <input class="search" id="componentSearch" placeholder="Search components" />
@@ -691,22 +810,8 @@
         </section>
 
         <aside class="inspector" id="inspector">
-          <div class="side-head"><span>Inspector</span></div>
+          <div class="side-head"><span>Details</span><span class="org-chip">Inspector</span></div>
           <div class="inspector-body">
-            <div style="margin-bottom:12px">
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px">
-                <div style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700">Preflight</div>
-                <button type="button" id="runPreflightBtn2">Run</button>
-              </div>
-              <div class="preflight-summary">
-                <span id="preflightSummary" class="badge">Not run</span>
-                <span id="preflightStamp" style="color:var(--muted);font-size:10px"></span>
-              </div>
-              <div class="preflight-list" id="preflightList">
-                <div class="empty" style="padding:6px 0">Run preflight before loading to catch credential/env issues early.</div>
-              </div>
-            </div>
-
             <div style="margin-bottom:10px">
               <div style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:6px">Session</div>
               <div id="inspectorRemaining" class="timer">--:--</div>
@@ -743,7 +848,7 @@
 
       <section class="devtools" id="devtools">
         <div class="devtools-tabs">
-          <button type="button" class="tab active" data-tab="http">HTTP</button>
+          <button type="button" class="tab active" data-tab="http">Issues</button>
           <button type="button" class="tab" data-tab="console">Console</button>
           <button type="button" class="tab" data-tab="timing">Timing</button>
           <button type="button" class="tab" data-tab="events">Events</button>
@@ -879,7 +984,6 @@ let health = {
   base: 'idle', component: 'idle', defined: 'idle', rendered: 'idle', api: 'idle', session: 'idle'
 };
 let interceptInstalled = false;
-let lastPreflight = null;
 let lastLoadResult = null;
 
 function applyTheme(theme) {
@@ -1117,7 +1221,6 @@ function clearRuntimeMemory() {
   eventEntries = [];
   lifecycleEntries = [];
   timingEntries = [];
-  lastPreflight = null;
   lastLoadResult = null;
   currentComponentEl = null;
   resetScriptLoadCache();
@@ -1138,7 +1241,6 @@ function clearRuntimeMemory() {
   renderEvents();
   renderLifecycle();
   renderTiming();
-  renderPreflight(null);
   updateHealthUi();
   updatePreviewChrome('Cache cleared · not loaded');
 }
@@ -1500,14 +1602,8 @@ async function loadComponent({ fromComponentSwitch = false } = {}) {
     health.session = 'err';
     updateHealthUi();
     lastLoadResult = { ok: false, at: new Date().toISOString(), reason: 'missing-credentials' };
-    runPreflight({ probeScripts: false, silent: true });
     $('appKey').focus();
     return;
-  }
-
-  await runPreflight({ probeScripts: false, silent: true });
-  if (lastPreflight && !lastPreflight.passed) {
-    logConsole('Preflight reported issues; continuing load anyway.', 'warn', 'preflight');
   }
 
   if (fromComponentSwitch) {
@@ -1552,7 +1648,6 @@ async function loadComponent({ fromComponentSwitch = false } = {}) {
       const rect = el.getBoundingClientRect();
       health.rendered = rect.width > 10 && rect.height > 10 ? 'ok' : 'warn';
       updateHealthUi();
-      runPreflight({ probeScripts: false, silent: true });
     });
 
     pushTiming(`load ${cfg.tagName}`, Math.round(performance.now() - t0));
@@ -1588,7 +1683,6 @@ async function loadComponent({ fromComponentSwitch = false } = {}) {
       error: err.message || String(err)
     };
     setStatusMessage(err.message || 'Load failed');
-    runPreflight({ probeScripts: false, silent: true });
   }
 }
 
@@ -1624,205 +1718,6 @@ function buildDiagnostics() {
     `Base Script=${health.base}`, `Component Script=${health.component}`, `Custom Element=${health.defined}`,
     `Rendered=${health.rendered}`, `API Calls=${health.api}`, `Session=${health.session}`);
   return lines.join('\n');
-}
-
-function preflightMark(status) {
-  return status === 'ok' ? '✓' : status === 'warn' ? '!' : '✕';
-}
-
-function renderPreflight(result) {
-  lastPreflight = result;
-  const summary = $('preflightSummary');
-  const list = $('preflightList');
-  const stamp = $('preflightStamp');
-  if (!result) {
-    summary.className = 'badge';
-    summary.textContent = 'Not run';
-    stamp.textContent = '';
-    list.innerHTML = '<div class="empty" style="padding:6px 0">Run preflight before loading to catch credential/env issues early.</div>';
-    return;
-  }
-  const failed = result.checks.filter(c => c.status === 'err').length;
-  const warned = result.checks.filter(c => c.status === 'warn').length;
-  summary.className = `badge ${failed ? 'err' : warned ? 'warn' : 'ok'}`;
-  summary.textContent = failed ? `${failed} failed` : warned ? `${warned} warnings` : 'All clear';
-  stamp.textContent = result.ranAt.toLocaleTimeString();
-  list.innerHTML = result.checks.map(c => `
-    <div class="preflight-row ${c.status}">
-      <span class="mark">${preflightMark(c.status)}</span>
-      <div>
-        <div>${escapeHtml(c.label)}</div>
-        ${c.detail ? `<div class="meta">${escapeHtml(c.detail)}</div>` : ''}
-      </div>
-      <span class="badge ${c.status === 'ok' ? 'ok' : c.status === 'warn' ? 'warn' : 'err'}">${c.status.toUpperCase()}</span>
-    </div>
-  `).join('');
-}
-
-async function probeScriptUrl(url) {
-  try {
-    const head = await fetch(url, { method: 'HEAD', cache: 'no-store' });
-    if (head.ok) return { ok: true, status: head.status };
-    // Some CDNs reject HEAD; fall back to a ranged GET.
-    const response = await fetch(url, {
-      method: 'GET',
-      cache: 'no-store',
-      headers: { Range: 'bytes=0-0' }
-    });
-    if (response.ok || response.status === 206) return { ok: true, status: response.status };
-    return { ok: false, status: response.status, error: `HTTP ${response.status}` };
-  } catch (err) {
-    return { ok: false, status: 0, error: err.message || String(err) };
-  }
-}
-
-async function runPreflight({ probeScripts = true, silent = false } = {}) {
-  const appKey = $('appKey').value.trim();
-  const userToken = $('userToken').value.trim();
-  const environment = $('environment').value;
-  const env = ENVIRONMENTS[environment];
-  const apiUrl = ($('apiUrl').value.trim().replace(/\/$/, '') || env.apiUrl);
-  const sandbox = env.sandbox;
-  const cfg = getComponentConfig(selectedComponentKey);
-  const checks = [];
-
-  checks.push({
-    id: 'appKey',
-    label: 'App Key present',
-    status: appKey ? 'ok' : 'err',
-    detail: appKey ? `Masked: ${maskToken(appKey)}` : 'Paste an appKey before loading.'
-  });
-  checks.push({
-    id: 'userToken',
-    label: 'User Token present',
-    status: userToken ? 'ok' : 'err',
-    detail: userToken ? `Masked: ${maskToken(userToken)}` : 'Paste a userToken before loading.'
-  });
-  checks.push({
-    id: 'component',
-    label: 'Component selected',
-    status: selectedComponentKey ? 'ok' : 'err',
-    detail: `${findComponentLabel(selectedComponentKey)} · ${cfg.tagName}`
-  });
-  checks.push({
-    id: 'environment',
-    label: 'Environment configured',
-    status: env ? 'ok' : 'err',
-    detail: `${env.label} · apiUrl=${apiUrl} · sandbox=${sandbox}`
-  });
-
-  const sandboxMismatch =
-    (environment === 'sandbox' && (!apiUrl.includes('sandbox') || sandbox !== 'true')) ||
-    (environment === 'production' && (apiUrl.includes('sandbox') || sandbox !== 'false'));
-  checks.push({
-    id: 'envMatch',
-    label: 'Environment / API URL alignment',
-    status: sandboxMismatch ? 'err' : 'ok',
-    detail: sandboxMismatch
-      ? `Selected ${env.label}, but apiUrl/sandbox look inconsistent.`
-      : 'Environment selection matches API URL and sandbox attr.'
-  });
-
-  let extraAttrsOk = true;
-  let extraAttrsDetail = 'No extra attributes.';
-  try {
-    const extra = parseExtraAttrs();
-    extraAttrsDetail = Object.keys(extra).length ? `JSON OK (${Object.keys(extra).length} keys)` : 'No extra attributes.';
-  } catch (err) {
-    extraAttrsOk = false;
-    extraAttrsDetail = err.message || String(err);
-  }
-  checks.push({
-    id: 'extraAttrs',
-    label: 'Extra attributes JSON',
-    status: extraAttrsOk ? 'ok' : 'err',
-    detail: extraAttrsDetail
-  });
-
-  if (activeSession.startedAt) {
-    const remaining = activeSession.expiresAt - Date.now();
-    const status = getSessionStatus(remaining);
-    checks.push({
-      id: 'session',
-      label: 'Active session token timer',
-      status: status.key === 'expired' ? 'err' : status.key === 'valid' ? 'ok' : 'warn',
-      detail: `${status.label} · remaining ${formatRemaining(remaining)}`
-    });
-  } else {
-    checks.push({
-      id: 'session',
-      label: 'Active session token timer',
-      status: 'warn',
-      detail: 'No session yet. Timer starts on first successful credentialed Load.'
-    });
-  }
-
-  const failedHttp = httpRequests.filter(r => r.error || (r.status && r.status >= 400));
-  checks.push({
-    id: 'http',
-    label: 'Recent HTTP failures',
-    status: failedHttp.length ? 'err' : 'ok',
-    detail: failedHttp.length
-      ? `${failedHttp.length} failing request(s); latest ${failedHttp[0].method} ${failedHttp[0].status || 'ERR'}`
-      : 'No failing requests captured in this session.'
-  });
-
-  if (probeScripts && appKey) {
-    if (!silent) setStatusMessage('Running preflight…');
-    const baseScript = `https://embed.array.io/cms/array-web-component.js?appKey=${encodeURIComponent(appKey)}`;
-    const componentScript = `${cfg.scriptUrl}?appKey=${encodeURIComponent(appKey)}`;
-    const [baseProbe, componentProbe] = await Promise.all([
-      probeScriptUrl(baseScript),
-      probeScriptUrl(componentScript)
-    ]);
-    checks.push({
-      id: 'baseScript',
-      label: 'Base script reachable',
-      status: baseProbe.ok ? 'ok' : 'err',
-      detail: baseProbe.ok
-        ? `HTTP ${baseProbe.status}`
-        : (baseProbe.error || `HTTP ${baseProbe.status || 'failed'}`)
-    });
-    checks.push({
-      id: 'componentScript',
-      label: 'Component script reachable',
-      status: componentProbe.ok ? 'ok' : 'err',
-      detail: componentProbe.ok
-        ? `HTTP ${componentProbe.status} · ${cfg.scriptUrl}`
-        : (componentProbe.error || `HTTP ${componentProbe.status || 'failed'} · ${cfg.scriptUrl}`)
-    });
-  }
-
-  if (currentComponentEl) {
-    const defined = !!customElements.get(cfg.tagName);
-    const rect = currentComponentEl.getBoundingClientRect();
-    checks.push({
-      id: 'defined',
-      label: 'Custom element registered',
-      status: defined ? 'ok' : 'err',
-      detail: defined ? `${cfg.tagName} is defined` : `${cfg.tagName} is not registered`
-    });
-    checks.push({
-      id: 'rendered',
-      label: 'Component rendered in preview',
-      status: rect.width > 10 && rect.height > 10 ? 'ok' : 'warn',
-      detail: `${Math.round(rect.width)}×${Math.round(rect.height)}`
-    });
-  }
-
-  const result = {
-    ranAt: new Date(),
-    checks,
-    passed: checks.every(c => c.status !== 'err')
-  };
-  renderPreflight(result);
-  const failed = checks.filter(c => c.status === 'err').length;
-  if (!silent) {
-    setStatusMessage(failed ? `Preflight: ${failed} issue(s)` : 'Preflight clear');
-    logConsole(failed ? `Preflight found ${failed} issue(s).` : 'Preflight passed.', failed ? 'warn' : 'ok', 'preflight');
-    pushEvent(failed ? `Preflight failed (${failed})` : 'Preflight passed');
-  }
-  return result;
 }
 
 function buildIncidentSnapshot() {
@@ -1864,11 +1759,6 @@ function buildIncidentSnapshot() {
       durationMs: activeSession.duration
     },
     health: { ...health },
-    preflight: lastPreflight ? {
-      ranAt: lastPreflight.ranAt.toISOString(),
-      passed: lastPreflight.passed,
-      checks: lastPreflight.checks
-    } : null,
     http: httpRequests.slice(0, 40).map(r => ({
       method: r.method,
       url: maskUrl(r.url),
@@ -1897,16 +1787,7 @@ function buildIncidentSnapshot() {
     `**Credentials:** appKey=\`${snapshot.credentials.appKey || '—'}\` · userToken=\`${snapshot.credentials.userToken || '—'}\``,
     `**Session:** ${snapshot.session.status} · remaining ${formatRemaining(snapshot.session.remainingMs)} · started ${formatClock(activeSession.startedAt)} · expires ${formatClock(activeSession.expiresAt)}`,
     '',
-    '**Preflight**'
-  ];
-  if (!lastPreflight) {
-    ticketLines.push('- Not run');
-  } else {
-    lastPreflight.checks.forEach(c => {
-      ticketLines.push(`- ${c.status.toUpperCase()} ${c.label}${c.detail ? ` — ${c.detail}` : ''}`);
-    });
-  }
-  ticketLines.push('', '**Component Health**',
+    '**Component Health**',
     `- Base Script: ${health.base}`,
     `- Component Script: ${health.component}`,
     `- Custom Element: ${health.defined}`,
@@ -1915,7 +1796,7 @@ function buildIncidentSnapshot() {
     `- Session: ${health.session}`,
     '',
     '**HTTP Timeline**'
-  );
+  ];
   if (!snapshot.http.length) ticketLines.push('- (none)');
   snapshot.http.slice(0, 20).forEach(r => {
     ticketLines.push(`- \`${r.method}\` ${r.status || 'ERR'} ${r.durationMs || 0}ms \`${r.url}\``);
@@ -2366,8 +2247,6 @@ $('copyDiagnosticsBtn').addEventListener('click', async () => {
     setStatusMessage(`Copy failed: ${err.message || err}`);
   }
 });
-$('runPreflightBtn').addEventListener('click', () => runPreflight({ probeScripts: true }));
-$('runPreflightBtn2').addEventListener('click', () => runPreflight({ probeScripts: true }));
 $('copySnapshotBtn').addEventListener('click', async () => {
   try { await copyIncidentSnapshot(); }
   catch (err) { setStatusMessage(`Copy failed: ${err.message || err}`); }
