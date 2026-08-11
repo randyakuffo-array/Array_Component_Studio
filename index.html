@@ -643,18 +643,71 @@
       width: 4px; cursor: col-resize; background: transparent;
     }
 
+    .flowtest-host {
+      display: none;
+      grid-column: 2 / -1;
+      min-width: 0;
+      min-height: 0;
+      background: var(--bg-deep);
+      border: 0;
+      position: relative;
+    }
+    .flowtest-host iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #0b0f14;
+    }
+    .flowtest-fallback {
+      position: absolute; inset: 0;
+      display: none;
+      align-items: center; justify-content: center;
+      padding: 32px; text-align: center;
+      color: var(--muted); font-size: 13px; line-height: 1.5;
+    }
+    .flowtest-fallback.visible { display: flex; flex-direction: column; gap: 12px; }
+    .flowtest-fallback code {
+      font-family: var(--mono); font-size: 11px; color: var(--text);
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 4px; padding: 2px 6px;
+    }
+
+    .app.mode-playbooks .explorer,
+    .app.mode-playbooks .preview-pane,
+    .app.mode-playbooks .inspector {
+      display: none !important;
+    }
+    .app.mode-playbooks .workspace {
+      grid-template-columns: var(--activity-w) minmax(0, 1fr);
+    }
+    .app.mode-playbooks .flowtest-host { display: block; }
+    .app.mode-playbooks .main {
+      grid-template-rows: 1fr;
+    }
+    .app.mode-playbooks .devtools { display: none !important; }
+    .app.mode-playbooks .title-right #copySnapshotBtn,
+    .app.mode-playbooks .title-right #downloadSnapshotBtn,
+    .app.mode-playbooks .title-right #clearCacheBtn,
+    .app.mode-playbooks .title-right #copyDiagnosticsBtn,
+    .app.mode-playbooks .title-right #toggleInspectorBtn {
+      display: none;
+    }
+
     @media (max-width: 1100px) {
       .workspace { grid-template-columns: var(--activity-w) 220px 1fr 260px; }
+      .app.mode-playbooks .workspace { grid-template-columns: var(--activity-w) minmax(0, 1fr); }
     }
   </style>
 </head>
 <body>
-  <div class="app">
+  <div class="app" id="appRoot">
     <header class="titlebar">
       <div class="title-left">
         <div class="app-mark">A</div>
         <div class="app-title">Array Component Studio</div>
-        <div class="title-crumb">Issues</div>
+        <div class="title-crumb" id="titleCrumb">Components</div>
         <div class="title-meta" id="titleMeta">No session</div>
       </div>
       <div class="title-right">
@@ -670,7 +723,8 @@
     <div class="main" id="main">
       <div class="workspace" id="workspace">
         <nav class="activity" aria-label="Activity bar">
-          <button type="button" class="active" data-activity="sidebar" title="Explorer">☰</button>
+          <button type="button" class="active" data-activity="components" title="Components">☰</button>
+          <button type="button" data-activity="playbooks" title="Playbooks / API workflows">◎</button>
           <button type="button" data-activity="http" title="HTTP Issues">⚡</button>
         </nav>
 
@@ -844,6 +898,18 @@
             </div>
           </div>
         </aside>
+
+        <div class="flowtest-host" id="flowtestHost" aria-label="Playbooks">
+          <iframe id="flowtestFrame" title="FlowTest Playbooks"></iframe>
+          <div class="flowtest-fallback" id="flowtestFallback">
+            <div>
+              Playbooks UI not loaded yet.<br />
+              Run <code>npm run sync:flowtest</code> from Component Studio,<br />
+              or start FlowTest on <code>http://localhost:8443</code> and reopen this tab.
+            </div>
+            <button type="button" class="primary" id="flowtestRetryBtn">Retry</button>
+          </div>
+        </div>
       </div>
 
       <section class="devtools" id="devtools">
@@ -2140,13 +2206,86 @@ function loadPreferences() {
 }
 
 function setActivity(name) {
+  if (name === 'sidebar') name = 'components';
   document.querySelectorAll('.activity button').forEach(btn => btn.classList.toggle('active', btn.dataset.activity === name));
+  const playbooks = name === 'playbooks';
+  $('appRoot').classList.toggle('mode-playbooks', playbooks);
+  if ($('titleCrumb')) $('titleCrumb').textContent = playbooks ? 'Playbooks' : 'Components';
+
+  if (playbooks) {
+    ensureFlowtestLoaded();
+    return;
+  }
+
   if (name === 'http') {
     setDevtoolsTab('http');
     if ($('main').classList.contains('devtools-collapsed')) {
       $('main').classList.remove('devtools-collapsed');
       $('toggleDevtoolsBtn').textContent = 'Collapse';
     }
+  }
+}
+
+const FLOWTEST_DEV_URL = 'http://localhost:8443/';
+const FLOWTEST_BUNDLED_URL = './flowtest/index.html';
+let flowtestLoadAttempted = false;
+
+async function probeUrl(url, timeoutMs = 600) {
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), timeoutMs);
+    await fetch(url, { method: 'GET', mode: 'no-cors', cache: 'no-store', signal: ctrl.signal });
+    clearTimeout(t);
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+async function resolveFlowtestUrl() {
+  if (window.acsNative?.getFlowtestUrl) {
+    try {
+      const info = await window.acsNative.getFlowtestUrl();
+      if (info?.url) return info;
+    } catch (_) {}
+  }
+  if (await probeUrl(FLOWTEST_DEV_URL)) {
+    return { url: FLOWTEST_DEV_URL, source: 'dev' };
+  }
+  return { url: FLOWTEST_BUNDLED_URL, source: 'bundled' };
+}
+
+async function ensureFlowtestLoaded(force = false) {
+  const frame = $('flowtestFrame');
+  const fallback = $('flowtestFallback');
+  if (!frame) return;
+  if (!force && frame.dataset.loaded === '1') return;
+
+  flowtestLoadAttempted = true;
+  fallback?.classList.remove('visible');
+  const info = await resolveFlowtestUrl();
+  frame.dataset.source = info.source || '';
+  frame.onload = () => {
+    frame.dataset.loaded = '1';
+    fallback?.classList.remove('visible');
+  };
+  frame.onerror = () => {
+    frame.dataset.loaded = '';
+    fallback?.classList.add('visible');
+  };
+  // Relative bundled path: if file missing, iframe may still "load" blank — show fallback after short check
+  frame.src = info.url;
+  if (info.source === 'bundled') {
+    setTimeout(() => {
+      try {
+        // file:// cross-check is limited; if still not marked loaded and contentDocument empty
+        if (frame.dataset.loaded !== '1') {
+          // leave it; onload should fire for local files
+        }
+      } catch (_) {
+        fallback?.classList.add('visible');
+      }
+    }, 1200);
   }
 }
 function setDevtoolsTab(name) {
@@ -2168,6 +2307,7 @@ document.querySelectorAll('.activity button').forEach(btn => {
 document.querySelectorAll('.devtools-tabs .tab').forEach(tab => {
   tab.addEventListener('click', () => setDevtoolsTab(tab.dataset.tab));
 });
+$('flowtestRetryBtn')?.addEventListener('click', () => ensureFlowtestLoaded(true));
 
 $('componentTree').addEventListener('click', e => {
   const btn = e.target.closest('[data-key]');

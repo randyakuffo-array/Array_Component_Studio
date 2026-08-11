@@ -1,5 +1,6 @@
-const { app, BrowserWindow, shell, ipcMain, session } = require('electron');
+const { app, BrowserWindow, shell, ipcMain, session, net } = require('electron');
 const path = require('path');
+const fs = require('fs');
 
 ipcMain.handle('acs:clear-http-cache', async () => {
   await session.defaultSession.clearCache();
@@ -21,6 +22,46 @@ ipcMain.handle('acs:clear-storage-data', async (_event, options = {}) => {
     ]
   });
   return { ok: true };
+});
+
+function bundledFlowtestPath() {
+  return path.join(__dirname, 'flowtest', 'index.html');
+}
+
+function probeDevFlowtest(timeoutMs = 400) {
+  return new Promise(resolve => {
+    try {
+      const req = net.request({ method: 'GET', url: 'http://localhost:8443/' });
+      const timer = setTimeout(() => {
+        try { req.abort(); } catch (_) {}
+        resolve(false);
+      }, timeoutMs);
+      req.on('response', () => {
+        clearTimeout(timer);
+        resolve(true);
+      });
+      req.on('error', () => {
+        clearTimeout(timer);
+        resolve(false);
+      });
+      req.end();
+    } catch (_) {
+      resolve(false);
+    }
+  });
+}
+
+ipcMain.handle('acs:get-flowtest-url', async () => {
+  const forceDev = process.env.ACS_FLOWTEST_DEV === '1';
+  const hasBundled = fs.existsSync(bundledFlowtestPath());
+
+  if (forceDev || await probeDevFlowtest()) {
+    return { url: 'http://localhost:8443/', source: 'dev' };
+  }
+  if (hasBundled) {
+    return { url: './flowtest/index.html', source: 'bundled' };
+  }
+  return { url: 'http://localhost:8443/', source: 'dev-fallback' };
 });
 
 function createWindow() {

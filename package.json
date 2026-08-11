@@ -7,6 +7,8 @@
   "scripts": {
     "start": "electron .",
     "dev": "electron .",
+    "dev:flowtest": "ACS_FLOWTEST_DEV=1 electron .",
+    "sync:flowtest": "npm --prefix \"../Workflow Testing Tool\" run build -- --base=./ --outDir=\"../Array_Component_Studio/flowtest\" --emptyOutDir",
     "build": "electron-builder --publish never",
     "build:mac": "electron-builder --mac --universal --publish never",
     "build:win": "electron-builder --win --publish never"
@@ -23,6 +25,7 @@
       "!dist/**",
       "!node_modules/.cache/**"
     ],
+    "extraResources": [],
     "directories": {
       "output": "dist"
     },
