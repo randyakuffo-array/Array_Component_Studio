@@ -6,69 +6,71 @@
   <title>Array Component Studio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --accent: #6C5FC7;
-      --accent-2: #584C9E;
-      --accent-soft: rgba(108, 95, 199, .16);
-      --ok: #2AC27B;
-      --warn: #F5B000;
-      --danger: #F55459;
-      --info: #3D74DB;
+      --accent: #1fb5a8;
+      --accent-2: #159a8f;
+      --accent-soft: color-mix(in srgb, #1fb5a8 16%, transparent);
+      --ok: #34c759;
+      --warn: #f0a202;
+      --danger: #ff5c5c;
+      --info: #6ea8fe;
       --preview: #ffffff;
-      --r: 3px;
-      --r2: 4px;
-      --r3: 6px;
-      --mono: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      --sans: "Rubik", "Helvetica Neue", Arial, sans-serif;
-      --title-h: 42px;
-      --status-h: 26px;
-      --activity-w: 54px;
-      --explorer-w: 272px;
-      --inspector-w: 308px;
-      --devtools-h: 268px;
-      --shadow-sm: 0 1px 0 rgba(255,255,255,.04) inset, 0 1px 2px rgba(0,0,0,.25);
-      --inset: inset 0 1px 2px rgba(0,0,0,.28);
+      --r: 6px;
+      --r2: 8px;
+      --r3: 10px;
+      --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --sans: "Sora", "Segoe UI", sans-serif;
+      --title-h: 48px;
+      --status-h: 28px;
+      --activity-w: 72px;
+      --explorer-w: 280px;
+      --inspector-w: 300px;
+      --devtools-h: 260px;
+      --shadow-sm: 0 1px 2px color-mix(in srgb, #000 18%, transparent);
+      --inset: inset 0 1px 1px color-mix(in srgb, #000 18%, transparent);
+      --accent-gradient: linear-gradient(135deg, #1fb5a8, #159a8f);
     }
 
     :root[data-theme="dark"] {
       color-scheme: dark;
-      --bg: #1A1A1F;
-      --bg-deep: #121217;
-      --sidebar: #16161A;
-      --panel: #232329;
-      --panel-2: #2A2A32;
-      --border: #34343B;
-      --border-strong: #45454F;
-      --text: #EBE6EF;
-      --muted: #9585A3;
-      --hover: #2C2C34;
-      --active: rgba(108, 95, 199, .22);
-      --input: #1C1C22;
-      --chip: #2F2A3D;
+      --bg: #0b0e11;
+      --bg-deep: #080a0c;
+      --sidebar: #11161b;
+      --panel: #151b21;
+      --panel-2: #1c242c;
+      --border: #2a333c;
+      --border-strong: #3a4652;
+      --text: #eef3f7;
+      --muted: #7d8b99;
+      --hover: #1a222a;
+      --active: color-mix(in srgb, #1fb5a8 18%, transparent);
+      --input: #0f1419;
+      --chip: #1c242c;
     }
 
     :root[data-theme="light"] {
       color-scheme: light;
-      --bg: #F7F5FA;
-      --bg-deep: #EFEAF6;
-      --sidebar: #FFFFFF;
-      --panel: #FFFFFF;
-      --panel-2: #F3F0F8;
-      --border: #E2DCEB;
-      --border-strong: #C9C0D8;
-      --text: #2B2438;
-      --muted: #6E647F;
-      --hover: #F0ECF7;
-      --active: rgba(108, 95, 199, .12);
-      --input: #FFFFFF;
-      --chip: #EDE8F7;
-      --accent: #5B4DB8;
-      --accent-2: #4A3E9A;
-      --accent-soft: rgba(108, 95, 199, .10);
-      --shadow-sm: 0 1px 2px rgba(43, 36, 56, .08);
-      --inset: inset 0 1px 2px rgba(43, 36, 56, .06);
+      --bg: #f3f5f7;
+      --bg-deep: #e8eef3;
+      --sidebar: #ffffff;
+      --panel: #ffffff;
+      --panel-2: #eef2f5;
+      --border: #d5dde5;
+      --border-strong: #bcc7d2;
+      --text: #12181e;
+      --muted: #6b7a89;
+      --hover: #e8eef3;
+      --active: color-mix(in srgb, #0f8f85 12%, transparent);
+      --input: #f8fafb;
+      --chip: #eef2f5;
+      --accent: #0f8f85;
+      --accent-2: #0c7a72;
+      --accent-soft: color-mix(in srgb, #0f8f85 12%, transparent);
+      --shadow-sm: 0 1px 2px color-mix(in srgb, #12181e 8%, transparent);
+      --inset: inset 0 1px 1px color-mix(in srgb, #12181e 4%, transparent);
+      --accent-gradient: linear-gradient(135deg, #0f8f85, #0c7a72);
     }
 
     * { box-sizing: border-box; }
@@ -79,84 +81,74 @@
       background: var(--bg);
       color: var(--text);
       overflow: hidden;
-      letter-spacing: .01em;
+      letter-spacing: -0.01em;
+      -webkit-font-smoothing: antialiased;
     }
     button, input, select, textarea { font: inherit; color: inherit; }
     button {
       border: 1px solid var(--border);
       background: var(--panel);
       border-radius: var(--r2);
-      padding: 5px 10px;
+      padding: 6px 11px;
       cursor: pointer;
       color: var(--text);
       font-weight: 500;
-      box-shadow: var(--shadow-sm);
-      transition: transform .08s ease, background .12s ease, border-color .12s ease;
+      box-shadow: none;
+      transition: background .14s ease, border-color .14s ease, color .14s ease;
     }
     button:hover {
       background: var(--hover);
       border-color: var(--border-strong);
-      transform: translateY(-1px);
+      transform: none;
     }
-    button:active { transform: translateY(0); }
+    button:active { transform: none; }
     button.active, button[aria-pressed="true"] {
       background: var(--accent-soft);
-      border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+      border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
       color: var(--text);
       box-shadow: none;
     }
     button.primary {
-      background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 92%, #fff), var(--accent));
-      border-color: var(--accent-2);
+      background: var(--accent-gradient);
+      border-color: transparent;
       color: #fff;
-      box-shadow: 0 1px 0 rgba(255,255,255,.12) inset, 0 1px 2px rgba(0,0,0,.25);
+      box-shadow: none;
     }
     button.primary:hover {
-      filter: brightness(1.06);
-      background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 92%, #fff), var(--accent));
+      filter: brightness(1.05);
+      background: var(--accent-gradient);
+    }
+    button.ghost {
+      background: transparent;
+      border-color: transparent;
+      color: var(--muted);
+      box-shadow: none;
+    }
+    button.ghost:hover {
+      background: var(--hover);
+      color: var(--text);
+      border-color: transparent;
     }
     input, select, textarea {
       width: 100%;
       background: var(--input);
       border: 1px solid var(--border);
       border-radius: var(--r2);
-      padding: 7px 9px;
+      padding: 8px 10px;
       outline: none;
-      box-shadow: var(--inset);
-      transition: border-color .12s ease, box-shadow .12s ease;
+      box-shadow: none;
+      transition: border-color .14s ease, box-shadow .14s ease;
     }
     input:focus, select:focus, textarea:focus {
       border-color: var(--accent);
-      box-shadow: var(--inset), 0 0 0 2px var(--accent-soft);
+      box-shadow: 0 0 0 3px var(--accent-soft);
     }
     textarea { resize: vertical; font-family: var(--mono); font-size: 11px; }
-    label { display: block; color: var(--muted); font-size: 11px; margin: 0 0 4px; font-weight: 500; }
+    label { display: block; color: var(--muted); font-size: 11px; margin: 0 0 5px; font-weight: 500; }
     .field { margin-bottom: 10px; }
     .mono { font-family: var(--mono); }
     .hidden { display: none !important; }
 
-    .profile-box {
-      border: 1px solid var(--border);
-      border-radius: var(--r3);
-      background: var(--panel);
-      padding: 10px;
-      margin-bottom: 10px;
-      box-shadow: var(--shadow-sm);
-    }
-    .profile-box .profile-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-    .profile-box .profile-head .label {
-      color: var(--muted);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-      font-weight: 700;
-    }
     .profile-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -164,11 +156,6 @@
       margin-top: 8px;
     }
     .profile-actions .span2 { grid-column: 1 / -1; }
-    .key-count {
-      color: var(--muted);
-      font-size: 10px;
-      font-family: var(--mono);
-    }
 
     .app {
       height: 100vh;
@@ -182,26 +169,33 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 0 12px;
-      background: var(--sidebar);
+      padding: 0 14px;
+      background: color-mix(in srgb, var(--sidebar) 92%, var(--bg));
       border-bottom: 1px solid var(--border);
       -webkit-app-region: drag;
+      backdrop-filter: blur(10px);
     }
     .titlebar * { -webkit-app-region: no-drag; }
     .title-left, .title-right { display: flex; align-items: center; gap: 8px; }
-    .title-right { flex-wrap: wrap; justify-content: flex-end; }
+    .title-right { flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+    .title-actions-secondary {
+      display: flex; align-items: center; gap: 4px;
+      padding-right: 6px;
+      margin-right: 2px;
+      border-right: 1px solid var(--border);
+    }
     .app-mark {
-      width: 22px; height: 22px; border-radius: 6px;
-      background: linear-gradient(145deg, #8B7CE8, var(--accent) 45%, #F2B712);
+      width: 24px; height: 24px; border-radius: 7px;
+      background: var(--accent-gradient);
       color: #fff;
       display: grid; place-items: center;
       font-size: 11px; font-weight: 700;
-      box-shadow: 0 0 0 1px rgba(0,0,0,.25), 0 2px 6px rgba(108,95,199,.35);
+      box-shadow: none;
     }
-    .app-title { font-weight: 600; font-size: 13px; }
+    .app-title { font-weight: 600; font-size: 13px; letter-spacing: -0.02em; }
     .title-crumb {
       display: inline-flex; align-items: center; gap: 6px;
-      color: var(--muted); font-size: 12px;
+      color: var(--muted); font-size: 12px; font-weight: 500;
     }
     .title-crumb::before {
       content: "";
@@ -209,9 +203,9 @@
       margin: 0 2px 0 4px;
     }
     .title-meta {
-      color: var(--muted); font-size: 12px;
-      padding: 3px 8px;
-      border-radius: 999px;
+      color: var(--muted); font-size: 11px; font-weight: 500;
+      padding: 4px 9px;
+      border-radius: 6px;
       background: var(--chip);
       border: 1px solid var(--border);
     }
@@ -237,36 +231,51 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 10px 0;
-      gap: 6px;
+      padding: 12px 8px;
+      gap: 8px;
     }
     .activity button {
-      width: 38px; height: 38px; padding: 0;
+      width: 100%;
+      min-height: 52px;
+      padding: 8px 4px 6px;
       border: 1px solid transparent;
       background: transparent;
       border-radius: 10px;
       color: var(--muted);
-      font-size: 15px;
-      font-weight: 700;
+      font-size: 12px;
+      font-weight: 600;
       box-shadow: none;
       position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .activity button .act-icon { font-size: 15px; line-height: 1; }
+    .activity button .act-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      opacity: 0.9;
     }
     .activity button:hover {
       background: var(--hover);
       color: var(--text);
       transform: none;
-      border-color: var(--border);
+      border-color: transparent;
     }
     .activity button.active {
       background: var(--accent-soft);
-      color: #C4BBF0;
-      border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+      color: var(--accent);
+      border-color: color-mix(in srgb, var(--accent) 28%, transparent);
       box-shadow: none;
     }
     .activity button.active::before {
       content: "";
       position: absolute;
-      left: -7px; top: 8px; bottom: 8px;
+      left: -8px; top: 12px; bottom: 12px;
       width: 3px;
       border-radius: 999px;
       background: var(--accent);
@@ -302,12 +311,16 @@
       color: var(--text);
       background: var(--chip);
       border: 1px solid var(--border);
-      border-radius: 999px;
+      border-radius: 6px;
       padding: 2px 8px;
     }
     .side-top { padding: 10px; border-bottom: 1px solid var(--border); }
     .search { margin-bottom: 0; }
-    .tree-wrap { overflow: auto; padding: 8px; min-height: 0; }
+    .tree-wrap {
+      overflow: auto;
+      padding: 8px;
+      min-height: 160px;
+    }
 
     .session-strip {
       display: flex;
@@ -337,7 +350,7 @@
       border-top: 1px solid var(--border);
       padding: 10px;
       overflow: auto;
-      max-height: 46vh;
+      max-height: 38vh;
       background: var(--sidebar);
     }
     .side-footer details.advanced {
@@ -428,7 +441,7 @@
       overflow-x: auto;
       overflow-y: auto;
       background:
-        radial-gradient(ellipse at top, rgba(108,95,199,.08), transparent 42%),
+        radial-gradient(ellipse at top, color-mix(in srgb, var(--accent) 10%, transparent), transparent 45%),
         var(--bg-deep);
       display: block;
       padding: 0;
@@ -632,7 +645,7 @@
       background: var(--sidebar);
       border-top: 1px solid var(--border);
       color: var(--muted); font-size: 11px;
-      box-shadow: inset 0 1px 0 rgba(108,95,199,.12);
+      box-shadow: none;
     }
     .statusbar .left, .statusbar .right { display: flex; gap: 12px; align-items: center; }
     .statusbar .ok { color: var(--ok); }
@@ -707,14 +720,16 @@
       <div class="title-left">
         <div class="app-mark">A</div>
         <div class="app-title">Array Component Studio</div>
-        <div class="title-crumb" id="titleCrumb">Components</div>
+        <div class="title-crumb" id="titleCrumb">UI</div>
         <div class="title-meta" id="titleMeta">No session</div>
       </div>
       <div class="title-right">
-        <button type="button" id="copySnapshotBtn">Copy Snapshot</button>
-        <button type="button" id="downloadSnapshotBtn">Download Snapshot</button>
-        <button type="button" id="clearCacheBtn">Clear Cache</button>
-        <button type="button" id="copyDiagnosticsBtn">Copy Diagnostics</button>
+        <div class="title-actions-secondary">
+          <button type="button" class="ghost" id="copySnapshotBtn" title="Copy ticket snapshot">Snapshot</button>
+          <button type="button" class="ghost" id="downloadSnapshotBtn" title="Download JSON snapshot">Export</button>
+          <button type="button" class="ghost" id="clearCacheBtn" title="Clear HTTP cache">Cache</button>
+          <button type="button" class="ghost" id="copyDiagnosticsBtn" title="Copy diagnostics">Diagnostics</button>
+        </div>
         <button type="button" id="toggleInspectorBtn">Inspector</button>
         <button type="button" id="themeToggleBtn">Theme</button>
       </div>
@@ -723,17 +738,31 @@
     <div class="main" id="main">
       <div class="workspace" id="workspace">
         <nav class="activity" aria-label="Activity bar">
-          <button type="button" class="active" data-activity="components" title="Components">☰</button>
-          <button type="button" data-activity="playbooks" title="Playbooks / API workflows">◎</button>
-          <button type="button" data-activity="http" title="HTTP Issues">⚡</button>
+          <button type="button" class="active" data-activity="components" title="Embedded components">
+            <span class="act-icon">▣</span>
+            <span class="act-label">UI</span>
+          </button>
+          <button type="button" data-activity="playbooks" title="API playbooks">
+            <span class="act-icon">◎</span>
+            <span class="act-label">API</span>
+          </button>
+          <button type="button" data-activity="http" title="HTTP issues & console">
+            <span class="act-icon">⚡</span>
+            <span class="act-label">Logs</span>
+          </button>
         </nav>
 
         <aside class="explorer" id="explorer">
-          <div class="side-head"><span>Explorer</span><span class="org-chip">ACS</span></div>
+          <div class="side-head"><span id="explorerTitle">Components</span><span class="org-chip">ACS</span></div>
 
           <div class="side-top">
             <input class="search" id="componentSearch" placeholder="Search components" />
-            <div class="session-strip">
+          </div>
+
+          <div class="tree-wrap" id="componentTree"></div>
+
+          <div class="side-footer">
+            <div class="session-strip" style="margin-top:0;margin-bottom:10px">
               <div class="left">
                 <div class="label">Session</div>
                 <div id="sessionRemaining" class="timer">--:--</div>
@@ -743,45 +772,9 @@
                 <div id="sessionEnvironment" style="margin-top:4px;color:var(--muted);font-size:10px">—</div>
               </div>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;font-size:10px;color:var(--muted)">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;font-size:10px;color:var(--muted)">
               <div>Started <span id="sessionStarted" class="mono" style="color:var(--text)">—</span></div>
               <div style="text-align:right">Expires <span id="sessionExpires" class="mono" style="color:var(--text)">—</span></div>
-            </div>
-          </div>
-
-          <div class="tree-wrap" id="componentTree"></div>
-
-          <div class="side-footer">
-            <div class="profile-box">
-              <div class="profile-head">
-                <span class="label">Client profiles</span>
-                <span class="key-count" id="profileKeyCount"></span>
-              </div>
-              <div class="field">
-                <label for="clientProfileSelect">Saved client</label>
-                <select id="clientProfileSelect">
-                  <option value="">— New / unsaved —</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="clientName">Client name</label>
-                <input id="clientName" autocomplete="off" placeholder="e.g. Acme Bank" />
-              </div>
-              <div class="field">
-                <label for="clientKeySelect">App key for this client</label>
-                <select id="clientKeySelect">
-                  <option value="">— Use field below —</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="clientKeyLabel">Key label (optional)</label>
-                <input id="clientKeyLabel" autocomplete="off" placeholder="e.g. Prod, Sandbox, Brand B" />
-              </div>
-              <div class="profile-actions">
-                <button type="button" class="primary span2" id="saveClientProfileBtn">Save client / key</button>
-                <button type="button" id="deleteClientKeyBtn">Remove key</button>
-                <button type="button" id="deleteClientProfileBtn">Delete client</button>
-              </div>
             </div>
             <div class="field">
               <label for="environment">Environment</label>
@@ -809,7 +802,7 @@
             </div>
             <div class="field">
               <label for="userToken">User Token</label>
-              <textarea id="userToken" rows="3" placeholder="Paste userToken (not saved in profiles)"></textarea>
+              <textarea id="userToken" rows="3" placeholder="Paste userToken (not saved)"></textarea>
             </div>
             <div style="display:grid;grid-template-columns:1.4fr .8fr;gap:6px;margin-bottom:4px">
               <button type="button" class="primary" id="loadBtn">Load / Reload</button>
@@ -838,7 +831,7 @@
                 <button type="button" class="span2" id="clearCacheBtn2">Clear runtime cache</button>
                 <button type="button" class="span2" id="resetLocalDataBtn">Reset all local data…</button>
               </div>
-              <div class="empty" style="padding:0">Profiles store client name + app keys only. User tokens are never saved. Clear cache keeps profiles; reset all local data removes profiles too.</div>
+              <div class="empty" style="padding:0">Credentials stay in the form only for this session. Clear cache keeps IDE preferences; reset all local data clears preferences and theme too.</div>
             </details>
           </div>
         </aside>
@@ -1021,13 +1014,9 @@ const COMPONENT_GROUPS = [
 const $ = id => document.getElementById(id);
 const THEME_KEY = 'acs.theme';
 const STORAGE_KEY = 'acs.ide.preferences.v1';
-const PROFILES_KEY = 'acs.clientProfiles.v1';
 const SCRIPT_LOADS = new Map();
 
 let selectedComponentKey = 'subscriptionManager';
-let clientProfiles = [];
-let activeProfileId = '';
-let activeKeyId = '';
 let activeSession = {
   appKey: null,
   userToken: null,
@@ -1333,36 +1322,30 @@ async function clearCache({ includeHttpCache = true } = {}) {
   }
 
   logConsole(
-    `Cache cleared (devtools, script map, Array HTML cache, ${removedSessionKeys} sessionStorage key(s)${httpCacheCleared ? ', HTTP cache' : ''}). Client profiles kept.`,
+    `Cache cleared (devtools, script map, Array HTML cache, ${removedSessionKeys} sessionStorage key(s)${httpCacheCleared ? ', HTTP cache' : ''}).`,
     'ok',
     'cache'
   );
   pushEvent('Cache cleared');
-  setStatusMessage('Cache cleared · profiles kept');
+  setStatusMessage('Cache cleared');
 }
 
 async function resetAllLocalData() {
   const ok = confirm(
-    'Reset ALL local data?\n\nThis removes:\n• Client profiles\n• IDE preferences\n• Theme\n• Runtime cache / HTTP cache\n• Array sessionStorage\n\nYou will need to re-enter credentials and rebuild client profiles.'
+    'Reset ALL local data?\n\nThis removes:\n• IDE preferences\n• Theme\n• Runtime cache / HTTP cache\n• Array sessionStorage\n\nYou will need to re-enter credentials.'
   );
   if (!ok) return;
 
   clearRuntimeMemory();
   clearArraySessionStorage();
-  clientProfiles = [];
-  activeProfileId = '';
-  activeKeyId = '';
-  localStorage.removeItem(PROFILES_KEY);
   localStorage.removeItem(STORAGE_KEY);
   localStorage.removeItem(THEME_KEY);
+  localStorage.removeItem('acs.clientProfiles.v1');
 
-  $('clientName').value = '';
-  $('clientKeyLabel').value = '';
   $('appKey').value = '';
   $('userToken').value = '';
   $('scriptOverride').value = '';
   $('extraAttrs').value = '';
-  renderClientProfileSelects();
 
   if (window.acsNative?.clearHttpCache) {
     try { await window.acsNative.clearHttpCache(); } catch (_) {}
@@ -1726,9 +1709,6 @@ async function loadComponent({ fromComponentSwitch = false } = {}) {
       durationMs: Math.round(performance.now() - t0)
     };
     savePreferences();
-    if (normalizeClientName($('clientName').value)) {
-      upsertClientProfile({ silent: true });
-    }
     updatePreviewChrome(`${cfg.tagName} · ${ENVIRONMENTS[environment].label}`);
     setStatusMessage(`Loaded ${label}`);
   } catch (err) {
@@ -1900,264 +1880,6 @@ function downloadIncidentSnapshot() {
   logConsole('Incident snapshot JSON downloaded.', 'ok', 'snapshot');
 }
 
-function newId(prefix = 'id') {
-  return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(16).slice(2, 8)}`;
-}
-
-function normalizeClientName(name) {
-  return String(name || '').trim().replace(/\s+/g, ' ');
-}
-
-function loadClientProfilesStore() {
-  try {
-    const raw = JSON.parse(localStorage.getItem(PROFILES_KEY) || '{}');
-    clientProfiles = Array.isArray(raw.profiles) ? raw.profiles : [];
-    activeProfileId = raw.lastProfileId || '';
-    activeKeyId = raw.lastKeyId || '';
-  } catch (_) {
-    clientProfiles = [];
-    activeProfileId = '';
-    activeKeyId = '';
-  }
-}
-
-function persistClientProfilesStore() {
-  localStorage.setItem(PROFILES_KEY, JSON.stringify({
-    profiles: clientProfiles,
-    lastProfileId: activeProfileId || '',
-    lastKeyId: activeKeyId || ''
-  }));
-}
-
-function findClientProfile(id) {
-  return clientProfiles.find(p => p.id === id) || null;
-}
-
-function findClientProfileByName(name) {
-  const needle = normalizeClientName(name).toLowerCase();
-  if (!needle) return null;
-  return clientProfiles.find(p => normalizeClientName(p.name).toLowerCase() === needle) || null;
-}
-
-function defaultKeyLabel(appKey, environment) {
-  const envLabel = ENVIRONMENTS[environment]?.label;
-  if (envLabel) return envLabel;
-  return maskToken(appKey) || 'App key';
-}
-
-function formatKeyOption(key) {
-  const label = key.label || defaultKeyLabel(key.appKey, key.environment);
-  return `${label} · ${maskToken(key.appKey)}`;
-}
-
-function renderClientProfileSelects() {
-  const profileSelect = $('clientProfileSelect');
-  const keySelect = $('clientKeySelect');
-  const selectedProfileId = activeProfileId;
-  const selectedKeyId = activeKeyId;
-
-  const sorted = [...clientProfiles].sort((a, b) =>
-    normalizeClientName(a.name).localeCompare(normalizeClientName(b.name))
-  );
-
-  profileSelect.innerHTML = `<option value="">— New / unsaved —</option>` + sorted.map(p => {
-    const count = (p.keys || []).length;
-    return `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)} (${count} key${count === 1 ? '' : 's'})</option>`;
-  }).join('');
-
-  if (selectedProfileId && findClientProfile(selectedProfileId)) {
-    profileSelect.value = selectedProfileId;
-  } else {
-    profileSelect.value = '';
-  }
-
-  const profile = findClientProfile(profileSelect.value);
-  const keys = profile?.keys || [];
-  keySelect.innerHTML = `<option value="">— Use field below —</option>` + keys.map(k =>
-    `<option value="${escapeHtml(k.id)}">${escapeHtml(formatKeyOption(k))}</option>`
-  ).join('');
-
-  if (selectedKeyId && keys.some(k => k.id === selectedKeyId)) {
-    keySelect.value = selectedKeyId;
-  } else {
-    keySelect.value = '';
-  }
-
-  const totalKeys = clientProfiles.reduce((n, p) => n + (p.keys?.length || 0), 0);
-  $('profileKeyCount').textContent = clientProfiles.length
-    ? `${clientProfiles.length} client${clientProfiles.length === 1 ? '' : 's'} · ${totalKeys} key${totalKeys === 1 ? '' : 's'}`
-    : 'None saved yet';
-}
-
-function applySelectedClientKey() {
-  const profile = findClientProfile($('clientProfileSelect').value);
-  const key = profile?.keys?.find(k => k.id === $('clientKeySelect').value);
-  if (!profile || !key) return;
-  $('clientName').value = profile.name;
-  $('clientKeyLabel').value = key.label || '';
-  $('appKey').value = key.appKey;
-  if (key.environment && ENVIRONMENTS[key.environment]) {
-    $('environment').value = key.environment;
-    syncEnvDefaults();
-  }
-  activeProfileId = profile.id;
-  activeKeyId = key.id;
-  persistClientProfilesStore();
-  setStatusMessage(`Loaded profile: ${profile.name} · ${key.label || maskToken(key.appKey)}`);
-}
-
-function onClientProfileSelected() {
-  activeProfileId = $('clientProfileSelect').value || '';
-  const profile = findClientProfile(activeProfileId);
-  if (!profile) {
-    activeKeyId = '';
-    $('clientName').value = '';
-    $('clientKeyLabel').value = '';
-    renderClientProfileSelects();
-    persistClientProfilesStore();
-    return;
-  }
-  $('clientName').value = profile.name;
-  const preferred = profile.keys.find(k => k.id === activeKeyId) || profile.keys[0];
-  activeKeyId = preferred?.id || '';
-  renderClientProfileSelects();
-  if (preferred) applySelectedClientKey();
-  else persistClientProfilesStore();
-}
-
-function upsertClientProfile({ silent = false } = {}) {
-  const name = normalizeClientName($('clientName').value);
-  const appKey = $('appKey').value.trim();
-  const label = $('clientKeyLabel').value.trim();
-  const environment = $('environment').value;
-
-  if (!name) {
-    if (!silent) {
-      setStatusMessage('Enter a client name to save');
-      $('clientName').focus();
-    }
-    return null;
-  }
-  if (!appKey) {
-    if (!silent) {
-      setStatusMessage('Paste an appKey to save');
-      $('appKey').focus();
-    }
-    return null;
-  }
-
-  let profile = findClientProfile(activeProfileId) || findClientProfileByName(name);
-  if (!profile) {
-    profile = { id: newId('client'), name, keys: [], updatedAt: new Date().toISOString() };
-    clientProfiles.push(profile);
-  } else {
-    profile.name = name;
-    profile.updatedAt = new Date().toISOString();
-  }
-
-  let key = profile.keys.find(k => k.appKey === appKey);
-  if (!key) {
-    key = {
-      id: newId('key'),
-      label: label || defaultKeyLabel(appKey, environment),
-      appKey,
-      environment
-    };
-    profile.keys.push(key);
-    if (!silent) logConsole(`Added app key to ${profile.name}: ${key.label}`, 'ok', 'profile');
-  } else {
-    if (label) key.label = label;
-    key.environment = environment;
-    if (!silent) logConsole(`Updated app key on ${profile.name}: ${key.label || maskToken(appKey)}`, 'ok', 'profile');
-  }
-
-  activeProfileId = profile.id;
-  activeKeyId = key.id;
-  persistClientProfilesStore();
-  renderClientProfileSelects();
-  $('clientProfileSelect').value = profile.id;
-  $('clientKeySelect').value = key.id;
-  $('clientKeyLabel').value = key.label || '';
-
-  if (!silent) {
-    setStatusMessage(`Saved ${profile.name} (${profile.keys.length} key${profile.keys.length === 1 ? '' : 's'})`);
-    pushEvent(`Profile saved: ${profile.name}`);
-  }
-  return { profile, key };
-}
-
-function deleteSelectedClientKey() {
-  const profile = findClientProfile($('clientProfileSelect').value || activeProfileId);
-  if (!profile) {
-    setStatusMessage('Select a saved client first');
-    return;
-  }
-  const keyId = $('clientKeySelect').value || activeKeyId;
-  const key = profile.keys.find(k => k.id === keyId);
-  if (!key) {
-    setStatusMessage('Select a saved app key to remove');
-    return;
-  }
-  if (!confirm(`Remove key "${key.label || maskToken(key.appKey)}" from ${profile.name}?`)) return;
-
-  profile.keys = profile.keys.filter(k => k.id !== key.id);
-  profile.updatedAt = new Date().toISOString();
-  if (!profile.keys.length) {
-    clientProfiles = clientProfiles.filter(p => p.id !== profile.id);
-    activeProfileId = '';
-    activeKeyId = '';
-    $('clientName').value = '';
-    $('clientKeyLabel').value = '';
-  } else {
-    activeProfileId = profile.id;
-    activeKeyId = profile.keys[0].id;
-  }
-  persistClientProfilesStore();
-  renderClientProfileSelects();
-  if (activeKeyId) applySelectedClientKey();
-  setStatusMessage('App key removed');
-  logConsole(`Removed key from ${profile.name}`, 'warn', 'profile');
-}
-
-function deleteSelectedClientProfile() {
-  const profile = findClientProfile($('clientProfileSelect').value || activeProfileId);
-  if (!profile) {
-    setStatusMessage('Select a saved client first');
-    return;
-  }
-  if (!confirm(`Delete client profile "${profile.name}" and all ${profile.keys.length} app key(s)?`)) return;
-  clientProfiles = clientProfiles.filter(p => p.id !== profile.id);
-  activeProfileId = '';
-  activeKeyId = '';
-  $('clientName').value = '';
-  $('clientKeyLabel').value = '';
-  persistClientProfilesStore();
-  renderClientProfileSelects();
-  setStatusMessage(`Deleted client ${profile.name}`);
-  logConsole(`Deleted client profile: ${profile.name}`, 'warn', 'profile');
-}
-
-function migrateRememberedAppKey(prefs) {
-  if (!prefs?.appKey || findClientProfileByName('Saved app key') || clientProfiles.some(p => p.keys?.some(k => k.appKey === prefs.appKey))) {
-    return;
-  }
-  const profile = {
-    id: newId('client'),
-    name: 'Saved app key',
-    keys: [{
-      id: newId('key'),
-      label: defaultKeyLabel(prefs.appKey, prefs.environment || 'sandbox'),
-      appKey: prefs.appKey,
-      environment: prefs.environment || 'sandbox'
-    }],
-    updatedAt: new Date().toISOString()
-  };
-  clientProfiles.push(profile);
-  activeProfileId = profile.id;
-  activeKeyId = profile.keys[0].id;
-  persistClientProfilesStore();
-}
-
 function savePreferences() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({
     component: selectedComponentKey,
@@ -2191,16 +1913,8 @@ function loadPreferences() {
       $('toggleDevtoolsBtn').textContent = 'Expand';
     }
     if (prefs.viewport === 'mobile') setViewport('mobile');
-
-    loadClientProfilesStore();
-    migrateRememberedAppKey(prefs);
-    renderClientProfileSelects();
-    if (activeProfileId && findClientProfile(activeProfileId)) {
-      $('clientProfileSelect').value = activeProfileId;
-      onClientProfileSelected();
-    } else if (prefs.rememberAppKey && prefs.appKey) {
-      $('appKey').value = prefs.appKey;
-    }
+    // Drop legacy remembered app keys / client profiles if present
+    localStorage.removeItem('acs.clientProfiles.v1');
     updatePreviewChrome();
   } catch (_) {}
 }
@@ -2209,8 +1923,14 @@ function setActivity(name) {
   if (name === 'sidebar') name = 'components';
   document.querySelectorAll('.activity button').forEach(btn => btn.classList.toggle('active', btn.dataset.activity === name));
   const playbooks = name === 'playbooks';
+  const logs = name === 'http';
   $('appRoot').classList.toggle('mode-playbooks', playbooks);
-  if ($('titleCrumb')) $('titleCrumb').textContent = playbooks ? 'Playbooks' : 'Components';
+  if ($('titleCrumb')) {
+    $('titleCrumb').textContent = playbooks ? 'API' : logs ? 'Logs' : 'UI';
+  }
+  if ($('explorerTitle')) {
+    $('explorerTitle').textContent = playbooks ? 'API' : 'Components';
+  }
 
   if (playbooks) {
     ensureFlowtestLoaded();
@@ -2335,21 +2055,10 @@ $('tokenLife').addEventListener('change', () => {
   savePreferences();
 });
 $('customTokenLife').addEventListener('input', savePreferences);
-$('appKey').addEventListener('input', savePreferences);
 $('componentHeight').addEventListener('input', savePreferences);
 $('scriptOverride').addEventListener('input', savePreferences);
 $('extraAttrs').addEventListener('input', savePreferences);
 $('apiUrl').addEventListener('input', savePreferences);
-
-$('clientProfileSelect').addEventListener('change', onClientProfileSelected);
-$('clientKeySelect').addEventListener('change', () => {
-  activeKeyId = $('clientKeySelect').value || '';
-  if (activeKeyId) applySelectedClientKey();
-  else persistClientProfilesStore();
-});
-$('saveClientProfileBtn').addEventListener('click', () => upsertClientProfile());
-$('deleteClientKeyBtn').addEventListener('click', deleteSelectedClientKey);
-$('deleteClientProfileBtn').addEventListener('click', deleteSelectedClientProfile);
 
 $('loadBtn').addEventListener('click', () => loadComponent());
 $('reloadBtn').addEventListener('click', () => loadComponent());
