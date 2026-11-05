@@ -1,17 +1,17 @@
 {
   "name": "array-component-studio",
-  "version": "1.0.0",
-  "description": "Local Electron studio for testing Array embedded web components.",
+  "version": "1.1.0",
+  "description": "Array Studio — local Electron app for embedded components and bulk user deletion.",
   "main": "main.js",
   "private": true,
   "scripts": {
     "start": "electron .",
     "dev": "electron .",
-    "dev:flowtest": "ACS_FLOWTEST_DEV=1 electron .",
-    "sync:flowtest": "npm --prefix \"../Workflow Testing Tool\" run build -- --base=./ --outDir=\"../Array_Component_Studio/flowtest\" --emptyOutDir",
     "build": "electron-builder --publish never",
     "build:mac": "electron-builder --mac --universal --publish never",
-    "build:win": "electron-builder --win --publish never"
+    "build:win": "electron-builder --win --publish never",
+    "build:win:nsis": "electron-builder --win nsis --publish never",
+    "build:win:portable": "electron-builder --win portable --publish never"
   },
   "devDependencies": {
     "electron": "^30.5.1",
@@ -19,11 +19,13 @@
   },
   "build": {
     "appId": "com.componentstudio.app",
-    "productName": "Component Studio",
+    "productName": "Array Studio",
     "files": [
       "**/*",
       "!dist/**",
-      "!node_modules/.cache/**"
+      "!node_modules/.cache/**",
+      "!figma-design*.tsx",
+      "!figma-design.css"
     ],
     "extraResources": [],
     "directories": {
@@ -34,17 +36,30 @@
         "dmg",
         "zip"
       ],
-      "category": "public.app-category.developer-tools"
+      "category": "public.app-category.developer-tools",
+      "artifactName": "ArrayStudio-${version}-${arch}.${ext}"
     },
     "win": {
       "target": [
-        "portable",
-        "nsis"
-      ]
+        "nsis",
+        "portable"
+      ],
+      "artifactName": "ArrayStudio-${version}-${arch}.${ext}"
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "allowElevation": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Array Studio",
+      "uninstallDisplayName": "Array Studio",
+      "deleteAppDataOnUninstall": false,
+      "artifactName": "ArrayStudio-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "ArrayStudio-Portable.exe"
     }
   }
 }

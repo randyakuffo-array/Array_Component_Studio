@@ -1,781 +1,127 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Array Component Studio</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --accent: #1fb5a8;
-      --accent-2: #159a8f;
-      --accent-soft: color-mix(in srgb, #1fb5a8 16%, transparent);
-      --ok: #34c759;
-      --warn: #f0a202;
-      --danger: #ff5c5c;
-      --info: #6ea8fe;
-      --preview: #ffffff;
-      --r: 6px;
-      --r2: 8px;
-      --r3: 10px;
-      --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      --sans: "Sora", "Segoe UI", sans-serif;
-      --title-h: 48px;
-      --status-h: 28px;
-      --activity-w: 72px;
-      --explorer-w: 280px;
-      --inspector-w: 300px;
-      --devtools-h: 260px;
-      --shadow-sm: 0 1px 2px color-mix(in srgb, #000 18%, transparent);
-      --inset: inset 0 1px 1px color-mix(in srgb, #000 18%, transparent);
-      --accent-gradient: linear-gradient(135deg, #1fb5a8, #159a8f);
-    }
-
-    :root[data-theme="dark"] {
-      color-scheme: dark;
-      --bg: #0b0e11;
-      --bg-deep: #080a0c;
-      --sidebar: #11161b;
-      --panel: #151b21;
-      --panel-2: #1c242c;
-      --border: #2a333c;
-      --border-strong: #3a4652;
-      --text: #eef3f7;
-      --muted: #7d8b99;
-      --hover: #1a222a;
-      --active: color-mix(in srgb, #1fb5a8 18%, transparent);
-      --input: #0f1419;
-      --chip: #1c242c;
-    }
-
-    :root[data-theme="light"] {
-      color-scheme: light;
-      --bg: #f3f5f7;
-      --bg-deep: #e8eef3;
-      --sidebar: #ffffff;
-      --panel: #ffffff;
-      --panel-2: #eef2f5;
-      --border: #d5dde5;
-      --border-strong: #bcc7d2;
-      --text: #12181e;
-      --muted: #6b7a89;
-      --hover: #e8eef3;
-      --active: color-mix(in srgb, #0f8f85 12%, transparent);
-      --input: #f8fafb;
-      --chip: #eef2f5;
-      --accent: #0f8f85;
-      --accent-2: #0c7a72;
-      --accent-soft: color-mix(in srgb, #0f8f85 12%, transparent);
-      --shadow-sm: 0 1px 2px color-mix(in srgb, #12181e 8%, transparent);
-      --inset: inset 0 1px 1px color-mix(in srgb, #12181e 4%, transparent);
-      --accent-gradient: linear-gradient(135deg, #0f8f85, #0c7a72);
-    }
-
-    * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; }
-    body {
-      font-family: var(--sans);
-      font-size: 13px;
-      background: var(--bg);
-      color: var(--text);
-      overflow: hidden;
-      letter-spacing: -0.01em;
-      -webkit-font-smoothing: antialiased;
-    }
-    button, input, select, textarea { font: inherit; color: inherit; }
-    button {
-      border: 1px solid var(--border);
-      background: var(--panel);
-      border-radius: var(--r2);
-      padding: 6px 11px;
-      cursor: pointer;
-      color: var(--text);
-      font-weight: 500;
-      box-shadow: none;
-      transition: background .14s ease, border-color .14s ease, color .14s ease;
-    }
-    button:hover {
-      background: var(--hover);
-      border-color: var(--border-strong);
-      transform: none;
-    }
-    button:active { transform: none; }
-    button.active, button[aria-pressed="true"] {
-      background: var(--accent-soft);
-      border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
-      color: var(--text);
-      box-shadow: none;
-    }
-    button.primary {
-      background: var(--accent-gradient);
-      border-color: transparent;
-      color: #fff;
-      box-shadow: none;
-    }
-    button.primary:hover {
-      filter: brightness(1.05);
-      background: var(--accent-gradient);
-    }
-    button.ghost {
-      background: transparent;
-      border-color: transparent;
-      color: var(--muted);
-      box-shadow: none;
-    }
-    button.ghost:hover {
-      background: var(--hover);
-      color: var(--text);
-      border-color: transparent;
-    }
-    input, select, textarea {
-      width: 100%;
-      background: var(--input);
-      border: 1px solid var(--border);
-      border-radius: var(--r2);
-      padding: 8px 10px;
-      outline: none;
-      box-shadow: none;
-      transition: border-color .14s ease, box-shadow .14s ease;
-    }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-soft);
-    }
-    textarea { resize: vertical; font-family: var(--mono); font-size: 11px; }
-    label { display: block; color: var(--muted); font-size: 11px; margin: 0 0 5px; font-weight: 500; }
-    .field { margin-bottom: 10px; }
-    .mono { font-family: var(--mono); }
-    .hidden { display: none !important; }
-
-    .profile-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-top: 8px;
-    }
-    .profile-actions .span2 { grid-column: 1 / -1; }
-
-    .app {
-      height: 100vh;
-      display: grid;
-      grid-template-rows: var(--title-h) 1fr var(--status-h);
-      background: var(--bg);
-    }
-
-    .titlebar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 0 14px;
-      background: color-mix(in srgb, var(--sidebar) 92%, var(--bg));
-      border-bottom: 1px solid var(--border);
-      -webkit-app-region: drag;
-      backdrop-filter: blur(10px);
-    }
-    .titlebar * { -webkit-app-region: no-drag; }
-    .title-left, .title-right { display: flex; align-items: center; gap: 8px; }
-    .title-right { flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
-    .title-actions-secondary {
-      display: flex; align-items: center; gap: 4px;
-      padding-right: 6px;
-      margin-right: 2px;
-      border-right: 1px solid var(--border);
-    }
-    .app-mark {
-      width: 24px; height: 24px; border-radius: 7px;
-      background: var(--accent-gradient);
-      color: #fff;
-      display: grid; place-items: center;
-      font-size: 11px; font-weight: 700;
-      box-shadow: none;
-    }
-    .app-title { font-weight: 600; font-size: 13px; letter-spacing: -0.02em; }
-    .title-crumb {
-      display: inline-flex; align-items: center; gap: 6px;
-      color: var(--muted); font-size: 12px; font-weight: 500;
-    }
-    .title-crumb::before {
-      content: "";
-      width: 1px; height: 14px; background: var(--border);
-      margin: 0 2px 0 4px;
-    }
-    .title-meta {
-      color: var(--muted); font-size: 11px; font-weight: 500;
-      padding: 4px 9px;
-      border-radius: 6px;
-      background: var(--chip);
-      border: 1px solid var(--border);
-    }
-
-    .main {
-      min-height: 0;
-      display: grid;
-      grid-template-rows: 1fr var(--devtools-h);
-    }
-    .workspace {
-      min-height: 0;
-      display: grid;
-      grid-template-columns: var(--activity-w) var(--explorer-w) minmax(0, 1fr) var(--inspector-w);
-    }
-    .workspace > * { min-height: 0; }
-    .workspace.inspector-collapsed { grid-template-columns: var(--activity-w) var(--explorer-w) minmax(0, 1fr) 0px; }
-    .workspace.inspector-collapsed .inspector { display: none; }
-    .main.devtools-collapsed { grid-template-rows: 1fr 30px; }
-
-    .activity {
-      background: var(--sidebar);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 12px 8px;
-      gap: 8px;
-    }
-    .activity button {
-      width: 100%;
-      min-height: 52px;
-      padding: 8px 4px 6px;
-      border: 1px solid transparent;
-      background: transparent;
-      border-radius: 10px;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 600;
-      box-shadow: none;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-    }
-    .activity button .act-icon { font-size: 15px; line-height: 1; }
-    .activity button .act-label {
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      opacity: 0.9;
-    }
-    .activity button:hover {
-      background: var(--hover);
-      color: var(--text);
-      transform: none;
-      border-color: transparent;
-    }
-    .activity button.active {
-      background: var(--accent-soft);
-      color: var(--accent);
-      border-color: color-mix(in srgb, var(--accent) 28%, transparent);
-      box-shadow: none;
-    }
-    .activity button.active::before {
-      content: "";
-      position: absolute;
-      left: -8px; top: 12px; bottom: 12px;
-      width: 3px;
-      border-radius: 999px;
-      background: var(--accent);
-    }
-
-    .explorer {
-      background: var(--sidebar);
-      border-right: 1px solid var(--border);
-      min-width: 200px;
-      max-width: 420px;
-      overflow: hidden;
-      display: grid;
-      grid-template-rows: auto auto minmax(0, 1fr) auto;
-      resize: horizontal;
-    }
-    .side-head {
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
-      font-size: 11px;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-weight: 700;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .side-head .org-chip {
-      text-transform: none;
-      letter-spacing: 0;
-      font-weight: 600;
-      font-size: 11px;
-      color: var(--text);
-      background: var(--chip);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 2px 8px;
-    }
-    .side-top { padding: 10px; border-bottom: 1px solid var(--border); }
-    .search { margin-bottom: 0; }
-    .tree-wrap {
-      overflow: auto;
-      padding: 8px;
-      min-height: 160px;
-    }
-
-    .session-strip {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
-      padding: 10px;
-      border: 1px solid var(--border);
-      border-radius: var(--r3);
-      background: linear-gradient(180deg, var(--panel-2), var(--panel));
-      box-shadow: var(--shadow-sm);
-    }
-    .session-strip .left { min-width: 0; }
-    .session-strip .label {
-      font-size: 10px; color: var(--muted); text-transform: uppercase;
-      letter-spacing: .06em; font-weight: 700;
-    }
-    .session-strip .timer {
-      font-family: var(--mono); font-size: 20px; font-weight: 600;
-      margin: 2px 0 0; color: var(--ok);
-    }
-    .session-strip .timer.warn { color: var(--warn); }
-    .session-strip .timer.danger, .session-strip .timer.expired { color: var(--danger); }
-
-    .side-footer {
-      border-top: 1px solid var(--border);
-      padding: 10px;
-      overflow: auto;
-      max-height: 38vh;
-      background: var(--sidebar);
-    }
-    .side-footer details.advanced {
-      margin-top: 8px;
-      border: 1px solid var(--border);
-      border-radius: var(--r3);
-      background: var(--panel);
-      padding: 0 8px 8px;
-    }
-    .side-footer details.advanced summary {
-      list-style: none; cursor: pointer; padding: 8px 0;
-      color: var(--muted); font-size: 11px; font-weight: 600;
-    }
-    .side-footer details.advanced summary::-webkit-details-marker { display: none; }
-
-    .tree-group { margin-bottom: 6px; }
-    .tree-group summary {
-      list-style: none;
-      cursor: pointer;
-      padding: 5px 8px;
-      border-radius: var(--r2);
-      color: var(--muted);
-      font-weight: 600;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .04em;
-    }
-    .tree-group summary::-webkit-details-marker { display: none; }
-    .tree-group summary::before { content: "▾ "; font-size: 10px; color: var(--accent); }
-    .tree-group:not([open]) summary::before { content: "▸ "; }
-    .tree-item {
-      display: block;
-      width: 100%;
-      text-align: left;
-      border: 0;
-      background: transparent;
-      border-radius: var(--r2);
-      padding: 6px 8px 6px 18px;
-      color: var(--text);
-      font-size: 12px;
-      box-shadow: none;
-      font-weight: 400;
-    }
-    .tree-item:hover { background: var(--hover); transform: none; }
-    .tree-item.active {
-      background: var(--active);
-      color: var(--text);
-      box-shadow: inset 2px 0 0 var(--accent);
-      border-radius: 0 var(--r2) var(--r2) 0;
-    }
-
-    .preview-pane {
-      min-width: 0;
-      min-height: 0;
-      overflow: hidden;
-      display: grid;
-      grid-template-rows: 40px minmax(0, 1fr);
-      background: var(--bg-deep);
-    }
-    .preview-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 0 10px;
-      background: var(--panel);
-      border-bottom: 1px solid var(--border);
-    }
-    .preview-toolbar .left, .preview-toolbar .right { display: flex; align-items: center; gap: 6px; }
-    .preview-toolbar strong { font-size: 13px; font-weight: 600; }
-    .preview-url {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--muted);
-      max-width: 420px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: var(--chip);
-      border: 1px solid var(--border);
-    }
-    .viewport {
-      min-height: 0;
-      height: 100%;
-      overflow: auto;
-      overflow-x: auto;
-      overflow-y: auto;
-      background:
-        radial-gradient(ellipse at top, color-mix(in srgb, var(--accent) 10%, transparent), transparent 45%),
-        var(--bg-deep);
-      display: block;
-      padding: 0;
-      -webkit-overflow-scrolling: touch;
-    }
-    .viewport.desktop { padding: 0; }
-    .viewport.mobile {
-      padding: 16px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-    }
-    .browser-frame {
-      background: var(--preview);
-      color: #0f172a;
-      width: 100%;
-      min-height: 100%;
-      overflow: visible;
-    }
-    .viewport.mobile .browser-frame {
-      width: 390px;
-      max-width: 100%;
-      min-height: 720px;
-      height: auto;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      box-shadow: 0 12px 40px rgba(0,0,0,.35);
-      flex-shrink: 0;
-    }
-    .viewport.fullscreen { overflow: auto; }
-    .viewport.fullscreen .browser-frame {
-      position: fixed; inset: 0; z-index: 50; width: 100%; height: 100%;
-      border: 0; border-radius: 0; overflow: auto;
-    }
-    #componentContainer {
-      min-height: 100%;
-      background: #fff;
-      overflow: visible;
-    }
-    .render-note {
-      font-size: 11px; color: #475569; background: #f8fafc;
-      border-bottom: 1px solid #e2e8f0; padding: 8px 10px;
-    }
-
-    .inspector {
-      background: var(--sidebar);
-      border-left: 1px solid var(--border);
-      min-width: 0;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-    .inspector-body { flex: 1; overflow: auto; padding: 10px; }
-    .kv {
-      display: grid;
-      grid-template-columns: 88px 1fr;
-      gap: 6px;
-      padding: 6px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 11px;
-    }
-    .kv .k { color: var(--muted); }
-    .kv .v { font-family: var(--mono); word-break: break-word; }
-    .timer {
-      font-family: var(--mono);
-      font-size: 24px;
-      font-weight: 600;
-      letter-spacing: -.03em;
-      color: var(--ok);
-      margin: 4px 0 10px;
-    }
-    .timer.warn { color: var(--warn); }
-    .timer.danger, .timer.expired { color: var(--danger); }
-    .badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      border: 1px solid transparent; border-radius: 999px;
-      padding: 2px 8px; font-size: 10px; font-weight: 600;
-      color: var(--muted);
-      background: var(--chip);
-    }
-    .badge.ok {
-      color: #8EF0C2;
-      background: rgba(42, 194, 123, .14);
-      border-color: rgba(42, 194, 123, .25);
-    }
-    .badge.warn {
-      color: #FFD56A;
-      background: rgba(245, 176, 0, .14);
-      border-color: rgba(245, 176, 0, .25);
-    }
-    .badge.err {
-      color: #FFB0B3;
-      background: rgba(245, 84, 89, .14);
-      border-color: rgba(245, 84, 89, .28);
-    }
-    :root[data-theme="light"] .badge.ok { color: #178A52; }
-    :root[data-theme="light"] .badge.warn { color: #9A6B00; }
-    :root[data-theme="light"] .badge.err { color: #C23036; }
-    .health-row {
-      display: flex; justify-content: space-between; align-items: center;
-      gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 11px;
-    }
-    .analysis {
-      border: 1px solid var(--border); border-radius: var(--r3);
-      background: var(--panel); padding: 10px; margin-top: 8px;
-      box-shadow: var(--shadow-sm);
-    }
-    .analysis h4 { margin: 0 0 6px; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
-    .analysis p { margin: 0 0 4px; color: var(--muted); line-height: 1.45; }
-    .analysis strong { color: var(--text); }
-
-    .insp-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
-
-    details.acc {
-      border: 1px solid var(--border);
-      border-radius: var(--r3);
-      background: var(--panel);
-      margin-bottom: 8px;
-      overflow: hidden;
-    }
-    details.acc summary {
-      list-style: none; cursor: pointer; padding: 8px 10px;
-      font-weight: 600; font-size: 11px; background: var(--panel-2);
-    }
-    details.acc summary::-webkit-details-marker { display: none; }
-    details.acc .acc-body { padding: 8px; max-height: 240px; overflow: auto; }
-    details.acc[open] summary { border-bottom: 1px solid var(--border); }
-    .acc-body pre {
-      margin: 0; white-space: pre-wrap; word-break: break-word;
-      font-family: var(--mono); font-size: 11px; color: var(--text);
-    }
-
-    .devtools {
-      background: var(--panel);
-      border-top: 1px solid var(--border);
-      min-height: 30px;
-      display: grid;
-      grid-template-rows: 30px 1fr;
-      overflow: hidden;
-    }
-    .devtools-tabs {
-      display: flex; align-items: center; gap: 2px;
-      padding: 0 8px; border-bottom: 1px solid var(--border); background: var(--sidebar);
-    }
-    .devtools-tabs .tab {
-      border: 0; background: transparent; border-radius: var(--r2);
-      padding: 5px 10px; color: var(--muted); font-size: 12px; font-weight: 500;
-      box-shadow: none;
-    }
-    .devtools-tabs .tab:hover { transform: none; color: var(--text); background: var(--hover); }
-    .devtools-tabs .tab.active {
-      color: var(--text);
-      background: var(--accent-soft);
-      box-shadow: inset 0 -2px 0 var(--accent);
-      border-radius: var(--r2) var(--r2) 0 0;
-    }
-    .devtools-tabs .spacer { flex: 1; }
-    .devtools-body { min-height: 0; overflow: hidden; background: var(--bg); }
-    .tab-panel { display: none; height: 100%; min-height: 0; }
-    .tab-panel.active { display: grid; }
-    .http-layout {
-      grid-template-columns: 1.1fr 1fr;
-      height: 100%;
-    }
-    .http-list, .http-detail, .console-pane, .timing-pane, .events-pane, .lifecycle-pane, .network-pane {
-      min-height: 0; overflow: auto; border-right: 1px solid var(--border);
-      background: var(--bg);
-    }
-    .http-detail { border-right: 0; }
-    .req-row {
-      display: grid;
-      grid-template-columns: 52px 56px 1fr 64px 56px;
-      gap: 8px;
-      padding: 7px 10px;
-      border-bottom: 1px solid var(--border);
-      font-family: var(--mono);
-      font-size: 11px;
-      cursor: pointer;
-    }
-    .req-row:hover { background: var(--hover); }
-    .req-row.active {
-      background: var(--active);
-      box-shadow: inset 2px 0 0 var(--accent);
-    }
-    .req-row .method { color: var(--accent); font-weight: 600; }
-    .req-row .status.ok { color: var(--ok); }
-    .req-row .status.warn { color: var(--warn); }
-    .req-row .status.err { color: var(--danger); }
-    .req-row .url { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
-    .log-line { font-family: var(--mono); font-size: 11px; padding: 3px 10px; }
-    .log-line.err { color: var(--danger); }
-    .log-line.warn { color: var(--warn); }
-    .log-line.ok { color: var(--ok); }
-    .empty {
-      color: var(--muted); padding: 14px; font-size: 12px;
-    }
-
-    .statusbar {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; padding: 0 12px;
-      background: var(--sidebar);
-      border-top: 1px solid var(--border);
-      color: var(--muted); font-size: 11px;
-      box-shadow: none;
-    }
-    .statusbar .left, .statusbar .right { display: flex; gap: 12px; align-items: center; }
-    .statusbar .ok { color: var(--ok); }
-    .statusbar .warn { color: var(--warn); }
-    .statusbar .err { color: var(--danger); }
-
-    .split-handle {
-      width: 4px; cursor: col-resize; background: transparent;
-    }
-
-    .flowtest-host {
-      display: none;
-      grid-column: 2 / -1;
-      min-width: 0;
-      min-height: 0;
-      background: var(--bg-deep);
-      border: 0;
-      position: relative;
-    }
-    .flowtest-host iframe {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
-      background: #0b0f14;
-    }
-    .flowtest-fallback {
-      position: absolute; inset: 0;
-      display: none;
-      align-items: center; justify-content: center;
-      padding: 32px; text-align: center;
-      color: var(--muted); font-size: 13px; line-height: 1.5;
-    }
-    .flowtest-fallback.visible { display: flex; flex-direction: column; gap: 12px; }
-    .flowtest-fallback code {
-      font-family: var(--mono); font-size: 11px; color: var(--text);
-      background: var(--panel); border: 1px solid var(--border);
-      border-radius: 4px; padding: 2px 6px;
-    }
-
-    .app.mode-playbooks .explorer,
-    .app.mode-playbooks .preview-pane,
-    .app.mode-playbooks .inspector {
-      display: none !important;
-    }
-    .app.mode-playbooks .workspace {
-      grid-template-columns: var(--activity-w) minmax(0, 1fr);
-    }
-    .app.mode-playbooks .flowtest-host { display: block; }
-    .app.mode-playbooks .main {
-      grid-template-rows: 1fr;
-    }
-    .app.mode-playbooks .devtools { display: none !important; }
-    .app.mode-playbooks .title-right #copySnapshotBtn,
-    .app.mode-playbooks .title-right #downloadSnapshotBtn,
-    .app.mode-playbooks .title-right #clearCacheBtn,
-    .app.mode-playbooks .title-right #copyDiagnosticsBtn,
-    .app.mode-playbooks .title-right #toggleInspectorBtn {
-      display: none;
-    }
-
-    @media (max-width: 1100px) {
-      .workspace { grid-template-columns: var(--activity-w) 220px 1fr 260px; }
-      .app.mode-playbooks .workspace { grid-template-columns: var(--activity-w) minmax(0, 1fr); }
-    }
-  </style>
+  <title>Array Studio</title>
+  <link rel="stylesheet" href="studio-theme.css" />
 </head>
 <body>
   <div class="app" id="appRoot">
     <header class="titlebar">
       <div class="title-left">
-        <div class="app-mark">A</div>
-        <div class="app-title">Array Component Studio</div>
-        <div class="title-crumb" id="titleCrumb">UI</div>
-        <div class="title-meta" id="titleMeta">No session</div>
+        <div class="title-brand">
+          <div class="app-mark">a</div>
+          <div class="brand-copy">
+            <div class="app-title">Array Studio</div>
+            <div class="app-subtitle">Component workspace</div>
+          </div>
+        </div>
+        <div class="title-crumb" id="titleCrumb">
+          <span class="crumb-root">Components</span>
+          <span class="crumb-sep">›</span>
+          <span class="crumb-current">Identity Protect</span>
+        </div>
       </div>
       <div class="title-right">
-        <div class="title-actions-secondary">
-          <button type="button" class="ghost" id="copySnapshotBtn" title="Copy ticket snapshot">Snapshot</button>
-          <button type="button" class="ghost" id="downloadSnapshotBtn" title="Download JSON snapshot">Export</button>
-          <button type="button" class="ghost" id="clearCacheBtn" title="Clear HTTP cache">Cache</button>
-          <button type="button" class="ghost" id="copyDiagnosticsBtn" title="Copy diagnostics">Diagnostics</button>
-        </div>
-        <button type="button" id="toggleInspectorBtn">Inspector</button>
-        <button type="button" id="themeToggleBtn">Theme</button>
+        <span class="pill"><span class="dot"></span><span id="headerEnvPill">Sandbox</span></span>
+        <button type="button" class="pill ghost-btn" id="headerSessionBtn" title="Open session setup">
+          <span class="pill-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M11.5 12.5 20 4l2 2-2 2-2-1-3 3 1 2"/></svg></span>
+          <span id="titleMeta">No active session</span>
+        </button>
+        <button type="button" class="ghost icon-btn" id="clearCacheBtn" title="Clear HTTP cache"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg></button>
+        <button type="button" class="ghost icon-btn" id="themeToggleBtn" title="Switch theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 0 0 11.5 11.5z"/></svg></button>
+        <div class="avatar" title="Array Studio" aria-hidden="true">AS</div>
       </div>
     </header>
 
     <div class="main" id="main">
       <div class="workspace" id="workspace">
         <nav class="activity" aria-label="Activity bar">
-          <button type="button" class="active" data-activity="components" title="Embedded components">
-            <span class="act-icon">▣</span>
-            <span class="act-label">UI</span>
+          <button type="button" class="active" data-activity="components" title="Component library">
+            <span class="act-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
+            <span class="act-label">Library</span>
           </button>
-          <button type="button" data-activity="playbooks" title="API playbooks">
-            <span class="act-icon">◎</span>
-            <span class="act-label">API</span>
+          <button type="button" data-activity="delete" title="Bulk delete">
+            <span class="act-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></span>
+            <span class="act-label">Delete</span>
           </button>
-          <button type="button" data-activity="http" title="HTTP issues & console">
-            <span class="act-icon">⚡</span>
-            <span class="act-label">Logs</span>
+          <div class="activity-spacer"></div>
+          <button type="button" class="rail-settings" id="railSettingsBtn" title="Session settings">
+            <span class="act-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3"/><path d="M2 14h4M10 8h4M18 16h4"/></svg></span>
+            <span class="act-label">Settings</span>
           </button>
         </nav>
 
         <aside class="explorer" id="explorer">
-          <div class="side-head"><span id="explorerTitle">Components</span><span class="org-chip">ACS</span></div>
-
-          <div class="side-top">
-            <input class="search" id="componentSearch" placeholder="Search components" />
+          <div class="side-head" id="explorerTitle">
+            <div class="side-head-copy">
+              <div class="side-kicker">Workspace</div>
+              <div class="side-title">Components</div>
+            </div>
+            <button type="button" class="side-layout-btn" id="sideLayoutBtn" title="Panel layout" aria-label="Panel layout">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="18" rx="1.5"/><rect x="14" y="3" width="7" height="8" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+            </button>
           </div>
-
+          <div class="side-top">
+            <div class="search-wrap">
+              <input class="search" id="componentSearch" placeholder="Search components" />
+              <span class="search-hotkey" aria-hidden="true">⌘K</span>
+            </div>
+          </div>
+          <div class="side-meta">
+            <span id="componentCountLabel">0 components</span>
+            <button type="button" class="filter-btn" id="componentFilterBtn" title="Filter">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3"/><path d="M2 14h4M10 8h4M18 16h4"/></svg>
+              Filter
+            </button>
+          </div>
           <div class="tree-wrap" id="componentTree"></div>
-
           <div class="side-footer">
-            <div class="session-strip" style="margin-top:0;margin-bottom:10px">
-              <div class="left">
-                <div class="label">Session</div>
-                <div id="sessionRemaining" class="timer">--:--</div>
-              </div>
-              <div style="text-align:right">
-                <div id="sessionStatusPill" class="badge">No session</div>
-                <div id="sessionEnvironment" style="margin-top:4px;color:var(--muted);font-size:10px">—</div>
+            <button type="button" class="session-cta" id="openSessionBtn">
+              <span class="cta-left">
+                <span class="cta-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M11.5 12.5 20 4l2 2-2 2-2-1-3 3 1 2"/></svg></span>
+                <span>
+                  <div class="cta-title">Session setup</div>
+                  <div class="cta-sub" id="sessionDrawerHint">Connect to test live data</div>
+                </span>
+              </span>
+              <span aria-hidden="true" style="color:var(--muted)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
+            </button>
+          </div>
+        </aside>
+
+        <section class="preview-pane">
+          <div class="preview-toolbar">
+            <div class="left">
+              <div class="preview-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 20h8"/></svg></div>
+              <div class="left-copy">
+                <strong id="previewTitle">Identity Protect</strong>
+                <span class="preview-url" id="previewMeta">Not loaded</span>
               </div>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;font-size:10px;color:var(--muted)">
-              <div>Started <span id="sessionStarted" class="mono" style="color:var(--text)">—</span></div>
-              <div style="text-align:right">Expires <span id="sessionExpires" class="mono" style="color:var(--text)">—</span></div>
+            <div class="right">
+              <button type="button" class="ghost icon-btn" id="reloadBtn" title="Reload"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg></button>
             </div>
+          </div>
+          <div class="viewport" id="viewport">
+            <div class="browser-frame" id="browserFrame">
+              <div id="componentContainer"></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="drawer-backdrop" id="drawerBackdrop"></div>
+        <aside class="session-drawer" id="sessionDrawer" aria-label="Session setup">
+          <div class="drawer-head">
+            <div>
+              <div class="drawer-kicker">Connection</div>
+              <h2>Session setup</h2>
+            </div>
+            <button type="button" class="ghost icon-btn" id="closeSessionDrawerBtn" title="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+          </div>
+          <div class="drawer-body">
+            <div class="banner">Test with real scenarios. Connect a secure session to populate components with live data.</div>
             <div class="field">
               <label for="environment">Environment</label>
               <select id="environment">
@@ -784,11 +130,11 @@
               </select>
             </div>
             <div class="field">
-              <label for="tokenLife">Token life</label>
+              <label for="tokenLife">Token lifetime</label>
               <select id="tokenLife">
-                <option value="15">15 min</option>
-                <option value="30" selected>30 min</option>
-                <option value="60">60 min</option>
+                <option value="15">15 minutes</option>
+                <option value="30" selected>30 minutes</option>
+                <option value="60">60 minutes</option>
                 <option value="custom">Custom</option>
               </select>
             </div>
@@ -797,17 +143,26 @@
               <input id="customTokenLife" type="number" min="1" step="1" />
             </div>
             <div class="field">
-              <label for="appKey">App Key</label>
+              <label for="appKey">App key</label>
               <input id="appKey" autocomplete="off" placeholder="Paste appKey" />
             </div>
             <div class="field">
-              <label for="userToken">User Token</label>
-              <textarea id="userToken" rows="3" placeholder="Paste userToken (not saved)"></textarea>
+              <label for="userToken">User token</label>
+              <textarea id="userToken" rows="4" placeholder="Paste userToken (not saved)"></textarea>
             </div>
-            <div style="display:grid;grid-template-columns:1.4fr .8fr;gap:6px;margin-bottom:4px">
-              <button type="button" class="primary" id="loadBtn">Load / Reload</button>
-              <button type="button" id="resetSessionBtn">Reset</button>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;color:var(--muted);margin-bottom:8px">
+              <div>Started <span id="sessionStarted" class="mono" style="color:var(--text)">—</span></div>
+              <div style="text-align:right">Expires <span id="sessionExpires" class="mono" style="color:var(--text)">—</span></div>
             </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <div id="sessionStatusPill" class="badge">No session</div>
+              <div class="mono" id="sessionRemaining" style="font-size:16px;font-weight:650;color:var(--ok)">--:--</div>
+            </div>
+            <div class="secure-note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v5c0 5 3.2 8.4 7 9.5 3.8-1.1 7-4.5 7-9.5V6l-7-3z"/></svg>
+              <span>Credentials are kept in memory and cleared when this workspace closes.</span>
+            </div>
+            <div class="hidden" id="sessionEnvironment">—</div>
             <details class="advanced">
               <summary>Advanced settings</summary>
               <div class="field" style="margin-top:6px">
@@ -827,106 +182,186 @@
                 <label for="extraAttrs">Extra attributes JSON</label>
                 <textarea id="extraAttrs" rows="4" placeholder='{"condensed":"true"}'></textarea>
               </div>
-              <div class="profile-actions" style="margin-top:10px">
-                <button type="button" class="span2" id="clearCacheBtn2">Clear runtime cache</button>
-                <button type="button" class="span2" id="resetLocalDataBtn">Reset all local data…</button>
+              <div style="display:grid;gap:6px;margin-top:8px">
+                <button type="button" id="clearCacheBtn2">Clear runtime cache</button>
+                <button type="button" id="resetLocalDataBtn">Reset all local data…</button>
               </div>
-              <div class="empty" style="padding:0">Credentials stay in the form only for this session. Clear cache keeps IDE preferences; reset all local data clears preferences and theme too.</div>
             </details>
           </div>
+          <div class="drawer-foot">
+            <button type="button" id="resetSessionBtn">Reset session</button>
+            <button type="button" class="ghost" id="openSessionBtn2">Cancel</button>
+            <button type="button" class="primary" id="loadBtn">Create session</button>
+          </div>
         </aside>
 
-        <section class="preview-pane">
-          <div class="preview-toolbar">
-            <div class="left">
-              <strong id="previewTitle">Subscription Manager</strong>
-              <span class="preview-url" id="previewMeta">Not loaded</span>
-            </div>
-            <div class="right">
-              <button type="button" id="reloadBtn">Reload</button>
-              <button type="button" id="mobileBtn">Mobile</button>
-              <button type="button" id="desktopBtn" class="active">Desktop</button>
-              <button type="button" id="fullscreenBtn">Fullscreen</button>
-            </div>
-          </div>
-          <div class="viewport desktop" id="viewport">
-            <div class="browser-frame" id="browserFrame">
-              <div id="componentContainer"></div>
-            </div>
-          </div>
-        </section>
-
-        <aside class="inspector" id="inspector">
-          <div class="side-head"><span>Details</span><span class="org-chip">Inspector</span></div>
-          <div class="inspector-body">
-            <div style="margin-bottom:10px">
-              <div style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:6px">Session</div>
-              <div id="inspectorRemaining" class="timer">--:--</div>
-              <div class="kv"><div class="k">Status</div><div class="v" id="inspectorStatus">Idle</div></div>
-              <div class="kv"><div class="k">Env</div><div class="v" id="inspectorEnv">—</div></div>
-            </div>
-
-            <div style="margin-bottom:10px">
-              <div style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:6px">Component Health</div>
-              <div class="health-row"><span>Base Script</span><span id="healthBase" class="badge">Idle</span></div>
-              <div class="health-row"><span>Component Script</span><span id="healthComponent" class="badge">Idle</span></div>
-              <div class="health-row"><span>Custom Element</span><span id="healthDefined" class="badge">Idle</span></div>
-              <div class="health-row"><span>Rendered</span><span id="healthRendered" class="badge">Idle</span></div>
-              <div class="health-row"><span>API Calls</span><span id="healthApi" class="badge">Idle</span></div>
-              <div class="health-row"><span>Session</span><span id="healthSession" class="badge">Idle</span></div>
-            </div>
-
-            <div id="smartAnalysis" class="analysis hidden">
-              <h4>Smart Analysis</h4>
-              <div id="smartAnalysisBody"></div>
-            </div>
-
-            <div style="margin-top:12px">
-              <div style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:6px">Incident Snapshot</div>
-              <div class="empty" style="padding:0 0 8px">Copy a ticket-ready summary or download a JSON bundle for engineering.</div>
-              <div class="insp-actions">
-                <button type="button" id="copySnapshotBtn2">Copy for ticket</button>
-                <button type="button" id="downloadSnapshotBtn2">Download JSON</button>
+        <div class="delete-host" id="deleteHost" aria-label="Bulk delete users">
+          <div class="delete-layout">
+            <aside class="delete-side">
+              <div class="delete-side-head">
+                <div class="delete-side-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></div>
+                <div>
+                  <div class="delete-kicker">Data utility</div>
+                  <h2>Bulk delete</h2>
+                </div>
               </div>
-            </div>
-          </div>
-        </aside>
+              <div class="warn-banner">IP allowlisting required. Wrong IP usually shows as AUTH_FAIL (403) on every row.</div>
 
-        <div class="flowtest-host" id="flowtestHost" aria-label="Playbooks">
-          <iframe id="flowtestFrame" title="FlowTest Playbooks"></iframe>
-          <div class="flowtest-fallback" id="flowtestFallback">
-            <div>
-              Playbooks UI not loaded yet.<br />
-              Run <code>npm run sync:flowtest</code> from Component Studio,<br />
-              or start FlowTest on <code>http://localhost:8443</code> and reopen this tab.
-            </div>
-            <button type="button" class="primary" id="flowtestRetryBtn">Retry</button>
+              <div class="field">
+                <label>Environment</label>
+                <div class="seg delete-env-row">
+                  <button type="button" id="deleteEnvSandbox" class="active" aria-pressed="true">Sandbox</button>
+                  <button type="button" id="deleteEnvProd" aria-pressed="false">Production</button>
+                </div>
+                <div class="delete-base-url" id="deleteBaseUrl">https://sandbox.array.io</div>
+              </div>
+
+              <div class="field">
+                <label for="deleteClientToken">Client token</label>
+                <input id="deleteClientToken" type="password" autocomplete="off" placeholder="x-credmo-client-token" />
+              </div>
+
+              <div class="field">
+                <label>CSV of userIds</label>
+                <div class="delete-path" id="deleteCsvPath">Choose a CSV file<br><span style="font-size:11px;opacity:.85">One user ID per row · up to 10 MB</span></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">
+                  <button type="button" id="deletePickCsvBtn">Browse CSV</button>
+                  <button type="button" class="ghost" id="deleteClearCsvBtn">Clear</button>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="deleteUserIdColumn">User ID column</label>
+                <select id="deleteUserIdColumn" disabled>
+                  <option value="">— Load a CSV first —</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Results folder</label>
+                <div class="delete-path" id="deleteOutputPath">Same folder as CSV</div>
+                <div style="margin-top:8px">
+                  <button type="button" id="deletePickOutputBtn" style="width:100%">Choose folder</button>
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Run mode</label>
+                <div class="seg delete-mode-row">
+                  <button type="button" id="deleteModeDry" class="active" aria-pressed="true">Dry run (Validate only)</button>
+                  <button type="button" id="deleteModeLive" aria-pressed="false">Live (Delete records)</button>
+                </div>
+              </div>
+
+              <details class="advanced">
+                <summary>Throttling (leave alone)</summary>
+                <div class="field" style="margin-top:8px">
+                  <label for="deleteMaxWorkers">Max workers</label>
+                  <input id="deleteMaxWorkers" type="number" min="1" max="100" value="50" />
+                </div>
+                <div class="field">
+                  <label for="deleteMinGap">Min seconds between requests</label>
+                  <input id="deleteMinGap" type="number" min="0" step="0.05" value="0.1" />
+                </div>
+              </details>
+
+              <div class="delete-actions">
+                <button type="button" class="primary" id="deleteRunBtn">Start dry run</button>
+                <button type="button" id="deleteStopBtn" disabled>Stop</button>
+              </div>
+              <div style="margin-top:8px">
+                <button type="button" class="ghost" id="deleteRevealResultsBtn" style="width:100%" disabled>Show results file</button>
+              </div>
+            </aside>
+
+            <section class="delete-main">
+              <div class="delete-main-head">
+                <div class="delete-kicker">Execution</div>
+                <h2>Run log</h2>
+                <p class="lede">Dry run sends no requests. Live writes a results CSV and can resume unfinished rows.</p>
+              </div>
+              <div class="delete-stats">
+                <div class="delete-stat"><div class="k">Queued</div><div class="v" id="deleteStatQueued">0</div><div class="hint">Wait for CSV</div></div>
+                <div class="delete-stat"><div class="k">Processed</div><div class="v" id="deleteStatDone">0</div><div class="hint">0 rows processed</div></div>
+                <div class="delete-stat"><div class="k">Valid</div><div class="v" id="deleteStatDeleted">0</div><div class="hint">Ready for live run</div></div>
+                <div class="delete-stat"><div class="k">Errors</div><div class="v" id="deleteStatErrors">0</div><div class="hint">No errors</div></div>
+              </div>
+              <div class="delete-progress" aria-hidden="true"><span id="deleteProgressBar"></span></div>
+              <div class="delete-log" id="deleteLog"><span class="info">No run started. Choose a CSV file and start with a dry run.</span></div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <div class="delete-modal-backdrop" id="deleteConfirmModal" role="dialog" aria-modal="true" aria-labelledby="deleteConfirmTitle">
+        <div class="delete-modal">
+          <h3 id="deleteConfirmTitle">Confirm LIVE delete</h3>
+          <p id="deleteConfirmBody">This will permanently delete users. There is no undo.</p>
+          <div class="field">
+            <label for="deleteConfirmInput">Type DELETE to continue</label>
+            <input id="deleteConfirmInput" autocomplete="off" placeholder="DELETE" />
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="ghost" id="deleteConfirmCancelBtn">Cancel</button>
+            <button type="button" class="primary" id="deleteConfirmOkBtn">Delete users</button>
           </div>
         </div>
       </div>
 
       <section class="devtools" id="devtools">
         <div class="devtools-tabs">
-          <button type="button" class="tab active" data-tab="http">Issues</button>
-          <button type="button" class="tab" data-tab="console">Console</button>
-          <button type="button" class="tab" data-tab="timing">Timing</button>
-          <button type="button" class="tab" data-tab="events">Events</button>
-          <button type="button" class="tab" data-tab="lifecycle">Lifecycle</button>
-          <button type="button" class="tab" data-tab="network">Network</button>
+          <button type="button" class="tab active" data-tab="http" title="Issues">
+            <span class="tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5"/><path d="M12 17.5h.01"/></svg></span>
+            <span>Issues</span>
+            <span class="tab-count" id="issuesCount" data-empty="true"></span>
+          </button>
+          <button type="button" class="tab" data-tab="console" title="Console">
+            <span class="tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m7 10 2.5 2L7 14"/><path d="M12 14h5"/></svg></span>
+            <span>Console</span>
+          </button>
+          <button type="button" class="tab" data-tab="network" title="Network">
+            <span class="tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="5" rx="1"/><rect x="2.5" y="16.5" width="6" height="5" rx="1"/><rect x="15.5" y="16.5" width="6" height="5" rx="1"/><path d="M12 7.5v3.5M12 11H5.5v5.5M12 11h6.5v5.5"/></svg></span>
+            <span>Network</span>
+            <span class="tab-count" id="networkCount" data-empty="true"></span>
+          </button>
+          <button type="button" class="tab" data-tab="events" title="Events">
+            <span class="tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 10-13h-7l1-7z"/></svg></span>
+            <span>Events</span>
+          </button>
+          <button type="button" class="tab" data-tab="lifecycle" title="Lifecycle">
+            <span class="tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3l2.5-6 3.5 12 2.5-7H21"/></svg></span>
+            <span>Lifecycle</span>
+          </button>
+          <button type="button" class="tab" data-tab="timing" title="Timing" style="display:none">
+            <span>Timing</span>
+          </button>
           <div class="spacer"></div>
-          <button type="button" id="clearHttpBtn">Clear</button>
-          <button type="button" id="toggleDevtoolsBtn">Collapse</button>
+          <div class="devtools-actions">
+            <button type="button" class="ghost" id="clearHttpBtn">Clear</button>
+            <button type="button" class="ghost" id="toggleDevtoolsBtn">Collapse</button>
+          </div>
         </div>
         <div class="devtools-body">
           <div class="tab-panel http-layout active" data-tab-panel="http">
-            <div class="http-list" id="httpList"><div class="empty">No HTTP traffic yet.</div></div>
+            <div class="http-list" id="httpList">
+              <div class="issue-cards">
+                <div class="issue-card ok">
+                  <div class="issue-title">Ready</div>
+                  <div class="issue-body">Load a session to start inspecting component traffic.</div>
+                </div>
+                <div class="issue-card warn">
+                  <div class="issue-title">Session data unavailable</div>
+                  <div class="issue-body"><button type="button" class="linkish" id="issuesOpenSessionBtn">Set up session</button> to populate live data.</div>
+                </div>
+              </div>
+            </div>
             <div class="http-detail" id="httpDetail"><div class="empty">Select a request.</div></div>
           </div>
           <div class="tab-panel console-pane" data-tab-panel="console" id="consolePane"><div class="empty">Relevant logs only.</div></div>
-          <div class="tab-panel timing-pane" data-tab-panel="timing" id="timingPane"><div class="empty">Timing appears after loads and requests.</div></div>
+          <div class="tab-panel network-pane" data-tab-panel="network" id="networkPane"><div class="empty">Network summary.</div></div>
           <div class="tab-panel events-pane" data-tab-panel="events" id="eventsPane"><div class="empty">Session and component events.</div></div>
           <div class="tab-panel lifecycle-pane" data-tab-panel="lifecycle" id="lifecyclePane"><div class="empty">Lifecycle markers will appear here.</div></div>
-          <div class="tab-panel network-pane" data-tab-panel="network" id="networkPane"><div class="empty">Network summary.</div></div>
+          <div class="tab-panel timing-pane" data-tab-panel="timing" id="timingPane"><div class="empty">Timing appears after loads and requests.</div></div>
         </div>
       </section>
     </div>
@@ -944,7 +379,7 @@
     </footer>
   </div>
 
-  <script>
+<script>
 const ENVIRONMENTS = {
   sandbox: { apiUrl: 'https://sandbox.array.io', sandbox: 'true', label: 'Sandbox' },
   production: { apiUrl: 'https://array.io', sandbox: 'false', label: 'Production' }
@@ -959,7 +394,7 @@ const SPECIAL_COMPONENTS = {
 };
 
 const COMPONENT_GROUPS = [
-  { id: 'auth', label: 'Enrollment & Auth', items: [
+  { id: 'auth', label: 'Enrollment & auth', items: [
     { key: 'accountEnroll', label: 'Account Enroll' },
     { key: 'authenticationKBA', label: 'Authentication KBA' },
     { key: 'login', label: 'Account Login' }
@@ -968,22 +403,22 @@ const COMPONENT_GROUPS = [
     { key: 'creditOverview', label: 'Credit Overview' },
     { key: 'creditReport1b', label: 'Credit Report v1 1B' },
     { key: 'creditReport3b', label: 'Credit Report v1 3B' },
-    { key: 'creditReportCondensed1b', label: 'Credit Report v2 1B' },
     { key: 'creditScoreDetails', label: 'Credit Score Details' },
     { key: 'mcmCreditProtection', label: 'Credit Protection' },
     { key: 'debtAnalysis', label: 'Debt Analysis' },
     { key: 'scoreInsights', label: 'Score Insights' },
     { key: 'scoreSimulator', label: 'Score Simulator' },
     { key: 'scoreCoach', label: 'Score Coach' },
+    { key: 'creditReportCondensed1b', label: 'Credit Report v2 1B' },
     { key: 'creditScore1b', label: 'Score Tracker 1B' },
     { key: 'creditScore3b', label: 'Score Tracker 3B' },
     { key: 'creditAlerts', label: 'Credit Alerts' }
   ]},
   { id: 'identity', label: 'Identity', items: [
     { key: 'identityProtect', label: 'Identity Protect' },
-    { key: 'identityProtectPlus', label: 'Identity Protect Plus' },
-    { key: 'neighborhoodWatch', label: 'Neighborhood Watch' },
-    { key: 'breachScan', label: 'Breach Scan' }
+    { key: 'neighborhoodWatch', label: 'Identity Monitoring' },
+    { key: 'breachScan', label: 'Dark Web Scan' },
+    { key: 'identityProtectPlus', label: 'Identity Protect Plus' }
   ]},
   { id: 'privacy', label: 'Privacy', items: [
     { key: 'subscriptionManager', label: 'Subscription Manager' },
@@ -1016,7 +451,7 @@ const THEME_KEY = 'acs.theme';
 const STORAGE_KEY = 'acs.ide.preferences.v1';
 const SCRIPT_LOADS = new Map();
 
-let selectedComponentKey = 'subscriptionManager';
+let selectedComponentKey = 'identityProtect';
 let activeSession = {
   appKey: null,
   userToken: null,
@@ -1045,10 +480,35 @@ function applyTheme(theme) {
   const next = theme === 'light' ? 'light' : 'dark';
   document.documentElement.dataset.theme = next;
   localStorage.setItem(THEME_KEY, next);
-  $('themeToggleBtn').textContent = next === 'dark' ? 'Light' : 'Dark';
+  const btn = $('themeToggleBtn');
+  if (btn) {
+    btn.title = next === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+    btn.setAttribute('aria-label', btn.title);
+    btn.innerHTML = next === 'dark' ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 14.5A8.5 8.5 0 1 1 9.5 3a7 7 0 0 0 11.5 11.5z"/></svg>`;
+  }
 }
 function toggleTheme() {
-  applyTheme((document.documentElement.dataset.theme || 'dark') === 'dark' ? 'light' : 'dark');
+  applyTheme((document.documentElement.dataset.theme || 'light') === 'dark' ? 'light' : 'dark');
+}
+
+function openSessionDrawer() {
+  $('sessionDrawer')?.classList.add('open');
+  $('drawerBackdrop')?.classList.add('open');
+}
+function closeSessionDrawer() {
+  $('sessionDrawer')?.classList.remove('open');
+  $('drawerBackdrop')?.classList.remove('open');
+}
+function updateBreadcrumb() {
+  const deleting = $('appRoot')?.classList.contains('mode-delete');
+  const crumb = $('titleCrumb');
+  if (!crumb) return;
+  if (deleting) {
+    crumb.innerHTML = '<span class="crumb-root">Utilities</span><span class="crumb-sep">›</span><span class="crumb-current">Bulk delete</span>';
+  } else {
+    const label = findComponentLabel(selectedComponentKey);
+    crumb.innerHTML = `<span class="crumb-root">Components</span><span class="crumb-sep">›</span><span class="crumb-current">${escapeHtml(label)}</span>`;
+  }
 }
 
 function maskToken(value) {
@@ -1075,6 +535,7 @@ function syncEnvDefaults() {
   $('apiUrl').value = env.apiUrl;
   $('sandboxAttr').value = env.sandbox;
   $('statusEnv').textContent = env.label;
+  if ($('headerEnvPill')) $('headerEnvPill').textContent = env.label;
 }
 function getTokenLifeMinutes() {
   if ($('tokenLife').value === 'custom') return Math.max(1, parseInt($('customTokenLife').value, 10) || 30);
@@ -1105,17 +566,8 @@ function getSessionStatus(remainingMs) {
   return { key: 'valid', label: 'Valid' };
 }
 function setStatusMessage(msg) { $('statusMessage').textContent = msg; }
-function setBadge(el, state, label) {
-  el.className = `badge ${state === 'ok' ? 'ok' : state === 'warn' ? 'warn' : state === 'err' ? 'err' : ''}`;
-  el.textContent = label;
-}
 function updateHealthUi() {
-  setBadge($('healthBase'), health.base === 'ok' ? 'ok' : health.base === 'err' ? 'err' : health.base === 'warn' ? 'warn' : '', labelForHealth(health.base));
-  setBadge($('healthComponent'), health.component === 'ok' ? 'ok' : health.component === 'err' ? 'err' : health.component === 'warn' ? 'warn' : '', labelForHealth(health.component));
-  setBadge($('healthDefined'), health.defined === 'ok' ? 'ok' : health.defined === 'err' ? 'err' : health.defined === 'warn' ? 'warn' : '', labelForHealth(health.defined));
-  setBadge($('healthRendered'), health.rendered === 'ok' ? 'ok' : health.rendered === 'err' ? 'err' : health.rendered === 'warn' ? 'warn' : '', labelForHealth(health.rendered));
-  setBadge($('healthApi'), health.api === 'ok' ? 'ok' : health.api === 'err' ? 'err' : health.api === 'warn' ? 'warn' : '', labelForHealth(health.api));
-  setBadge($('healthSession'), health.session === 'ok' ? 'ok' : health.session === 'err' ? 'err' : health.session === 'warn' ? 'warn' : '', labelForHealth(health.session));
+  // Health is tracked for diagnostics; the inspector UI was removed.
 }
 function labelForHealth(state) {
   return ({ idle: 'Idle', ok: 'OK', warn: 'Warn', err: 'Fail' })[state] || state;
@@ -1169,20 +621,35 @@ function updateSessionUi() {
   const status = getSessionStatus(remaining);
   const remClass = status.key === 'refresh' ? 'warn' : (status.key === 'expiring' || status.key === 'expired') ? (status.key === 'expired' ? 'expired' : 'danger') : '';
 
-  $('sessionRemaining').textContent = formatRemaining(remaining);
-  $('sessionRemaining').className = `timer ${remClass}`;
-  $('inspectorRemaining').textContent = formatRemaining(remaining);
-  $('inspectorRemaining').className = `timer ${remClass}`;
-  $('sessionEnvironment').textContent = ENVIRONMENTS[activeSession.environment]?.label || '—';
-  $('sessionStarted').textContent = formatClock(activeSession.startedAt);
-  $('sessionExpires').textContent = formatClock(activeSession.expiresAt);
-  $('sessionStatusPill').className = `badge ${status.key === 'valid' ? 'ok' : status.key === 'refresh' ? 'warn' : status.key === 'idle' ? '' : 'err'}`;
-  $('sessionStatusPill').textContent = status.label;
-  $('inspectorStatus').textContent = status.label;
-  $('inspectorEnv').textContent = ENVIRONMENTS[activeSession.environment]?.label || '—';
-  $('titleMeta').textContent = activeSession.startedAt ? `${status.label} · ${formatRemaining(remaining)}` : 'No session';
-  $('statusSession').textContent = status.label;
-  $('statusSession').className = status.key === 'valid' ? 'ok' : status.key === 'refresh' ? 'warn' : status.key === 'idle' ? '' : 'err';
+  const envLabel = ENVIRONMENTS[activeSession.environment]?.label
+    || ENVIRONMENTS[$('environment')?.value]?.label
+    || 'Sandbox';
+  if ($('sessionRemaining')) {
+    $('sessionRemaining').textContent = formatRemaining(remaining);
+    $('sessionRemaining').className = `timer ${remClass}`;
+  }
+  if ($('sessionEnvironment')) $('sessionEnvironment').textContent = envLabel;
+  if ($('sessionStarted')) $('sessionStarted').textContent = formatClock(activeSession.startedAt);
+  if ($('sessionExpires')) $('sessionExpires').textContent = formatClock(activeSession.expiresAt);
+  if ($('sessionStatusPill')) {
+    $('sessionStatusPill').className = `badge ${status.key === 'valid' ? 'ok' : status.key === 'refresh' ? 'warn' : status.key === 'idle' ? '' : 'err'}`;
+    $('sessionStatusPill').textContent = status.label;
+  }
+  if ($('headerEnvPill')) $('headerEnvPill').textContent = envLabel;
+  if ($('titleMeta')) {
+    $('titleMeta').textContent = activeSession.startedAt
+      ? `${status.label} · ${formatRemaining(remaining)}`
+      : 'No active session';
+  }
+  if ($('statusSession')) {
+    $('statusSession').textContent = status.label;
+    $('statusSession').className = status.key === 'valid' ? 'ok' : status.key === 'refresh' ? 'warn' : status.key === 'idle' ? '' : 'err';
+  }
+  if ($('sessionDrawerHint')) {
+    $('sessionDrawerHint').textContent = activeSession.startedAt
+      ? `${status.label} · ${formatRemaining(remaining)} remaining`
+      : 'Connect to test live data';
+  }
 
   if (activeSession.startedAt) {
     health.session = status.key === 'valid' ? 'ok' : status.key === 'refresh' ? 'warn' : 'err';
@@ -1357,7 +824,7 @@ async function resetAllLocalData() {
     } catch (_) {}
   }
 
-  applyTheme('dark');
+  applyTheme('light');
   logConsole('All local data reset.', 'warn', 'cache');
   pushEvent('All local data reset');
   setStatusMessage('All local data reset');
@@ -1382,17 +849,8 @@ function analyzeRequest(req) {
   return null;
 }
 
-function renderSmartAnalysis(req) {
-  const box = $('smartAnalysis');
-  const body = $('smartAnalysisBody');
-  const analysis = req ? analyzeRequest(req) : null;
-  if (!analysis) { box.classList.add('hidden'); body.innerHTML = ''; return; }
-  box.classList.remove('hidden');
-  body.innerHTML = `
-    <p><strong>Problem</strong><br>${escapeHtml(analysis.problem)}</p>
-    <p><strong>Confidence</strong><br>${escapeHtml(analysis.confidence)}</p>
-    <p><strong>Suggested Fix</strong><br>${escapeHtml(analysis.fix)}</p>
-  `;
+function renderSmartAnalysis(_req) {
+  // Smart analysis panel lived in the removed inspector.
 }
 
 function maskUrl(url) {
@@ -1408,17 +866,40 @@ function statusClass(status, error) {
   return 'ok';
 }
 
+function setTabCount(id, value) {
+  const el = $(id);
+  if (!el) return;
+  const n = Number(value) || 0;
+  el.textContent = n > 0 ? String(n) : '';
+  el.dataset.empty = n > 0 ? 'false' : 'true';
+}
+
 function renderHttp() {
   $('statusHttp').textContent = `${httpRequests.length} request${httpRequests.length === 1 ? '' : 's'}`;
   const failed = httpRequests.filter(r => r.error || (r.status && r.status >= 400)).length;
   health.api = !httpRequests.length ? (health.api === 'idle' ? 'idle' : health.api) : failed ? 'err' : 'ok';
   updateHealthUi();
+  setTabCount('networkCount', httpRequests.length);
 
   if (!httpRequests.length) {
-    $('httpList').innerHTML = '<div class="empty">No HTTP traffic yet.</div>';
+    const hasSession = !!(activeSession?.userToken && activeSession?.expiresAt && Date.now() < activeSession.expiresAt);
+    setTabCount('issuesCount', hasSession ? 0 : 2);
+    $('httpList').innerHTML = hasSession
+      ? `<div class="issue-cards"><div class="issue-card ok"><div class="issue-title">No issues</div><div class="issue-body">No HTTP traffic yet for this session.</div></div></div>`
+      : `<div class="issue-cards">
+      <div class="issue-card ok">
+        <div class="issue-title">Ready</div>
+        <div class="issue-body">Load a session to start inspecting component traffic.</div>
+      </div>
+      <div class="issue-card warn">
+        <div class="issue-title">Session data unavailable</div>
+        <div class="issue-body"><button type="button" class="linkish" id="issuesOpenSessionBtn">Set up session</button> to populate live data.</div>
+      </div>
+    </div>`;
     $('networkPane').innerHTML = '<div class="empty">Network summary.</div>';
     return;
   }
+  setTabCount('issuesCount', failed || 0);
   const rows = httpRequests.map(r => {
     const active = r.id === selectedRequestId ? ' active' : '';
     return `<div class="req-row${active}" data-id="${r.id}">
@@ -1602,25 +1083,43 @@ function waitForCustomElement(tagName, timeoutMs = 8000) {
   ]);
 }
 
+const ITEM_DOC_ICON = `<span class="item-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="m9.5 15 1.5-2-1.5-2"/><path d="m14.5 11-1.5 2 1.5 2"/></svg></span>`;
+const ITEM_ARROW = `<span class="item-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></span>`;
+
+function renderTreeItem(item) {
+  const active = item.key === selectedComponentKey ? ' active' : '';
+  return `<button type="button" class="tree-item${active}" data-key="${item.key}">${ITEM_DOC_ICON}<span class="item-label">${escapeHtml(item.label)}</span>${ITEM_ARROW}</button>`;
+}
+
 function renderComponentTree(filter = '') {
   const q = filter.trim().toLowerCase();
+  let visibleCount = 0;
   const html = COMPONENT_GROUPS.map(group => {
     const items = group.items.filter(i => !q || i.label.toLowerCase().includes(q) || i.key.toLowerCase().includes(q));
     if (!items.length) return '';
+    visibleCount += items.length;
     return `<details class="tree-group" open>
-      <summary>${escapeHtml(group.label)}</summary>
-      ${items.map(i => `<button type="button" class="tree-item${i.key === selectedComponentKey ? ' active' : ''}" data-key="${i.key}">${escapeHtml(i.label)}</button>`).join('')}
+      <summary>
+        <span class="chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+        <span class="group-label">${escapeHtml(group.label.toUpperCase())}</span>
+        <span class="count">${items.length}</span>
+      </summary>
+      ${items.map(renderTreeItem).join('')}
     </details>`;
   }).join('');
+  if ($('componentCountLabel')) {
+    $('componentCountLabel').textContent = `${visibleCount} component${visibleCount === 1 ? '' : 's'}`;
+  }
   $('componentTree').innerHTML = html || '<div class="empty">No matches.</div>';
 }
 
 function updatePreviewChrome(extra) {
   const label = findComponentLabel(selectedComponentKey);
   const cfg = getComponentConfig(selectedComponentKey);
-  $('previewTitle').textContent = label;
-  $('previewMeta').textContent = extra || `${cfg.tagName} · not loaded`;
-  $('statusComponent').textContent = label;
+  if ($('previewTitle')) $('previewTitle').textContent = label;
+  if ($('previewMeta')) $('previewMeta').textContent = extra || `${cfg.tagName} · not loaded`;
+  if ($('statusComponent')) $('statusComponent').textContent = label;
+  updateBreadcrumb();
 }
 
 async function loadComponent({ fromComponentSwitch = false } = {}) {
@@ -1766,120 +1265,6 @@ function buildDiagnostics() {
   return lines.join('\n');
 }
 
-function buildIncidentSnapshot() {
-  const environment = $('environment').value;
-  const env = ENVIRONMENTS[environment];
-  const apiUrl = ($('apiUrl').value.trim().replace(/\/$/, '') || env.apiUrl);
-  const cfg = getComponentConfig(selectedComponentKey);
-  const remaining = activeSession.startedAt == null ? null : activeSession.expiresAt - Date.now();
-  const status = getSessionStatus(remaining);
-  const failed = httpRequests.filter(r => r.error || (r.status && r.status >= 400));
-  const latestFail = failed[0] || null;
-  const analysis = latestFail ? analyzeRequest(latestFail) : null;
-
-  const snapshot = {
-    version: 1,
-    type: 'array-component-studio-incident-snapshot',
-    createdAt: new Date().toISOString(),
-    component: {
-      key: selectedComponentKey,
-      label: findComponentLabel(selectedComponentKey),
-      tagName: cfg.tagName,
-      scriptUrl: cfg.scriptUrl
-    },
-    environment: {
-      name: environment,
-      label: env.label,
-      apiUrl,
-      sandbox: env.sandbox
-    },
-    credentials: {
-      appKey: maskToken($('appKey').value.trim()) || null,
-      userToken: maskToken($('userToken').value.trim()) || null
-    },
-    session: {
-      status: status.label,
-      startedAt: activeSession.startedAt ? new Date(activeSession.startedAt).toISOString() : null,
-      expiresAt: activeSession.expiresAt ? new Date(activeSession.expiresAt).toISOString() : null,
-      remainingMs: remaining,
-      durationMs: activeSession.duration
-    },
-    health: { ...health },
-    http: httpRequests.slice(0, 40).map(r => ({
-      method: r.method,
-      url: maskUrl(r.url),
-      status: r.status,
-      durationMs: r.duration,
-      size: r.size,
-      error: r.error,
-      responseBody: (r.responseBody || '').slice(0, 2000)
-    })),
-    console: consoleEntries.slice(-40).map(e => ({
-      time: e.time.toISOString(),
-      level: e.level,
-      tag: e.tag,
-      message: e.message
-    })),
-    analysis,
-    lastLoadResult
-  };
-
-  const ticketLines = [
-    '### Array Component Studio — Incident Snapshot',
-    '',
-    `**When:** ${snapshot.createdAt}`,
-    `**Component:** ${snapshot.component.label} (\`${snapshot.component.tagName}\`)`,
-    `**Environment:** ${snapshot.environment.label} · apiUrl=\`${snapshot.environment.apiUrl}\` · sandbox=\`${snapshot.environment.sandbox}\``,
-    `**Credentials:** appKey=\`${snapshot.credentials.appKey || '—'}\` · userToken=\`${snapshot.credentials.userToken || '—'}\``,
-    `**Session:** ${snapshot.session.status} · remaining ${formatRemaining(snapshot.session.remainingMs)} · started ${formatClock(activeSession.startedAt)} · expires ${formatClock(activeSession.expiresAt)}`,
-    '',
-    '**Component Health**',
-    `- Base Script: ${health.base}`,
-    `- Component Script: ${health.component}`,
-    `- Custom Element: ${health.defined}`,
-    `- Rendered: ${health.rendered}`,
-    `- API Calls: ${health.api}`,
-    `- Session: ${health.session}`,
-    '',
-    '**HTTP Timeline**'
-  ];
-  if (!snapshot.http.length) ticketLines.push('- (none)');
-  snapshot.http.slice(0, 20).forEach(r => {
-    ticketLines.push(`- \`${r.method}\` ${r.status || 'ERR'} ${r.durationMs || 0}ms \`${r.url}\``);
-  });
-  if (analysis) {
-    ticketLines.push('', '**Likely Cause**', analysis.problem, '', '**Suggested Fix**', analysis.fix, `Confidence: ${analysis.confidence}`);
-  }
-  if (latestFail && latestFail.responseBody) {
-    ticketLines.push('', '**Latest Failure Body (truncated)**', '```', latestFail.responseBody.slice(0, 1200), '```');
-  }
-  ticketLines.push('', '_Secrets are masked. Attach the downloaded JSON for full engineering detail._');
-
-  snapshot.ticketMarkdown = ticketLines.join('\n');
-  return snapshot;
-}
-
-async function copyIncidentSnapshot() {
-  const snapshot = buildIncidentSnapshot();
-  await navigator.clipboard.writeText(snapshot.ticketMarkdown);
-  setStatusMessage('Incident snapshot copied');
-  logConsole('Incident snapshot copied for ticket.', 'ok', 'snapshot');
-}
-
-function downloadIncidentSnapshot() {
-  const snapshot = buildIncidentSnapshot();
-  const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-  a.href = url;
-  a.download = `acs-incident-${selectedComponentKey}-${stamp}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-  setStatusMessage('Incident snapshot downloaded');
-  logConsole('Incident snapshot JSON downloaded.', 'ok', 'snapshot');
-}
-
 function savePreferences() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify({
     component: selectedComponentKey,
@@ -1889,9 +1274,7 @@ function savePreferences() {
     componentHeight: $('componentHeight').value,
     scriptOverride: $('scriptOverride').value,
     extraAttrs: $('extraAttrs').value,
-    inspectorCollapsed: $('workspace').classList.contains('inspector-collapsed'),
-    devtoolsCollapsed: $('main').classList.contains('devtools-collapsed'),
-    viewport: $('viewport').classList.contains('mobile') ? 'mobile' : 'desktop'
+    devtoolsCollapsed: $('main').classList.contains('devtools-collapsed')
   }));
 }
 
@@ -1907,12 +1290,10 @@ function loadPreferences() {
     if (prefs.componentHeight) $('componentHeight').value = prefs.componentHeight;
     if (prefs.scriptOverride) $('scriptOverride').value = prefs.scriptOverride;
     if (prefs.extraAttrs) $('extraAttrs').value = prefs.extraAttrs;
-    if (prefs.inspectorCollapsed) $('workspace').classList.add('inspector-collapsed');
     if (prefs.devtoolsCollapsed) {
       $('main').classList.add('devtools-collapsed');
       $('toggleDevtoolsBtn').textContent = 'Expand';
     }
-    if (prefs.viewport === 'mobile') setViewport('mobile');
     // Drop legacy remembered app keys / client profiles if present
     localStorage.removeItem('acs.clientProfiles.v1');
     updatePreviewChrome();
@@ -1920,115 +1301,27 @@ function loadPreferences() {
 }
 
 function setActivity(name) {
-  if (name === 'sidebar') name = 'components';
-  document.querySelectorAll('.activity button').forEach(btn => btn.classList.toggle('active', btn.dataset.activity === name));
-  const playbooks = name === 'playbooks';
-  const logs = name === 'http';
-  $('appRoot').classList.toggle('mode-playbooks', playbooks);
-  if ($('titleCrumb')) {
-    $('titleCrumb').textContent = playbooks ? 'API' : logs ? 'Logs' : 'UI';
-  }
-  if ($('explorerTitle')) {
-    $('explorerTitle').textContent = playbooks ? 'API' : 'Components';
-  }
-
-  if (playbooks) {
-    ensureFlowtestLoaded();
-    return;
-  }
-
-  if (name === 'http') {
-    setDevtoolsTab('http');
-    if ($('main').classList.contains('devtools-collapsed')) {
-      $('main').classList.remove('devtools-collapsed');
-      $('toggleDevtoolsBtn').textContent = 'Collapse';
-    }
-  }
+  if (!name) return;
+  if (name === 'sidebar' || name === 'http') name = 'components';
+  document.querySelectorAll('.activity button[data-activity]').forEach(btn => btn.classList.toggle('active', btn.dataset.activity === name));
+  const deleting = name === 'delete';
+  $('appRoot').classList.toggle('mode-delete', deleting);
+  closeSessionDrawer();
+  updateBreadcrumb();
+  if (deleting) initDeleteToolOnce();
 }
 
-const FLOWTEST_DEV_URL = 'http://localhost:8443/';
-const FLOWTEST_BUNDLED_URL = './flowtest/index.html';
-let flowtestLoadAttempted = false;
-
-async function probeUrl(url, timeoutMs = 600) {
-  try {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), timeoutMs);
-    await fetch(url, { method: 'GET', mode: 'no-cors', cache: 'no-store', signal: ctrl.signal });
-    clearTimeout(t);
-    return true;
-  } catch (_) {
-    return false;
-  }
-}
-
-async function resolveFlowtestUrl() {
-  if (window.acsNative?.getFlowtestUrl) {
-    try {
-      const info = await window.acsNative.getFlowtestUrl();
-      if (info?.url) return info;
-    } catch (_) {}
-  }
-  if (await probeUrl(FLOWTEST_DEV_URL)) {
-    return { url: FLOWTEST_DEV_URL, source: 'dev' };
-  }
-  return { url: FLOWTEST_BUNDLED_URL, source: 'bundled' };
-}
-
-async function ensureFlowtestLoaded(force = false) {
-  const frame = $('flowtestFrame');
-  const fallback = $('flowtestFallback');
-  if (!frame) return;
-  if (!force && frame.dataset.loaded === '1') return;
-
-  flowtestLoadAttempted = true;
-  fallback?.classList.remove('visible');
-  const info = await resolveFlowtestUrl();
-  frame.dataset.source = info.source || '';
-  frame.onload = () => {
-    frame.dataset.loaded = '1';
-    fallback?.classList.remove('visible');
-  };
-  frame.onerror = () => {
-    frame.dataset.loaded = '';
-    fallback?.classList.add('visible');
-  };
-  // Relative bundled path: if file missing, iframe may still "load" blank — show fallback after short check
-  frame.src = info.url;
-  if (info.source === 'bundled') {
-    setTimeout(() => {
-      try {
-        // file:// cross-check is limited; if still not marked loaded and contentDocument empty
-        if (frame.dataset.loaded !== '1') {
-          // leave it; onload should fire for local files
-        }
-      } catch (_) {
-        fallback?.classList.add('visible');
-      }
-    }, 1200);
-  }
-}
 function setDevtoolsTab(name) {
   document.querySelectorAll('.devtools-tabs .tab').forEach(tab => tab.classList.toggle('active', tab.dataset.tab === name));
   document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.toggle('active', panel.dataset.tabPanel === name));
 }
-function setViewport(mode) {
-  const viewport = $('viewport');
-  viewport.classList.remove('mobile', 'desktop', 'fullscreen');
-  viewport.classList.add(mode === 'mobile' ? 'mobile' : 'desktop');
-  $('mobileBtn').classList.toggle('active', mode === 'mobile');
-  $('desktopBtn').classList.toggle('active', mode !== 'mobile');
-  savePreferences();
-}
 
-document.querySelectorAll('.activity button').forEach(btn => {
+document.querySelectorAll('.activity button[data-activity]').forEach(btn => {
   btn.addEventListener('click', () => setActivity(btn.dataset.activity));
 });
 document.querySelectorAll('.devtools-tabs .tab').forEach(tab => {
   tab.addEventListener('click', () => setDevtoolsTab(tab.dataset.tab));
 });
-$('flowtestRetryBtn')?.addEventListener('click', () => ensureFlowtestLoaded(true));
-
 $('componentTree').addEventListener('click', e => {
   const btn = e.target.closest('[data-key]');
   if (!btn) return;
@@ -2039,8 +1332,9 @@ $('componentTree').addEventListener('click', e => {
   if ($('appKey').value.trim() && $('userToken').value.trim()) {
     loadComponent({ fromComponentSwitch: true });
   } else {
-    $('appKey').focus();
-    setStatusMessage('Enter credentials below to load component');
+    openSessionDrawer();
+    $('appKey')?.focus();
+    setStatusMessage('Set up a session to load this component');
   }
 });
 
@@ -2060,18 +1354,32 @@ $('scriptOverride').addEventListener('input', savePreferences);
 $('extraAttrs').addEventListener('input', savePreferences);
 $('apiUrl').addEventListener('input', savePreferences);
 
-$('loadBtn').addEventListener('click', () => loadComponent());
+$('loadBtn').addEventListener('click', async () => {
+  await loadComponent();
+  if (lastLoadResult?.ok) closeSessionDrawer();
+});
 $('reloadBtn').addEventListener('click', () => loadComponent());
 $('resetSessionBtn').addEventListener('click', resetSession);
 $('themeToggleBtn').addEventListener('click', toggleTheme);
-$('mobileBtn').addEventListener('click', () => setViewport('mobile'));
-$('desktopBtn').addEventListener('click', () => setViewport('desktop'));
-$('fullscreenBtn').addEventListener('click', () => {
-  $('viewport').classList.toggle('fullscreen');
+$('openSessionBtn')?.addEventListener('click', openSessionDrawer);
+$('openSessionBtn2')?.addEventListener('click', closeSessionDrawer);
+$('closeSessionDrawerBtn')?.addEventListener('click', closeSessionDrawer);
+$('drawerBackdrop')?.addEventListener('click', closeSessionDrawer);
+$('headerSessionBtn')?.addEventListener('click', openSessionDrawer);
+$('railSettingsBtn')?.addEventListener('click', openSessionDrawer);
+$('componentFilterBtn')?.addEventListener('click', () => {
+  $('componentSearch')?.focus();
+  $('componentSearch')?.select();
 });
-$('toggleInspectorBtn').addEventListener('click', () => {
-  $('workspace').classList.toggle('inspector-collapsed');
-  savePreferences();
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && String(e.key).toLowerCase() === 'k') {
+    e.preventDefault();
+    $('componentSearch')?.focus();
+    $('componentSearch')?.select();
+  }
+});
+document.addEventListener('click', e => {
+  if (e.target.closest('#issuesOpenSessionBtn')) openSessionDrawer();
 });
 $('toggleDevtoolsBtn').addEventListener('click', () => {
   const collapsed = $('main').classList.toggle('devtools-collapsed');
@@ -2088,25 +1396,6 @@ $('clearHttpBtn').addEventListener('click', () => {
 $('clearCacheBtn').addEventListener('click', () => clearCache());
 $('clearCacheBtn2').addEventListener('click', () => clearCache());
 $('resetLocalDataBtn').addEventListener('click', () => resetAllLocalData());
-$('copyDiagnosticsBtn').addEventListener('click', async () => {
-  try {
-    await navigator.clipboard.writeText(buildDiagnostics());
-    setStatusMessage('Diagnostics copied');
-  } catch (err) {
-    setStatusMessage(`Copy failed: ${err.message || err}`);
-  }
-});
-$('copySnapshotBtn').addEventListener('click', async () => {
-  try { await copyIncidentSnapshot(); }
-  catch (err) { setStatusMessage(`Copy failed: ${err.message || err}`); }
-});
-$('copySnapshotBtn2').addEventListener('click', async () => {
-  try { await copyIncidentSnapshot(); }
-  catch (err) { setStatusMessage(`Copy failed: ${err.message || err}`); }
-});
-$('downloadSnapshotBtn').addEventListener('click', downloadIncidentSnapshot);
-$('downloadSnapshotBtn2').addEventListener('click', downloadIncidentSnapshot);
-
 document.addEventListener('click', e => {
   const row = e.target.closest('.req-row[data-id]');
   if (!row) return;
@@ -2117,7 +1406,466 @@ document.addEventListener('click', e => {
   setDevtoolsTab('http');
 });
 
-applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+/* ── Bulk delete users (ArrayDeleteUserTool) ─────────────────────────────── */
+const DONE_OUTCOMES = new Set(['DELETED', 'NOT_FOUND', 'AUTH_FAIL', 'BAD_REQUEST']);
+const deleteState = {
+  ready: false,
+  environment: 'sandbox',
+  live: false,
+  csvPath: '',
+  outputDir: '',
+  headers: [],
+  rows: [],
+  resultsPath: '',
+  running: false,
+  stopRequested: false,
+  counts: { queued: 0, done: 0, deleted: 0, errors: 0, total: 0 }
+};
+
+function deleteApi() {
+  return window.acsNative?.deleteTool || null;
+}
+
+function deleteLog(message, level = 'info') {
+  const el = $('deleteLog');
+  if (!el) return;
+  if (!el.classList.contains('has-content')) {
+    el.classList.add('has-content');
+    el.innerHTML = '';
+  }
+  const line = document.createElement('div');
+  line.className = level;
+  line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+  el.appendChild(line);
+  el.scrollTop = el.scrollHeight;
+}
+
+function resetDeleteLog() {
+  const el = $('deleteLog');
+  if (!el) return;
+  el.classList.remove('has-content');
+  el.innerHTML = '<span class="info">No run started. Choose a CSV file and start with a dry run.</span>';
+}
+
+function setDeleteStats(partial = {}) {
+  Object.assign(deleteState.counts, partial);
+  if ($('deleteStatQueued')) $('deleteStatQueued').textContent = String(deleteState.counts.queued);
+  if ($('deleteStatDone')) $('deleteStatDone').textContent = String(deleteState.counts.done);
+  if ($('deleteStatDeleted')) $('deleteStatDeleted').textContent = String(deleteState.counts.deleted);
+  if ($('deleteStatErrors')) $('deleteStatErrors').textContent = String(deleteState.counts.errors);
+  const total = deleteState.counts.total || 0;
+  const pct = total ? Math.min(100, Math.round((deleteState.counts.done / total) * 100)) : 0;
+  $('deleteProgressBar').style.width = `${pct}%`;
+}
+
+function parseCsvText(text) {
+  const rows = [];
+  let row = [];
+  let cell = '';
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const next = text[i + 1];
+    if (inQuotes) {
+      if (ch === '"' && next === '"') { cell += '"'; i++; }
+      else if (ch === '"') inQuotes = false;
+      else cell += ch;
+      continue;
+    }
+    if (ch === '"') { inQuotes = true; continue; }
+    if (ch === ',') { row.push(cell); cell = ''; continue; }
+    if (ch === '\n') {
+      row.push(cell);
+      if (!(row.length === 1 && row[0] === '')) rows.push(row);
+      row = []; cell = '';
+      continue;
+    }
+    if (ch === '\r') continue;
+    cell += ch;
+  }
+  if (cell.length || row.length) {
+    row.push(cell);
+    if (!(row.length === 1 && row[0] === '')) rows.push(row);
+  }
+  return rows;
+}
+
+function guessUserIdColumn(headers) {
+  const lower = headers.map(h => h.trim().toLowerCase());
+  const preferred = ['userid', 'user_id', 'user id', 'id'];
+  for (const name of preferred) {
+    const idx = lower.indexOf(name);
+    if (idx >= 0) return idx;
+  }
+  const fuzzy = lower.findIndex(h => h.includes('userid') || h.includes('user_id'));
+  return fuzzy >= 0 ? fuzzy : 0;
+}
+
+function dirnameFromPath(filePath) {
+  if (!filePath) return '';
+  const parts = filePath.split(/[/\\]/);
+  parts.pop();
+  return parts.join('/') || parts.join('\\');
+}
+
+async function refreshDeleteBaseUrl() {
+  const api = deleteApi();
+  let url = deleteState.environment === 'production' ? 'https://array.io' : 'https://sandbox.array.io';
+  if (api?.baseUrl) {
+    try { url = await api.baseUrl(deleteState.environment); } catch (_) {}
+  }
+  const el = $('deleteBaseUrl');
+  el.textContent = url;
+  el.classList.toggle('prod', deleteState.environment === 'production');
+  return url;
+}
+
+function setDeleteEnvironment(environment) {
+  deleteState.environment = environment === 'production' ? 'production' : 'sandbox';
+  $('deleteEnvSandbox').classList.toggle('active', deleteState.environment === 'sandbox');
+  $('deleteEnvSandbox').setAttribute('aria-pressed', String(deleteState.environment === 'sandbox'));
+  $('deleteEnvProd').classList.toggle('active', deleteState.environment === 'production');
+  $('deleteEnvProd').setAttribute('aria-pressed', String(deleteState.environment === 'production'));
+  refreshDeleteBaseUrl();
+}
+
+function setDeleteMode(live) {
+  deleteState.live = !!live;
+  $('deleteModeDry').classList.toggle('active', !deleteState.live);
+  $('deleteModeDry').setAttribute('aria-pressed', String(!deleteState.live));
+  $('deleteModeLive').classList.toggle('active', deleteState.live);
+  $('deleteModeLive').setAttribute('aria-pressed', String(deleteState.live));
+  if ($('deleteRunBtn')) {
+    $('deleteRunBtn').textContent = deleteState.live ? 'Start live delete' : 'Start dry run';
+  }
+}
+
+function clearDeleteCsv() {
+  deleteState.csvPath = '';
+  deleteState.outputDir = '';
+  deleteState.headers = [];
+  deleteState.rows = [];
+  deleteState.resultsPath = '';
+  $('deleteCsvPath').innerHTML = 'Choose a CSV file<br><span style="font-size:11px;opacity:.85">One user ID per row · up to 10 MB</span>';
+  $('deleteCsvPath').classList.remove('has-file');
+  $('deleteOutputPath').textContent = 'Same folder as CSV';
+  $('deleteOutputPath').classList.remove('has-file');
+  $('deleteUserIdColumn').innerHTML = '<option value="">— Load a CSV first —</option>';
+  $('deleteUserIdColumn').disabled = true;
+  $('deleteRevealResultsBtn').disabled = true;
+}
+
+async function loadDeleteCsv(filePath) {
+  const api = deleteApi();
+  if (!api) throw new Error('Native bridge unavailable');
+  const text = await api.readText(filePath);
+  const rows = parseCsvText(text);
+  if (!rows.length) throw new Error('CSV is empty');
+  const headers = rows[0].map(h => String(h || '').trim());
+  const dataRows = rows.slice(1);
+  deleteState.csvPath = filePath;
+  deleteState.headers = headers;
+  deleteState.rows = dataRows;
+  if (!deleteState.outputDir) deleteState.outputDir = dirnameFromPath(filePath);
+  $('deleteCsvPath').textContent = filePath;
+  $('deleteCsvPath').classList.add('has-file');
+  $('deleteOutputPath').textContent = deleteState.outputDir || 'Same folder as CSV';
+  $('deleteOutputPath').classList.toggle('has-file', !!deleteState.outputDir);
+  const select = $('deleteUserIdColumn');
+  select.disabled = false;
+  select.innerHTML = headers.map((h, i) =>
+    `<option value="${i}">${escapeHtml(h || `(column ${i + 1})`)}</option>`
+  ).join('');
+  select.value = String(guessUserIdColumn(headers));
+  deleteLog(`Loaded CSV with ${dataRows.length} data row(s), ${headers.length} column(s).`, 'ok');
+}
+
+function askLiveConfirm(baseUrl) {
+  return new Promise(resolve => {
+    const modal = $('deleteConfirmModal');
+    const input = $('deleteConfirmInput');
+    $('deleteConfirmBody').textContent =
+      `Environment: ${deleteState.environment.toUpperCase()}\nEndpoint: DELETE ${baseUrl}/api/user/v4/{userId}?permanent=true\n\nThis permanently destroys userIds. Type DELETE to continue.`;
+    input.value = '';
+    modal.classList.add('visible');
+    input.focus();
+
+    const cleanup = (ok) => {
+      modal.classList.remove('visible');
+      $('deleteConfirmOkBtn').onclick = null;
+      $('deleteConfirmCancelBtn').onclick = null;
+      input.onkeydown = null;
+      resolve(ok);
+    };
+    $('deleteConfirmCancelBtn').onclick = () => cleanup(false);
+    $('deleteConfirmOkBtn').onclick = () => {
+      if (input.value.trim() !== 'DELETE') {
+        deleteLog('Confirmation text must be exactly DELETE.', 'err');
+        input.focus();
+        return;
+      }
+      cleanup(true);
+    };
+    input.onkeydown = (e) => {
+      if (e.key === 'Escape') cleanup(false);
+      if (e.key === 'Enter') $('deleteConfirmOkBtn').click();
+    };
+  });
+}
+
+function sleepMs(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function runDeleteJob() {
+  const api = deleteApi();
+  if (!api) {
+    deleteLog('Native delete bridge is unavailable in this shell.', 'err');
+    return;
+  }
+  if (deleteState.running) return;
+  if (!deleteState.csvPath || !deleteState.rows.length) {
+    deleteLog('Pick a CSV first.', 'err');
+    return;
+  }
+  const token = $('deleteClientToken').value.trim();
+  if (!deleteState.live && !token) {
+    // dry run can proceed without token
+  } else if (deleteState.live && !token) {
+    deleteLog('Paste a client token before LIVE runs.', 'err');
+    $('deleteClientToken').focus();
+    return;
+  }
+
+  const colIdx = Number($('deleteUserIdColumn').value);
+  if (!Number.isInteger(colIdx) || colIdx < 0) {
+    deleteLog('Choose the userId column.', 'err');
+    return;
+  }
+
+  const baseUrl = await refreshDeleteBaseUrl();
+  const maxWorkers = Math.max(1, Math.min(100, Number($('deleteMaxWorkers').value) || 50));
+  const minGapMs = Math.max(0, Math.round((Number($('deleteMinGap').value) || 0.1) * 1000));
+
+  const ids = deleteState.rows.map(r => String(r[colIdx] ?? '').trim());
+  const emptyCount = ids.filter(id => !id).length;
+  const nonEmpty = ids.filter(Boolean);
+  const unique = [...new Set(nonEmpty)];
+  const dupCount = nonEmpty.length - unique.length;
+
+  resetDeleteLog();
+  setDeleteStats({ queued: 0, done: 0, deleted: 0, errors: 0, total: 0 });
+  deleteLog(`Mode: ${deleteState.live ? 'LIVE' : 'Dry Run'} · Env: ${deleteState.environment} · ${baseUrl}`, 'info');
+  deleteLog(`Rows: ${ids.length} · non-empty: ${nonEmpty.length} · unique: ${unique.length} · empty: ${emptyCount} · duplicates: ${dupCount}`, 'info');
+  deleteLog(`First 10 userIds: ${unique.slice(0, 10).join(', ') || '(none)'}`, 'info');
+
+  if (!deleteState.live) {
+    deleteLog('Dry Run complete — no requests sent, no results file written.', 'ok');
+    setStatusMessage('Delete dry run complete');
+    return;
+  }
+
+  const firstOk = confirm(
+    `LIVE delete on ${deleteState.environment.toUpperCase()}?\n\n${unique.length} unique userId(s)\n${baseUrl}/api/user/v4/{userId}?permanent=true\n\nThis cannot be undone.`
+  );
+  if (!firstOk) {
+    deleteLog('LIVE run cancelled.', 'warn');
+    return;
+  }
+  const typedOk = await askLiveConfirm(baseUrl);
+  if (!typedOk) {
+    deleteLog('LIVE run cancelled at confirmation.', 'warn');
+    return;
+  }
+
+  const outputDir = deleteState.outputDir || dirnameFromPath(deleteState.csvPath);
+  const resultsPath = await api.resultsPath({
+    csvPath: deleteState.csvPath,
+    outputDir,
+    environment: deleteState.environment
+  });
+  deleteState.resultsPath = resultsPath;
+  $('deleteRevealResultsBtn').disabled = false;
+
+  const prior = await api.readResults(resultsPath);
+  const queue = [];
+  let skippedDone = 0;
+  for (const id of unique) {
+    const priorOutcome = prior[id];
+    if (priorOutcome && DONE_OUTCOMES.has(priorOutcome)) {
+      skippedDone += 1;
+      continue;
+    }
+    queue.push(id);
+  }
+  deleteLog(`Results file: ${resultsPath}`, 'info');
+  deleteLog(`Resume skip (already finished): ${skippedDone}. Queued: ${queue.length}.`, 'info');
+  if (!queue.length) {
+    deleteLog('Nothing left to delete for this environment.', 'ok');
+    return;
+  }
+
+  deleteState.running = true;
+  deleteState.stopRequested = false;
+  $('deleteRunBtn').disabled = true;
+  $('deleteStopBtn').disabled = false;
+  setDeleteStats({ queued: queue.length, done: 0, deleted: 0, errors: 0, total: queue.length });
+
+  let cursor = 0;
+  let consecutiveTimeouts = 0;
+  const workers = Math.min(maxWorkers, queue.length);
+
+  async function worker() {
+    while (!deleteState.stopRequested) {
+      const idx = cursor++;
+      if (idx >= queue.length) return;
+      const userId = queue[idx];
+      const result = await api.deleteUser({ baseUrl, token, userId });
+      if (deleteState.stopRequested && !result) {
+        await api.appendResult({
+          filePath: resultsPath,
+          row: { userId, outcome: 'STOPPED', httpStatus: '', effectiveDate: '', detail: 'Stopped before send' }
+        });
+        deleteState.counts.done += 1;
+        setDeleteStats();
+        continue;
+      }
+
+      if (result.timedOut) consecutiveTimeouts += 1;
+      else consecutiveTimeouts = 0;
+
+      if (consecutiveTimeouts >= 8) {
+        deleteLog('Circuit breaker: 8 consecutive timeouts — pausing 45s.', 'warn');
+        consecutiveTimeouts = 0;
+        await sleepMs(45_000);
+      }
+
+      await api.appendResult({
+        filePath: resultsPath,
+        row: {
+          userId,
+          outcome: result.outcome,
+          httpStatus: result.httpStatus,
+          effectiveDate: result.effectiveDate,
+          detail: result.detail
+        }
+      });
+
+      deleteState.counts.done += 1;
+      if (result.outcome === 'DELETED') deleteState.counts.deleted += 1;
+      if (['AUTH_FAIL', 'BAD_REQUEST', 'NETWORK_ERROR'].includes(result.outcome)) {
+        deleteState.counts.errors += 1;
+      }
+      setDeleteStats();
+      const level = result.outcome === 'DELETED' ? 'ok'
+        : result.outcome === 'PENDING' || result.outcome === 'NOT_FOUND' ? 'warn'
+        : result.outcome === 'AUTH_FAIL' || result.outcome === 'BAD_REQUEST' || result.outcome === 'NETWORK_ERROR' ? 'err'
+        : 'info';
+      deleteLog(`${userId} → ${result.outcome}${result.effectiveDate ? ` (effective ${result.effectiveDate})` : ''}${result.detail ? ` · ${result.detail}` : ''}`, level);
+      if (minGapMs) await sleepMs(minGapMs);
+    }
+  }
+
+  try {
+    await Promise.all(Array.from({ length: workers }, () => worker()));
+    if (deleteState.stopRequested) {
+      while (cursor < queue.length) {
+        const userId = queue[cursor++];
+        await api.appendResult({
+          filePath: resultsPath,
+          row: { userId, outcome: 'STOPPED', httpStatus: '', effectiveDate: '', detail: 'Stopped before send' }
+        });
+        deleteState.counts.done += 1;
+      }
+      setDeleteStats();
+      deleteLog('Stopped. Remaining queued IDs marked STOPPED.', 'warn');
+    } else {
+      deleteLog(`LIVE run finished. Deleted ${deleteState.counts.deleted}. Results: ${resultsPath}`, 'ok');
+    }
+    setStatusMessage('Bulk delete finished');
+  } catch (err) {
+    deleteLog(err.message || String(err), 'err');
+    setStatusMessage('Bulk delete failed');
+  } finally {
+    deleteState.running = false;
+    deleteState.stopRequested = false;
+    $('deleteRunBtn').disabled = false;
+    $('deleteStopBtn').disabled = true;
+  }
+}
+
+function initDeleteToolOnce() {
+  if (deleteState.ready) return;
+  deleteState.ready = true;
+
+  setDeleteEnvironment('sandbox');
+  setDeleteMode(false);
+  clearDeleteCsv();
+
+  const api = deleteApi();
+  if (api?.envToken) {
+    api.envToken().then(token => {
+      if (token && !$('deleteClientToken').value) $('deleteClientToken').value = token;
+    }).catch(() => {});
+  }
+
+  $('deleteEnvSandbox').addEventListener('click', () => {
+    if (deleteState.running) return;
+    setDeleteEnvironment('sandbox');
+  });
+  $('deleteEnvProd').addEventListener('click', () => {
+    if (deleteState.running) return;
+    setDeleteEnvironment('production');
+  });
+  $('deleteModeDry').addEventListener('click', () => {
+    if (deleteState.running) return;
+    setDeleteMode(false);
+  });
+  $('deleteModeLive').addEventListener('click', () => {
+    if (deleteState.running) return;
+    setDeleteMode(true);
+  });
+  $('deletePickCsvBtn').addEventListener('click', async () => {
+    try {
+      const filePath = await deleteApi().pickCsv();
+      if (!filePath) return;
+      await loadDeleteCsv(filePath);
+    } catch (err) {
+      deleteLog(err.message || String(err), 'err');
+    }
+  });
+  $('deleteClearCsvBtn').addEventListener('click', () => {
+    if (deleteState.running) return;
+    clearDeleteCsv();
+    deleteLog('Cleared CSV selection.', 'info');
+  });
+  $('deletePickOutputBtn').addEventListener('click', async () => {
+    try {
+      const dir = await deleteApi().pickOutputDir(deleteState.outputDir || dirnameFromPath(deleteState.csvPath) || null);
+      if (!dir) return;
+      deleteState.outputDir = dir;
+      $('deleteOutputPath').textContent = dir;
+      $('deleteOutputPath').classList.add('has-file');
+    } catch (err) {
+      deleteLog(err.message || String(err), 'err');
+    }
+  });
+  $('deleteRunBtn').addEventListener('click', () => { runDeleteJob(); });
+  $('deleteStopBtn').addEventListener('click', () => {
+    if (!deleteState.running) return;
+    deleteState.stopRequested = true;
+    deleteLog('Stop requested — finishing in-flight requests…', 'warn');
+  });
+  $('deleteRevealResultsBtn').addEventListener('click', async () => {
+    if (!deleteState.resultsPath) return;
+    try { await deleteApi().showItem(deleteState.resultsPath); }
+    catch (err) { deleteLog(err.message || String(err), 'err'); }
+  });
+
+  resetDeleteLog();
+}
+
+applyTheme(localStorage.getItem(THEME_KEY) || 'light');
 syncEnvDefaults();
 loadPreferences();
 renderComponentTree();
@@ -2125,7 +1873,9 @@ updateSessionUi();
 updateHealthUi();
 renderConsole();
 renderHttp();
+updateBreadcrumb();
 setStatusMessage('Ready');
-  </script>
+  
+</script>
 </body>
 </html>
